@@ -17,7 +17,7 @@
 struct TropicalMatrix
 {
     std::vector<std::vector<ExtendedInteger>> matrix;
-    explicit TropicalMatrix(size_t n,size_t m): matrix(n,std::vector<ExtendedInteger>(m,inf_plus_t{}))
+    explicit TropicalMatrix(size_t n,size_t m): matrix(n,std::vector<ExtendedInteger>(m,inf_p))
     {}
     explicit TropicalMatrix(size_t n): TropicalMatrix(n,n)
     {}
@@ -72,7 +72,7 @@ struct TropicalMatrix
     {
         auto n = matrix.size();
         auto m = other.size();
-        std::vector<ExtendedInteger> result(n,inf_plus_t{});
+        std::vector<ExtendedInteger> result(n,inf_p);
         for(int i=0;i<n;i++) for(int j=0;j<m;j++)
                 result[i] = std::min(result[i],matrix[i][j]+other[j]);
         return result;

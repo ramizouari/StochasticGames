@@ -79,10 +79,14 @@ struct Min
  * responsibility to the developer.
  * */
 template<typename T>
-concept MonoidOperation = requires(T op,typename T::base_type x,typename T::base_type y)
+concept MonoidOperation = requires()
 {
-    {op(x,y)} -> std::same_as<typename T::base_type>;
+    typename T::base_type;
     {T::identity} -> std::same_as<typename T::base_type &>;
+    requires requires(T op,typename T::base_type x,typename T::base_type y)
+    {
+        {op(x,y)} -> std::same_as<typename T::base_type>;
+    };
 };
 
 #endif //COUNTERSTRATEGY_OPERATION_H

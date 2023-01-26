@@ -1,5 +1,10 @@
 
-## 1. Max-closed Semi Linear Program
+## 1. Max-closed Linear Program
+> A linear inequality is max-closed if and only if it is of the form
+> $$
+ \sum_{i=1}^n a_ix_i> c
+ $$
+ With $a_1,\dots,a_n$ are all positive except potentially one term. 
 
 - Let $\sum_{i=1}^na_ix_i \succ c$ be a linear inequality.
 - Let $\boldsymbol{x}=(x_1,\dots,x_n),\boldsymbol{y}=(y_1,\dots,y_n)$ be two vectors satisfying the constraints.

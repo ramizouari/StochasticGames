@@ -4,3 +4,6 @@
 
 # Local files
 local
+
+# Build files
+cmake-*

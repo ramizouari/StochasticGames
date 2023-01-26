@@ -43,14 +43,14 @@ struct inf_plus_t : public inf_t
     /*
      * Positive infinity is greater than any integer
      * */
-    std::strong_ordering operator<=>(const integer &O) const
+    constexpr std::strong_ordering operator<=>(const integer &O) const
     {
         return std::strong_ordering::greater;
     }
     /*
      * A positive infinity is greater than negative infinity
      * */
-    std::strong_ordering operator<=>(const class inf_minus_t&)
+    constexpr std::strong_ordering operator<=>(const class inf_minus_t&)
     {
         return std::strong_ordering::greater;
     }
@@ -74,14 +74,14 @@ struct inf_minus_t : public inf_t
     /*
      * Negative infinity is less than any integer
      * */
-    std::strong_ordering operator<=>(const integer &O) const
+    constexpr std::strong_ordering operator<=>(const integer &O) const
     {
         return std::strong_ordering::less;
     }
     /*
      * Negative infinity is less than positive infinity
      * */
-    std::strong_ordering operator<=>(const class inf_plus_t&)
+    constexpr std::strong_ordering operator<=>(const class inf_plus_t&)
     {
         return std::strong_ordering::less;
     }
@@ -93,7 +93,23 @@ struct inf_minus_t : public inf_t
 
 };
 
-inf_plus_t operator+(const inf_plus_t&, const inf_plus_t&)
+constexpr inf_plus_t operator+(const inf_t &)
+{
+    return {};
+}
+constexpr inf_minus_t operator-(const inf_t&)
+{
+    return {};
+}
+
+// Unsigned infinity
+[[maybe_unused]] inline constexpr inf_t inf;
+// A positive infinity
+[[maybe_unused]] inline constexpr inf_plus_t inf_p;
+// A negative infinity
+[[maybe_unused]] inline constexpr inf_minus_t inf_m;
+
+constexpr inf_plus_t operator+(const inf_plus_t&, const inf_plus_t&)
 {
     return {};
 }
@@ -105,7 +121,7 @@ integer operator-(const inf_plus_t&, const inf_plus_t&)
     return 0;
 }
 
-inf_plus_t operator+=(const inf_plus_t& a, const inf_plus_t&)
+constexpr inf_plus_t operator+=(const inf_plus_t& a, const inf_plus_t&)
 {
     return {};
 }
@@ -116,7 +132,7 @@ inf_plus_t operator-=(const inf_plus_t& a, const inf_plus_t&)
 }
 
 
-inf_minus_t operator+(const inf_minus_t&, const inf_minus_t&)
+constexpr inf_minus_t operator+(const inf_minus_t&, const inf_minus_t&)
 {
     return {};
 }
@@ -128,7 +144,7 @@ integer operator-(const inf_minus_t&, const inf_minus_t&)
     return 0;
 }
 
-inf_minus_t operator+=(const inf_minus_t& a, const inf_minus_t&)
+constexpr inf_minus_t operator+=(const inf_minus_t& a, const inf_minus_t&)
 {
     return {};
 }
@@ -138,12 +154,12 @@ inf_minus_t operator-=(const inf_minus_t& a, const inf_minus_t&)
     throw std::overflow_error("inf - inf");
 }
 
-inf_plus_t operator-(const inf_minus_t&)
+constexpr inf_plus_t operator-(const inf_minus_t&)
 {
     return {};
 }
 
-inf_minus_t operator-(const inf_plus_t&)
+constexpr inf_minus_t operator-(const inf_plus_t&)
 {
     return {};
 }
@@ -156,7 +172,7 @@ inf_plus_t operator+(const inf_plus_t&, const inf_minus_t&)
         return {};
 }
 
-inf_plus_t operator-(const inf_plus_t&, const inf_minus_t&)
+constexpr inf_plus_t operator-(const inf_plus_t&, const inf_minus_t&)
 {
     return {};
 }
@@ -169,7 +185,7 @@ inf_plus_t operator+(const inf_minus_t&, const inf_plus_t&)
         return {};
 }
 
-inf_minus_t operator-(const inf_minus_t&, const inf_plus_t&)
+constexpr inf_minus_t operator-(const inf_minus_t&, const inf_plus_t&)
 {
     return {};
 }
@@ -178,60 +194,60 @@ inf_minus_t operator-(const inf_minus_t&, const inf_plus_t&)
  * Operation on integers
  * */
 
-inf_plus_t operator+(const inf_plus_t&, const integer& a)
+constexpr inf_plus_t operator+(const inf_plus_t&, const integer& a)
 {
     return {};
 }
 
-inf_plus_t operator-(const integer&, const inf_plus_t& a)
+constexpr inf_plus_t operator-(const integer&, const inf_plus_t& a)
 {
     return {};
 }
 
-inf_plus_t operator+(const integer&, const inf_plus_t& a)
+constexpr inf_plus_t operator+(const integer&, const inf_plus_t& a)
 {
     return {};
 }
 
-inf_plus_t operator-(const inf_plus_t&, const integer& a)
+constexpr inf_plus_t operator-(const inf_plus_t&, const integer& a)
 {
     return {};
 }
 
-inf_plus_t operator+=(const inf_plus_t& a, const integer& b)
+constexpr inf_plus_t operator+=(const inf_plus_t& a, const integer& b)
 {
     return {};
 }
-inf_plus_t operator-=(const inf_plus_t& a, const integer& b)
-{
-    return {};
-}
-
-inf_minus_t operator+(const inf_minus_t&, const integer& a)
+constexpr inf_plus_t operator-=(const inf_plus_t& a, const integer& b)
 {
     return {};
 }
 
-inf_minus_t operator-(const integer&, const inf_minus_t& a)
+constexpr inf_minus_t operator+(const inf_minus_t&, const integer& a)
 {
     return {};
 }
 
-inf_minus_t operator+(const integer&, const inf_minus_t& a)
+constexpr inf_minus_t operator-(const integer&, const inf_minus_t& a)
 {
     return {};
 }
 
-inf_minus_t operator-(const inf_minus_t&, const integer& a)
+constexpr inf_minus_t operator+(const integer&, const inf_minus_t& a)
 {
     return {};
 }
 
-inf_minus_t operator+=(const inf_minus_t& a, const integer& b)
+constexpr inf_minus_t operator-(const inf_minus_t&, const integer& a)
 {
     return {};
 }
-inf_minus_t operator-=(const inf_minus_t& a, const integer& b)
+
+constexpr inf_minus_t operator+=(const inf_minus_t& a, const integer& b)
+{
+    return {};
+}
+constexpr inf_minus_t operator-=(const inf_minus_t& a, const integer& b)
 {
     return {};
 }
