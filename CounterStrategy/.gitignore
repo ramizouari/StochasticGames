@@ -1,0 +1,6 @@
+# Project related files
+.idea
+.vs
+
+# Local files
+local

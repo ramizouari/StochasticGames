@@ -1,0 +1,6 @@
+# Project Files
+.vs
+.idea
+
+# Virtual environments
+venv
