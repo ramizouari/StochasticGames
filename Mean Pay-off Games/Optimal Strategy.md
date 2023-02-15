@@ -5,6 +5,8 @@
 ## 2. Equation
 - Let $(f_n)_{n\in\mathbb{N}}$ be a family of valuations such that:
 	$$
+	\DeclareMathOperator{\Adj}{Adj}
+	\DeclareMathOperator{\adj}{adj}
 		\begin{cases}
 	\displaystyle \forall u\in\mathcal{V} &  f_0(u)=0\\
 		\displaystyle \forall n\in\mathbb{N}^*,\forall u\in\mathcal{V} &  f_n(u)=\displaystyle \begin{cases} 
@@ -53,3 +55,21 @@ $$
 Both sequences converge on $\mathscr{F}(\mathcal{V},\bar{\mathcal{R}})$  to $(g^*,h^*)$ (with a suitable metric, like $d(f,g)= \max_{u\in\mathcal{V}}\lvert \tanh f(u)-\tanh g(u)\rvert$), then: 
 - $g^*(u)$ will be the valuation of a game that starts at $u\in\mathcal{V}$ on which the second player plays first.
 - $h^*(u)$ will be the valuation of a game that starts at $u\in\mathcal{V}$ on which the first player plays first.
+## 5. Tests
+To test our algorithms, we generated test files with the given format:
+```bash
+|V| |E|
+u1 v1 l1
+u2 v2 l2
+...
+...
+...
+um vm lm
+```
+with:
+- $n=\lvert \mathcal{V}\rvert$
+- $m=\lvert \mathcal{E} \rvert$
+- $\mathcal{V}=\{0,\dots,n-1\}$
+- $\mathcal{E}=\{(u_1,v_1),\dots,(u_m,v_m)\}$
+- $L:(u_i,v_i)\rightarrow l_i$
+

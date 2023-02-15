@@ -1,6 +1,10 @@
 # Project Files
 .vs
 .idea
+.ipynb_checkpoints
 
 # Virtual environments
 venv
+
+# Cache
+__pycache__

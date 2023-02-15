@@ -7,3 +7,6 @@ local
 
 # Build files
 cmake-*
+
+# Cache
+__pycache__

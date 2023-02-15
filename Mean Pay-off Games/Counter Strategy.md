@@ -64,12 +64,12 @@ In case of convergence, the value $f^*$  should be the same as that of $(3.)$
 To test our algorithms, we generated test files with the given format:
 ```bash
 |V| |E|
-u1 v1
-u2 v2
+u1 v1 l1
+u2 v2 l2
 ...
 ...
 ...
-um vm
+um vm lm
 s1 s2 ... sn
 ```
 with:
@@ -78,4 +78,6 @@ with:
 - $\mathcal{V}=\{0,\dots,n-1\}$
 - $\mathcal{E}=\{(u_1,v_1),\dots,(u_m,v_m)\}$
 - $S:i\rightarrow s_i$
+- $L:(u_i,v_i)\rightarrow l_i$
+
 
