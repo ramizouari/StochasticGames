@@ -18,4 +18,4 @@ for _ in range(E):
     graph.addEdge((u,v,l))
 # Read the strategy
 S = list(map(int,input().split()))
-print(g.counterStrategyBellmanFord(graph, S,method="experimental"))
+print(g.counterStrategy(graph, S, method="floyd_warshall"))

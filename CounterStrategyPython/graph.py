@@ -1,6 +1,7 @@
 import queue
 from typing import List, Tuple, Callable
 
+import networkx as nx
 import numpy as np
 
 import union_find
@@ -124,22 +125,17 @@ def FloydWarshallAlgorithm(G: LabeledGraph, retCycles=True):
     for w in range(G.V):
         for u in range(G.V):
             for v in range(G.V):
-                if D[u, w] > D[u, v] + L:
-                    D[u, w] = D[u, v] + L
-                    ancestor[w] = v
+                D[u,v]=np.minimum(D[u,v],D[u,w]+D[w,v])
+                if u==v and D[u,w] + D[w,v] < 0:
+                    D[u,v]=-np.inf
+                    D[u,w]=-np.inf
+                    D[w,v]=-np.inf
     for u in range(G.V):
         for v in range(G.V):
             for w, L in G.adjacencyList[v]:
                 if D[u, v] + L < D[u, w]:
                     C = v
-    k = ancestor[C]
-    cycles.append(C)
-    while k != C:
-        cycles.append(k)
-        k = ancestor[k]
-    cycles.reverse()
-    if retCycles:
-        return D, cycles
+                    D[u,w]=-np.inf
     return D
 
 
@@ -173,9 +169,10 @@ def BellmanFordAlgorithm(G: LabeledGraph, source=0, retCycles=True):
         for v, L in G.adjacencyList[s]:
             if d[v] > d[s] + L:
                 parent[v] = s
-                d[v]=-np.inf
+            if not visited[v]:
+                visited[v] = True
                 Q.put(v)
-                pass
+            pass
     if not retCycles:
         return d
 
@@ -223,7 +220,7 @@ def ExperimentalMethod(G: LabeledGraph, retCycles=True):
     return D
 
 
-def counterStrategyBellmanFord(G: LabeledGraph, psi: List[int], method="floyd-warshall"):
+def counterStrategy(G: LabeledGraph, psi: List[int], method="floyd-warshall"):
     strategyCost: List[TropicalInteger] = [TropicalInteger(0) for _ in range(G.V)]
     for u in range(G.V):
         for (v, l) in G.adjacencyList[u]:
@@ -231,12 +228,25 @@ def counterStrategyBellmanFord(G: LabeledGraph, psi: List[int], method="floyd-wa
                 strategyCost[u] = l
     # The one-player equivalent game
     G1 = LabeledGraph(G.V)
+    G2 = LabeledGraph(G.V)
     for u in range(G.V):
         for v, L in G.adjacencyList[psi[u]]:
             G1.addEdge((u, v, L + strategyCost[u]))
+        for v, L in G.adjacencyList[u]:
+            G2.addEdge((u, psi[v], L+strategyCost[v]))
     match method:
         case "floyd-warshall":
-            raise NotImplementedError(f"Method {method} is not implemented yet")
+            # 1. Apply Floyd-Warshall algorithm
+            D = FloydWarshallAlgorithm(G1, retCycles=False)
+            # 2. Compute the counter-strategy
+            source=0
+            counterStrategy=[-1 for _ in range(G.V)]
+            for u in range(G.V):
+                for v,L in G1.adjacencyList[u]:
+                    if D[u,v]==-np.inf:
+                        counterStrategy[psi[u]]=v
+            return counterStrategy
+
         case "experimental":
             _, C = ExperimentalMethod(G1, True)
             n = len(C)
@@ -248,27 +258,62 @@ def counterStrategyBellmanFord(G: LabeledGraph, psi: List[int], method="floyd-wa
                         R += L
             R /= n
             return C, R
-        case "bellman-ford":
+        case "bellman-ford" | "bellmanford" | "bellman" | "bf" | "bford" | "b-ford" | "b-f" | "b-ford" | "bellman_ford" | "bellman_f" | "bellmanford" | "bellman_f":
             # 1. Apply Bellman-Ford algorithm on the one-player equivalent game
             d = BellmanFordAlgorithm(G1, 0, retCycles=False)
             # 2. Calculate the counter strategy
             source=0
             counterStrategy = [-1 for v in range(G.V)]
+            outward=[[] for v in range(G.V)]
             Q = queue.Queue()
             Q.put(source)
             visited = [False for v in range(G.V)]
+            valuation=[+np.inf for v in range(G.V)]
             while not Q.empty():
                 s = Q.get()
-                for v, L in G.adjacencyList[s]:
-                    if d[v] == -np.inf:
-                        counterStrategy[s] = v
-                    if not visited[v]:
-                        visited[v] = True
-                        Q.put(v)
-                counterStrategy[s] = G.adjacencyList[s][0][0]
-            return counterStrategy
+                if visited[s]:
+                    continue
+                visited[s]=True
+                for v, L in G1.adjacencyList[s]:
+                    if d[v] <= valuation[s]:
+                        counterStrategy[psi[s]]=v
+                        outward[s].append(v)
+                        valuation[s]=d[v]
+                    Q.put(v)
+            return outward
         case _:
             raise NotImplementedError(f"Method {method} is not implemented yet")
+
+
+def negative_cycle(g: nx.DiGraph,weight='weight'):
+    def getW(e):
+        if weight is None:
+            return 1
+        return e[2][weight]
+    n = len(g.nodes())
+    edges = list(g.edges().data())
+    d = np.ones(n) * 10000
+    p = np.ones(n) * -1
+    x = -1
+    for i in range(n):
+        for e in edges:
+            if d[int(e[0])] + getW(e) < d[int(e[1])]:
+                d[int(e[1])] = d[int(e[0])] + getW(e)
+                p[int(e[1])] = int(e[0])
+                x = int(e[1])
+    if x == -1:
+        print("No negative cycle")
+        return None
+    for i in range(n):
+        x = p[int(x)]
+    cycle = []
+    v = x
+    while True:
+        cycle.append(str(int(v)))
+        if v == x and len(cycle) > 1:
+            break
+        v = p[int(v)]
+    return list(reversed(cycle))
 
 # This method reads a graph from a file
 def read_from_text_file(file_name,graph_type="auto",directed=True):
@@ -278,14 +323,19 @@ def read_from_text_file(file_name,graph_type="auto",directed=True):
         V,E=map(int,line.split())
         line =file.readline().rstrip()
         splitted=line.split()
-        if autoDetect:
-            if len(splitted)>2:
+        match graph_type:
+            case "auto":
+                if len(splitted)>2:
+                    G=WeightedGraph(V)
+                elif len(splitted)==2:
+                    G=Graph(V)
+                else:
+                    raise RuntimeError("File format error")
+            case "weighted"|"labeled":
                 G=WeightedGraph(V)
-            elif len(splitted)==2:
+            case "unweighted"|"unlabeled":
                 G=Graph(V)
-            else:
-                raise RuntimeError("File format error")
-        while line:
+        while len(splitted) in [2,3]:
             G.addEdge(map(int,splitted))
             line=file.readline().rstrip()
             splitted=line.split()
@@ -305,4 +355,4 @@ if __name__ == "__main__":
         for k in range(E):
             G.addEdge(map(int, input().split()))
     strategy=map(int,input().split())
-    print(counterStrategyBellmanFord(G,psi=list(strategy), method="bellman-ford"))
+    print(counterStrategy(G, psi=list(strategy), method="floyd-warshall"))
