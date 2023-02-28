@@ -1,38 +1,21 @@
+import abc
 import queue
-from typing import Tuple
+from typing import Tuple, List, Set, Dict, Any
 
 import numpy as np
-class Variable:
-    default_name: str = "X"
 
-    def __init__(self, id = None, name: str = None):
-        self.id = id
-        if name is None:
-            self.name = f"X[{self.id}]"
-        else:
-            self.name=name
-
-    pass
-
-    def __repr__(self):
-        return self.name
-
-    def __eq__(self, other):
-        if type(self) != type(other):
-            return False
-        return self.id == other.id
-
-    def __hash__(self):
-        return self.id.__hash__()
+from csp import ConstraintSatisfactionProblem, Variable
 
 
-class TernaryMaxAtomSystem():
+# This class represents a variable in a ternary max atom system
+# A ternary max atom system is a system of equations of the form
+# x <= max(y,z) + c
+class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
     def __init__(self):
+        super().__init__()
         self.constraints = []
-        self.variables=set()
         self.lhs_constraints={}
         self.adjacency_list={}
-        pass
 
     def add_constraint(self, x, y, z, c):
         self.constraints.append([x,y,z,c])
@@ -84,7 +67,7 @@ class TernaryMaxAtomSystem():
                 admissible_values[constraint[P[0]]].remove(s)
                 pass
 
-    def solve(self,L=None,R=None):
+    def solve(self,L=None,R=None) -> Dict[Variable, List[Any]]:
         #Sum of all constants
         K= np.sum(np.fromiter((np.abs(c) for x,y,z,c in self.constraints),dtype=int))
         if L is None:
@@ -101,14 +84,18 @@ class TernaryMaxAtomSystem():
                 self._consistency(constraint=(u,v,w,c),admissible_values=admissible_values,Q=Q)
         return admissible_values
 
-class MaxAtomSystem:
+
+# This class represents a variable in a max atom system
+# A max atom system is a system of equations of the form
+# x <= max(Y) + c
+# where Y is a set of variables
+class MaxAtomSystem(ConstraintSatisfactionProblem):
     def __init__(self):
+        super().__init__()
         self.constraints = []
-        self.variables=set()
         self.mapper={}
         self.equivalent_system=TernaryMaxAtomSystem()
         self.counter=0
-        pass
 
     def add_constraint(self,x,Y,c):
         if len(Y) == 0:
@@ -130,18 +117,23 @@ class MaxAtomSystem:
         self.equivalent_system.add_constraint(x,_Y[0],_Y[-1],c)
         self.variables.add(x)
         self.variables.update(Y)
-    def solve(self,L=None,R=None):
+    def solve(self,L=None,R=None)  -> Dict[Variable, List[Any]]:
         S_augmented=self.equivalent_system.solve(L,R)
         return {u:S_augmented[u] for u in self.variables}
 
-class MinMaxSystem:
+
+# This class represents a variable in a min max system
+# A min max system is a system of equations of the form
+# x <= op(y1+c1,y2+c2,...,yn+cn)
+# where Y=[y1,y2,...,yn] is a set of variables
+# and C=[c1,c2,...,cn] is a set of constants
+class MinMaxSystem(ConstraintSatisfactionProblem):
     def __init__(self):
+        super().__init__()
         self.constraints = []
-        self.variables=set()
         self.mapper={}
         self.equivalent_system=MaxAtomSystem()
         self.counter=0
-        pass
 
     def add_constraint(self,op,x,Y,C):
         if op not in ["min", "max"]:
@@ -166,7 +158,7 @@ class MinMaxSystem:
             self.equivalent_system.add_constraint(x,Z,0)
             pass
 
-    def solve(self,L=None,R=None):
+    def solve(self,L=None,R=None) -> Dict[Variable, List[Any]]:
         S_augmented = self.equivalent_system.solve(L, R)
         return {u: S_augmented[u] for u in self.variables}
 
@@ -177,6 +169,7 @@ class MinMaxSystem:
             args=",".join([f"{y}+{c}" for y,c in zip(Y,C)])
             output.append(f"{x} <= {op}({args})")
         return f"System of {len(self.constraints)} min-max constraints:\n\t"+endline.join(output)
+
 
 if __name__=="__main__":
     system = MaxAtomSystem()
