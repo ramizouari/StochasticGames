@@ -9,4 +9,4 @@ with open("data/test01.in",'r') as file:
         G.addEdge(map(int,file.readline().rstrip().split()))
     psi=list(map(int,file.readline().rstrip().split()))
 G=g.read_from_text_file("data/test01.in",graph_type="auto")
-print(g.counterStrategy(G,psi,method="bellman-ford"))
+print(g.counterStrategyBellmanFord(G,psi,method="bellman-ford"))

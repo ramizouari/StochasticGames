@@ -1,11 +1,11 @@
 import queue
-from typing import List, Tuple, Callable
+from typing import List, Tuple, Callable, Union
 
-import networkx as nx
 import numpy as np
 
 import union_find
 from extended_integer import TropicalInteger
+import networkx as nx
 
 
 class Graph:
@@ -68,6 +68,13 @@ class Graph:
         return components, componentId, C, topologicalOrder
     def vertices(self):
         return range(self.V)
+    
+    def as_networkx(self):
+        G=nx.DiGraph()
+        for u in range(self.V):
+            for v in self.adjacencyList[u]:
+                G.add_edge(u,v)
+        return G
 
 
 class LabeledGraph:
@@ -97,20 +104,16 @@ class LabeledGraph:
 """
     def vertices(self):
         return range(self.V)
+    
+    def as_networkx(self):
+        G=nx.DiGraph()
+        for u in range(self.V):
+            for v,L in self.adjacencyList[u]:
+                G.add_edge(u,v,weight=L,label=L)
+        return G
 
 
 WeightedGraph = LabeledGraph
-
-
-def MeanPayoffGraph(LabeledGraph):
-    def __init__(self, V):
-        super().__init__(V)
-
-    def closure(self):
-        for u in range(self.V):
-            if len(self.adjacencyList[u]) == 0:
-                self.addEdge(u, u, 0)
-
 
 def FloydWarshallAlgorithm(G: LabeledGraph, retCycles=True):
     D = np.full((G.V, G.V), np.inf)
@@ -169,10 +172,9 @@ def BellmanFordAlgorithm(G: LabeledGraph, source=0, retCycles=True):
         for v, L in G.adjacencyList[s]:
             if d[v] > d[s] + L:
                 parent[v] = s
-            if not visited[v]:
-                visited[v] = True
+                d[v]=-np.inf
                 Q.put(v)
-            pass
+                pass
     if not retCycles:
         return d
 
@@ -188,6 +190,9 @@ def BellmanFordAlgorithm(G: LabeledGraph, source=0, retCycles=True):
             cycles.reverse()
             break
     return d, cycles
+
+
+
 
 # This is a suboptimal method, running in O(n²m), But it is used for now for negative cycles construction
 def ExperimentalMethod(G: LabeledGraph, retCycles=True):
@@ -220,20 +225,18 @@ def ExperimentalMethod(G: LabeledGraph, retCycles=True):
     return D
 
 
-def counterStrategy(G: LabeledGraph, psi: List[int], method="floyd-warshall"):
+def counterStrategyBellmanFord(G: Union[nx.DiGraph,LabeledGraph], psi: List[int], method="floyd-warshall"):
+    source=0
     strategyCost: List[TropicalInteger] = [TropicalInteger(0) for _ in range(G.V)]
     for u in range(G.V):
         for (v, l) in G.adjacencyList[u]:
             if v == psi[u]:
                 strategyCost[u] = l
     # The one-player equivalent game
-    G1 = LabeledGraph(G.V)
-    G2 = LabeledGraph(G.V)
+    G1 = nx.DiGraph()
     for u in range(G.V):
         for v, L in G.adjacencyList[psi[u]]:
-            G1.addEdge((u, v, L + strategyCost[u]))
-        for v, L in G.adjacencyList[u]:
-            G2.addEdge((u, psi[v], L+strategyCost[v]))
+            G1.add_edge(u, v, weight=L + strategyCost[u],label=L+strategyCost[u])
     match method:
         case "floyd-warshall":
             # 1. Apply Floyd-Warshall algorithm
@@ -242,9 +245,9 @@ def counterStrategy(G: LabeledGraph, psi: List[int], method="floyd-warshall"):
             source=0
             counterStrategy=[-1 for _ in range(G.V)]
             for u in range(G.V):
-                for v,L in G1.adjacencyList[u]:
+                for v in G.adjacencyList[u]:
                     if D[u,v]==-np.inf:
-                        counterStrategy[psi[u]]=v
+                        counterStrategy[u]=v
             return counterStrategy
 
         case "experimental":
@@ -258,62 +261,47 @@ def counterStrategy(G: LabeledGraph, psi: List[int], method="floyd-warshall"):
                         R += L
             R /= n
             return C, R
-        case "bellman-ford" | "bellmanford" | "bellman" | "bf" | "bford" | "b-ford" | "b-f" | "b-ford" | "bellman_ford" | "bellman_f" | "bellmanford" | "bellman_f":
-            # 1. Apply Bellman-Ford algorithm on the one-player equivalent game
-            d = BellmanFordAlgorithm(G1, 0, retCycles=False)
-            # 2. Calculate the counter strategy
-            source=0
-            counterStrategy = [-1 for v in range(G.V)]
-            outward=[[] for v in range(G.V)]
-            Q = queue.Queue()
-            Q.put(source)
-            visited = [False for v in range(G.V)]
-            valuation=[+np.inf for v in range(G.V)]
-            while not Q.empty():
-                s = Q.get()
-                if visited[s]:
-                    continue
-                visited[s]=True
-                for v, L in G1.adjacencyList[s]:
-                    if d[v] <= valuation[s]:
-                        counterStrategy[psi[s]]=v
-                        outward[s].append(v)
-                        valuation[s]=d[v]
-                    Q.put(v)
-            return outward
+        case "bellman-ford":
+            # 1. Detect negative cycles
+            if nx.negative_edge_cycle(G1):
+                # 2. Finds a negative cycle
+                C=nx.find_negative_cycle(G1,source=source)
+                S=set(C)
+                Q=queue.Queue()
+                Q.put(source)
+                visited=[False for _ in range(G.V)]
+                visited[source]=True
+                parent=[-1 for v in range(G.V)]
+                dest=-1
+                # 3. Finds a vertex in the negative cycle, starting from the source, and computes the parent array
+                while not Q.empty():
+                    s=Q.get()
+                    if s in S:
+                        dest=s
+                        break
+                    for v in G1.succ[s]:
+                        if not visited[v]:
+                            Q.put(v)
+                            parent[v]=s
+                            visited[v]=True
+                if dest==-1:
+                    raise RuntimeError("Error in the algorithm")
+                counterStrategy=[-1 for _ in range(G.V)]
+                # 4. Computes the counter-strategy along the path from the source to the vertex in the negative cycle
+                while parent[dest]!=-1:
+                    counterStrategy[psi[parent[dest]]]=dest
+                    dest=parent[dest]
+                # 5. Computes the counter-strategy along the negative cycle
+                m=len(C)-1
+                for k in range(m):
+                    counterStrategy[psi[C[k]]]=C[(k+1)%m]
+                # 6. Computes the counter-strategy for the remaining vertices
+                for u in range(G.V):
+                    if counterStrategy[u]==-1:
+                        counterStrategy[u]=G.adjacencyList[u][0][0]
+                return counterStrategy
         case _:
             raise NotImplementedError(f"Method {method} is not implemented yet")
-
-
-def negative_cycle(g: nx.DiGraph,weight='weight'):
-    def getW(e):
-        if weight is None:
-            return 1
-        return e[2][weight]
-    n = len(g.nodes())
-    edges = list(g.edges().data())
-    d = np.ones(n) * 10000
-    p = np.ones(n) * -1
-    x = -1
-    for i in range(n):
-        for e in edges:
-            if d[int(e[0])] + getW(e) < d[int(e[1])]:
-                d[int(e[1])] = d[int(e[0])] + getW(e)
-                p[int(e[1])] = int(e[0])
-                x = int(e[1])
-    if x == -1:
-        print("No negative cycle")
-        return None
-    for i in range(n):
-        x = p[int(x)]
-    cycle = []
-    v = x
-    while True:
-        cycle.append(str(int(v)))
-        if v == x and len(cycle) > 1:
-            break
-        v = p[int(v)]
-    return list(reversed(cycle))
 
 # This method reads a graph from a file
 def read_from_text_file(file_name,graph_type="auto",directed=True):
@@ -355,4 +343,4 @@ if __name__ == "__main__":
         for k in range(E):
             G.addEdge(map(int, input().split()))
     strategy=map(int,input().split())
-    print(counterStrategy(G, psi=list(strategy), method="floyd-warshall"))
+    print(counterStrategyBellmanFord(G,psi=list(strategy), method="bellman-ford"))
