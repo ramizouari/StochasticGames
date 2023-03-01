@@ -67,7 +67,7 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
                 admissible_values[constraint[P[0]]].remove(s)
                 pass
 
-    def solve(self,L=None,R=None) -> Dict[Variable, List[Any]]:
+    def solve(self,L=None,R=None,include_inf=False) -> Dict[Variable, List[Any]]:
         #Sum of all constants
         K= np.sum(np.fromiter((np.abs(c) for x,y,z,c in self.constraints),dtype=int))
         if L is None:
@@ -75,6 +75,9 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
         if R is None:
             R=K
         admissible_values={u:set(range(L,R+1)) for u in self.variables}
+        if include_inf:
+            for u in self.variables:
+                admissible_values[u].add(-np.inf)
         Q=queue.Queue()
         for u in self.variables:
             Q.put(u)
@@ -117,8 +120,8 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
         self.equivalent_system.add_constraint(x,_Y[0],_Y[-1],c)
         self.variables.add(x)
         self.variables.update(Y)
-    def solve(self,L=None,R=None)  -> Dict[Variable, List[Any]]:
-        S_augmented=self.equivalent_system.solve(L,R)
+    def solve(self,L=None,R=None,include_inf=False)  -> Dict[Variable, List[Any]]:
+        S_augmented=self.equivalent_system.solve(L,R,include_inf=include_inf)
         return {u:S_augmented[u] for u in self.variables}
 
 
@@ -138,28 +141,32 @@ class MinMaxSystem(ConstraintSatisfactionProblem):
     def add_constraint(self,op,x,Y,C):
         if op not in ["min", "max"]:
             raise RuntimeError("operator is not min or max")
-
+        # add variables to the set of variables
         self.variables.add(x)
         self.variables.update(Y)
+        # add constraint to the list of constraints
         self.constraints.append([op,x,Y,C])
+        # if op is min, then we add the constraints x <= y1+c , x <= y2+c , ... , x <= yn+cn
         if op == "min":
             for y,c in zip(Y,C):
                 self.equivalent_system.add_constraint(x,[y,y],c)
             pass
         else:
             Z=[]
+            # if op is max, then we add the constraints x <= max(z1,z2,...,zn),
+            # z1 <= y1+c1, z2 <= y2+c2, ... , zn <= yn+cn
             for y,c in zip(Y,C):
                 if (y,c) not in self.mapper:
                     self.mapper[(y,c)]=Variable(self.counter)
                     self.counter+=1
                 z=self.mapper[(y,c)]
                 Z.append(z)
-                self.equivalent_system.add_constraint(y,[z,z],c)
+                self.equivalent_system.add_constraint(z,[y,y],c)
             self.equivalent_system.add_constraint(x,Z,0)
             pass
 
-    def solve(self,L=None,R=None) -> Dict[Variable, List[Any]]:
-        S_augmented = self.equivalent_system.solve(L, R)
+    def solve(self,L=None,R=None,include_inf=False) -> Dict[Variable, List[Any]]:
+        S_augmented = self.equivalent_system.solve(L, R,include_inf=include_inf)
         return {u: S_augmented[u] for u in self.variables}
 
     def __repr__(self):

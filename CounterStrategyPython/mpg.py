@@ -60,9 +60,12 @@ class MeanPayoffGraph(nx.DiGraph):
 def winning_everywhere(G:MeanPayoffGraph) -> bool:
     return G.as_min_max_system().satisfiable()
 
+def winning_somewhere(G:MeanPayoffGraph):
+    return G.as_min_max_system().solve(include_inf=True)
+
 # This function is used to get a winning strategy from a graph
 # If the graph is not winning everywhere, it returns None
-def winning_strategy_csp(G:MeanPayoffGraph) -> Union[Dict[Any,Any],None]:
+def winning_everywhere_strategy_csp(G:MeanPayoffGraph) -> Union[Dict[Any,Any],None]:
     S=G.as_min_max_system()
     admissible_values=S.solve()
     if not all(len(admissible_values[u])>0 for u in S.variables):
@@ -78,9 +81,20 @@ def winning_strategy_csp(G:MeanPayoffGraph) -> Union[Dict[Any,Any],None]:
                     R=assignment[y]+c
                     strategy[u.id[0]]=y.id[0]
     return strategy
-def winning_somewhere(G:MeanPayoffGraph) -> bool:
-    raise NotImplementedError
-
+def winning_somewhere_strategy_csp(G:MeanPayoffGraph) -> Union[Dict[Any,Any],None]:
+    S=G.as_min_max_system()
+    admissible_values=S.solve(include_inf=True)
+    assignment={u: max(admissible_values[u]) for u in S.variables}
+    strategy={}
+    for op,u,Y,C in S.constraints:
+        if op=="max":
+            R=assignment[Y[0]]+C[0]
+            strategy[u.id[0]]=Y[0].id[0]
+            for y,c in zip(Y,C):
+                if assignment[y]+c > R:
+                    R=assignment[y]+c
+                    strategy[u.id[0]]=y.id[0]
+    return strategy
 # This function is used to read a graph from a file
 # The graph format is the following:
 # Each line is either:
@@ -190,6 +204,5 @@ if __name__=="__main__":
     G=mpg_from_file("data/test01.in",ignore_header=1)
     G.closure()
     print(G.edges(data=True))
-    print(winning_strategy_csp(G))
-    psi=winning_strategy_csp(G)
-    print(counter_strategy(G,psi,method="bellman-ford"))
+    W=winning_somewhere(G)
+    print({u.id[0]:max(W[u]) for u in W})
