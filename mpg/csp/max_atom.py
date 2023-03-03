@@ -10,9 +10,22 @@ from csp import ConstraintSatisfactionProblem, Variable
 # A ternary max atom system is a system of equations of the form
 # x <= max(y,z) + c
 class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
+    """
+    A ternary max atom system is a system of equations of the form:
+
+    - **x_1 <= max(y_1,z_1) + c_1**
+    - **x_2 <= max(y_2,z_2) + c_2**
+    - ...
+    - **x_n <= max(y_n,z_n) + c_n**
+
+    where **x_i**, **y_i**, **z_i** are variables and **c_i** is a constant.
+    """
     DEFAULT_METHOD: str = "ACO"
 
     def __init__(self):
+        """
+        Initialize the system
+        """
         super().__init__()
         self.constraints = []
         self.lhs_constraints = {}
@@ -21,6 +34,14 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
         self.assignment = None
 
     def add_constraint(self, x, y, z, c):
+        """
+        Add a constraint to the system
+        :param x: The variable on the left hand side of the constraint
+        :param y: The first variable on the right hand side of the constraint
+        :param z: The second variable on the right hand side of the constraint
+        :param c: The constant on the right hand side of the constraint
+        :return: None
+        """
         self.constraints.append([x, y, z, c])
         self.variables.add(x)
         self.variables.add(y)
@@ -102,6 +123,13 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
         return assignment
 
     def solve(self, L=None, R=None, method=DEFAULT_METHOD) -> Union[Dict[Variable, Any], None]:
+        """
+        Solve the system of equations
+        :param L: The lower bound of the admissible values
+        :param R: The upper bound of the admissible values
+        :param method: The method to use to solve the system
+        :return: A dictionary mapping each variable to an admissible value, or None if the system is inconsistent
+        """
         match method:
             case "AC" | "arc_consistency" | "arc-consistency":
                 # Sum of all constants
@@ -120,6 +148,7 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
                     u = Q.get()
                     for v, w, c in self.lhs_constraints[u]:
                         self._consistency(constraint=(u, v, w, c), admissible_values=admissible_values, Q=Q)
+                # Applies the max polymorphism to the admissible values
                 self.assignment = {u: max(admissible_values[u]) for u in self.variables}
 
             case "ACO" | "arc_consistency_optimized" | "arc-consistency-optimized":
@@ -128,6 +157,13 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
 
     # Return True if there is an assignment on which every value is finite
     def satisfiable(self, L=None, R=None, method=DEFAULT_METHOD) -> bool:
+        """
+        Return True if there is an assignment on which every value is finite
+        :param L: The lower bound of the admissible values
+        :param R: The upper bound of the admissible values
+        :param method: The method to use to solve the system
+        :return: True if there is an assignment on which every value is finite
+        """
         if self.assignment is None:
             self.solve(L, R, method=method)
         return all(map(lambda u: u > -np.inf, self.assignment))
@@ -138,9 +174,26 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
 # x <= max(Y) + c
 # where Y is a set of variables
 class MaxAtomSystem(ConstraintSatisfactionProblem):
+    """
+    This class represents a variable in a max atom system
+    A max atom system is a system of equations of the form:
+
+    - **x1 <= max(Y1) + c1**
+
+    - **x2 <= max(Y2) + c2**
+
+    - ...
+
+    - **xn <= max(Yn) + cn**
+
+    Where **x1,..,xn** are variables, **Y1,..,Yn** are set of variables and **c1,..,cn** are constants.
+    """
     DEFAULT_METHOD: str = TernaryMaxAtomSystem.DEFAULT_METHOD
 
     def __init__(self):
+        """
+        Initialize the max atom system
+        """
         super().__init__()
         self.constraints = []
         self.mapper = {}
@@ -148,6 +201,13 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
         self.counter = 0
 
     def add_constraint(self, x, Y, c):
+        """
+        Add a constraint to the system
+        :param x: The variable on the left-hand side of the constraint
+        :param Y: The set of variables on the right-hand side of the constraint
+        :param c: The constant on the right-hand side of the constraint
+        :return: None
+        """
         if len(Y) == 0:
             raise RuntimeError("right-hand side contains 0 variables")
         self.constraints.append([x, Y, c])
@@ -169,6 +229,13 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
         self.variables.update(Y)
 
     def solve(self, L=None, R=None, method=DEFAULT_METHOD) -> Dict[Variable, List[Any]]:
+        """
+        Solve the system of equations
+        :param L: The lower bound of the admissible values
+        :param R: The upper bound of the admissible values
+        :param method: The method to use to solve the system
+        :return: A dictionary mapping each variable to an admissible value, or None if the system is inconsistent
+        """
         S_augmented = self.equivalent_system.solve(L, R, method=method)
         return {u: S_augmented[u] for u in self.variables}
 
@@ -179,9 +246,26 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
 # where Y=[y1,y2,...,yn] is a set of variables
 # and C=[c1,c2,...,cn] is a set of constants
 class MinMaxSystem(ConstraintSatisfactionProblem):
+    """
+    This class represents a variable in a min max system
+    A min max system is a system of equations of the form:
+
+    - **x1 <= OP1(y11+c11,y12+c12,...,y1n+c1n)**
+
+    - **x2 <= OP2(y21+c21,y22+c22,...,y2n+c2n)**
+
+    - ...
+
+    - **xn <= OPn(yn1+cn1,yn2+cn2,...,ynn+cn)**
+
+    Where **x1,..,xn** are variables, **yij** are variables and **cij** are constants, and **OP1,..,OPn** are either **min** or **max**.
+    """
     DEFAULT_METHOD: str = MaxAtomSystem.DEFAULT_METHOD
 
     def __init__(self):
+        """
+        Initialize the min max system
+        """
         super().__init__()
         self.constraints = []
         self.mapper = {}
@@ -189,6 +273,14 @@ class MinMaxSystem(ConstraintSatisfactionProblem):
         self.counter = 0
 
     def add_constraint(self, op, x, Y, C):
+        """
+        Add a constraint to the system
+        :param op: The operator of the constraint. It can be either "min" or "max"
+        :param x: The variable on the left-hand side of the constraint
+        :param Y: The list of variables on the right-hand side of the constraint
+        :param C: The list of constants on the right-hand side of the constraint
+        :return: None
+        """
         if op not in ["min", "max"]:
             raise RuntimeError("operator is not min or max")
         # add variables to the set of variables
@@ -217,6 +309,13 @@ class MinMaxSystem(ConstraintSatisfactionProblem):
 
     def solve(self, L=None, R=None,  method=DEFAULT_METHOD) -> Dict[
         Variable, List[Any]]:
+        """
+        Solve the system of equations
+        :param L: The lower bound of the admissible values
+        :param R: The upper bound of the admissible values
+        :param method: The method to use to solve the system
+        :return: A dictionary mapping each variable to an admissible value, or None if the system is inconsistent
+        """
         S_augmented = self.equivalent_system.solve(L, R, method=method)
         return {u: S_augmented[u] for u in self.variables}
 

@@ -1,5 +1,5 @@
 import queue
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Dict, Any
 
 import numpy as np
 
@@ -7,22 +7,27 @@ from ds import union_find
 from algbera.extended_integer import TropicalInteger
 import networkx as nx
 
-def floyd_warshall_negative_paths(G:nx.DiGraph):
+def floyd_warshall_negative_paths(graph:nx.DiGraph)-> Dict[Any,Any]:
+    """
+    Floyd-Warshall algorithm for finding negative cycles in a graph
+    :param graph: The graph to be processed
+    :return: dictionary of nodes with their successors. The successors will eventually lead to a negative cycle, if any.
+    """
     # map nodes to integers
-    mapper=dict(zip(G.nodes(),range(G.number_of_nodes())))
+    mapper=dict(zip(graph.nodes(), range(graph.number_of_nodes())))
     # initialize distance matrix
-    D=np.full((G.number_of_nodes(),G.number_of_nodes()),np.inf)
+    D=np.full((graph.number_of_nodes(), graph.number_of_nodes()), np.inf)
     # fill distance matrix
-    for i in range(G.number_of_nodes()):
+    for i in range(graph.number_of_nodes()):
         D[i,i]=0
-    for u in G.nodes():
-        for v in G[u]:
-            D[mapper[u],mapper[v]]=G[u][v]['weight']
+    for u in graph.nodes():
+        for v in graph[u]:
+            D[mapper[u],mapper[v]]=graph[u][v]['weight']
     # find paths with negative cycles
     successor={}
-    for w in range(G.number_of_nodes()):
-        for u in range(G.number_of_nodes()):
-            for v in range(G.number_of_nodes()):
+    for w in range(graph.number_of_nodes()):
+        for u in range(graph.number_of_nodes()):
+            for v in range(graph.number_of_nodes()):
                 if D[u,w]==np.inf or D[w,v]==np.inf:
                     continue
                 D[u,v]=np.minimum(D[u,v],D[u,w]+D[w,v])
@@ -30,14 +35,14 @@ def floyd_warshall_negative_paths(G:nx.DiGraph):
                     D[u,v]=-np.inf
                     D[u,w]=-np.inf
                     D[w,v]=-np.inf
-                if D[u,v]==-np.inf and v in G.succ[u] and not u in successor:
+                if D[u,v]==-np.inf and v in graph.succ[u] and not u in successor:
                     successor[u]=v
     # find short paths
-    for u in G.nodes:
+    for u in graph.nodes:
         if u in successor:
             continue
         R=np.inf
-        for v in G.succ[u]:
+        for v in graph.succ[u]:
             if D[mapper[u],mapper[v]]<R:
                 R=D[mapper[u],mapper[v]]
                 successor[u]=v

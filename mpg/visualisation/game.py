@@ -20,6 +20,9 @@ NODE_COLOUR: Colour = Colour("turquoise")
 
 
 class ColourDescription:
+    """
+    A description of a colour used in a graph visualisation.
+    """
     def __init__(self, colour: colors.Colour, description: str):
         self.colour = colour
         self.description = description
@@ -39,6 +42,9 @@ def colours_info():
 
 
 class Legend:
+    """
+    A legend for a graph visualisation.
+    """
     def __init__(self, colours: List[ColourDescription]):
         self.colours = deepcopy(colours)
 
@@ -95,23 +101,12 @@ class EdgeLegend(Legend):
         for C in self.colours:
             C.colour._symbol = "&rarr;"
 
-    def __add__(self, other) -> Legend:
-        return Legend(self.colours + other.colours)
-
-    def __radd__(self, other) -> Legend:
-        return Legend(self.colours + other.colours)
-
 
 class NodeLegend(Legend):
     def __init__(self, colours: List[ColourDescription]):
         super().__init__(colours)
         for C in self.colours:
             C.colour._symbol = "&#9679;"
-    def __add__(self, other) -> Legend:
-        return Legend(self.colours + other.colours)
-
-    def __radd__(self, other) -> Legend:
-        return Legend(self.colours + other.colours)
 
 
 class EdgeColourer(abc.ABC):
@@ -124,6 +119,12 @@ class EdgeColourer(abc.ABC):
 
 
 class StrategyVisualiser(EdgeColourer):
+    """
+    Visualise a strategy of both players in a game.
+    Each player's strategy is represented by a different colour.
+    If both players have the same strategy, it is represented by a third colour.
+    Edges avoided by both players are represented by a fourth colour.
+    """
 
     def __init__(self, strategy1=None, strategy2=None, game: MeanPayoffGraph = None):
         self.strategy1 = strategy1
@@ -168,7 +169,9 @@ class NodeColourer(abc.ABC):
 
 
 class PositionVisualiser(NodeColourer):
-
+    """
+    Visualise the current position in a game.
+    """
     def __init__(self, position: Any = None):
         self.position = position
 
@@ -186,9 +189,18 @@ class PositionVisualiser(NodeColourer):
 
 
 class WinnerVisualiser(NodeColourer):
+    """
+    Visualise the winner of a game if a player starts at a node.
+    If both players have a winning strategy starting at that node, the node is coloured in a third colour.
+    If neither player has a winning strategy starting at that node, the node is coloured in a fourth colour.
+    """
     def __init__(self, game: MeanPayoffGraph):
+        """
+        Initialise the visualiser.
+        :param game: The game to visualise.
+        """
         # W is a dictionary of nodes and whether they are winners
-        W = mpg.winners(game,*mpg.optimal_strategy_pair(G=game))
+        W = mpg.winners(game, *mpg.optimal_strategy_pair(game=game))
         # W1 is a dictionary of nodes and whether they are winners for player 1
         self.W1={u[0]:W[u] for u in W if u[1]==MeanPayoffGraph.player0}
         # W2 is a dictionary of nodes and whether they are winners for player 2
@@ -196,6 +208,12 @@ class WinnerVisualiser(NodeColourer):
 
 
     def __call__(self, index: Any, node: vg.NodeMetadata):
+        """
+        Return the colour of a node.
+        :param index: The index of the node.
+        :param node: The node.
+        :return: The colour of the node.
+        """
         colour: Colour = NODE_COLOUR
         u=node["id"]
         if self.W1[u] and self.W2[u]:
@@ -209,16 +227,22 @@ class WinnerVisualiser(NodeColourer):
         return colour.hex
 
     def legend(self) -> NodeLegend:
+        """
+        Return the legend for the visualisation.
+        :return: The legend for the visualisation.
+        """
         return NodeLegend([
-            ColourDescription(NODE_COLOUR, "If either player starts, he is not a winner"),
+            ColourDescription(NODE_COLOUR, "The starting position is losing for both players"),
             ColourDescription(PLAYER_1_COLOUR, "If player 1 starts, he is a winner"),
             ColourDescription(PLAYER_2_COLOUR, "If player 2 starts, he is a winner"),
-            ColourDescription(SHARED_COLOUR, "If either player starts, he is a winner"),
+            ColourDescription(SHARED_COLOUR, "The starting position is winning for both players"),
         ])
 
 
 class MPGVisualisation(GraphVisualisation):
-
+    """
+    Visualise a mean payoff graph.
+    """
     def __init__(self, game: MeanPayoffGraph):
         super().__init__(graph=game)
 
