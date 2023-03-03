@@ -2,6 +2,7 @@
 .vs
 .idea
 .ipynb_checkpoints
+.obsidian
 
 # Virtual environments
 venv

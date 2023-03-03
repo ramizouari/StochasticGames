@@ -1,7 +1,4 @@
-import graph as g
-
-
-import graph as g
+import graph.algorithms as g
 with open("data/test01.in",'r') as file:
     V,E=map(int,file.readline().rstrip().split())
     G=g.LabeledGraph(V)

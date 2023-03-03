@@ -1,9 +1,6 @@
 # This is a sample Python script.
-from typing import List, Tuple
-import graph as g
-import random_graph as rg
+from graph import algorithms as g, random_graph as rg
 import numpy as np
-import extended_integer
 
 rg.set_generation_method(np.random.MT19937(35))
 d=lambda :rg.graph_generator.binomial(10,0.1)
