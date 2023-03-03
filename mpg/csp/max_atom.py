@@ -168,7 +168,7 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
         self.variables.add(x)
         self.variables.update(Y)
 
-    def solve(self, L=None, R=None, include_inf=False, method=DEFAULT_METHOD) -> Dict[Variable, List[Any]]:
+    def solve(self, L=None, R=None, method=DEFAULT_METHOD) -> Dict[Variable, List[Any]]:
         S_augmented = self.equivalent_system.solve(L, R, method=method)
         return {u: S_augmented[u] for u in self.variables}
 
@@ -215,9 +215,9 @@ class MinMaxSystem(ConstraintSatisfactionProblem):
             self.equivalent_system.add_constraint(x, Z, 0)
             pass
 
-    def solve(self, L=None, R=None, include_inf=False, method=DEFAULT_METHOD) -> Dict[
+    def solve(self, L=None, R=None,  method=DEFAULT_METHOD) -> Dict[
         Variable, List[Any]]:
-        S_augmented = self.equivalent_system.solve(L, R, include_inf=include_inf, method=method)
+        S_augmented = self.equivalent_system.solve(L, R, method=method)
         return {u: S_augmented[u] for u in self.variables}
 
     def __repr__(self):

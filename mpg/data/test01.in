@@ -1,4 +1,6 @@
+#Nodes Edges
 8 11
+#Source Destination Weight
 1 2 5
 2 3 -7
 3 7 0
@@ -10,4 +12,5 @@
 5 7 0
 7 1 0
 0 1 5
+#Strategy
 1 2 3 6 5 6 1 1

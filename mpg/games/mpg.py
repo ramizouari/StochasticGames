@@ -2,6 +2,7 @@ import queue
 from typing import Dict, Any, Union, Tuple
 
 import networkx as nx
+import numpy as np
 
 from csp import max_atom as ma
 from csp.max_atom import MinMaxSystem
@@ -61,14 +62,23 @@ class MeanPayoffGraph(nx.DiGraph):
                 G.add_edge(u, v, -self[u][v]["weight"])
         return G
 
-
+    def winners(self,L=None,R=None,method=MinMaxSystem.DEFAULT_METHOD) -> Tuple[Dict[Any,bool], Dict[Any,bool]]:
+        solution=self.as_min_max_system().solve(L=L,R=R,method=method)
+        Z1={}
+        Z2={}
+        for u in solution:
+            s=u.id
+            if s[1]==0:
+                Z1[s[0]]=solution[u] > -np.inf
+            else:
+                Z2[s[0]]=solution[u] == -np.inf
+        return Z1,Z2
 # This function is used to check if a graph is winning everywhere
 def winning_everywhere(G: MeanPayoffGraph) -> bool:
     return G.as_min_max_system().satisfiable()
 
-
 def winning_somewhere(G: MeanPayoffGraph):
-    return G.as_min_max_system().solve(include_inf=True)
+    return G.as_min_max_system().solve()
 
 
 # This function is used to get a winning strategy from a graph
@@ -104,7 +114,7 @@ def mpg_from_digraph(G: nx.DiGraph) -> MeanPayoffGraph:
 def optimal_strategy_pair(G: MeanPayoffGraph, method=MinMaxSystem.DEFAULT_METHOD) -> Tuple[
     Dict[Any, Any], Dict[Any, Any]]:
     S = G.as_min_max_system()
-    assignment = S.solve(include_inf=True, method=method)
+    assignment = S.solve(method=method)
     strategy = {}
     counter_strategy = {}
     for op, u, Y, C in S.constraints:
@@ -256,6 +266,61 @@ def counter_strategy(G: MeanPayoffGraph, psi: Dict[Any, Any], source=0, method="
         case _:
             raise NotImplementedError(f"Method {method} is not implemented yet")
 
+# This function is used to compute the mean payoff of a graph
+# G is the graph
+# starting_position is the starting position
+# strategy1 is the strategy of the first player
+# strategy2 is the strategy of the second player
+def mean_payoff(G:MeanPayoffGraph,starting_position,strategy1,strategy2,starting_turn=MeanPayoffGraph.player0) -> float:
+    BG = G.as_bipartite()
+    visited = {u: False for u in BG.nodes}
+    total_payoff = {u: 0 for u in BG.nodes}
+    last_payoff = 0
+    index={u:0 for u in BG.nodes}
+    last_index=0
+    U = (starting_position, starting_turn)
+    while not visited[U]:
+        current_position, current_player = U
+        V=(strategy1[current_position] if not current_player else strategy2[current_position],not current_player)
+        next_position, next_player = V
+        visited[U] = True
+        if visited[V]:
+            n=last_index-index[V]
+            return (last_payoff + G[current_position][next_position]["weight"]-total_payoff[V])/n
+        else:
+            total_payoff[V] = last_payoff + G[current_position][next_position]["weight"]
+            last_payoff = total_payoff[V]
+        index[V]=last_index
+        last_index+=1
+        U = V
+
+# This function is used to compute the mean payoffs of a graph at each position
+# G is the graph
+# strategy1 is the strategy of the first player
+# strategy2 is the strategy of the second player
+def mean_payoffs(G:MeanPayoffGraph,strategy1,strategy2) -> Dict[Tuple[Any,Any],float]:
+    payoffs={}
+    for s,p in G.as_bipartite().nodes:
+        payoffs[(s,p)]=mean_payoff(G,s,strategy1,strategy2,starting_turn=p)
+    return payoffs
+
+# This function is used to get the winner of a game
+# G is the graph
+# starting_point is the starting position
+# strategy1 is the strategy of the first player
+# strategy2 is the strategy of the second player
+def winner(G:MeanPayoffGraph,starting_point,strategy1,strategy2,starting_turn=MeanPayoffGraph.player0) -> bool:
+    return mean_payoff(G,starting_point,strategy1,strategy2,starting_turn=starting_turn)>=0
+
+# This function is used to get winners of a game as a function of the starting position
+# G is the graph
+# strategy1 is the strategy of the first player
+# strategy2 is the strategy of the second player
+def winners(G:MeanPayoffGraph,strategy1,strategy2) -> Dict[Tuple[Any,Any],bool]:
+    winners={}
+    for s,p in G.as_bipartite().nodes:
+        winners[(s,p)]=winner(G,s,strategy1,strategy2,starting_turn=p)
+    return winners
 
 if __name__ == "__main__":
     G = mpg_from_file("data/test01.in", ignore_header=1)
@@ -264,6 +329,8 @@ if __name__ == "__main__":
     psi = dict(zip(range(len(Z)), map(int, Z)))
     # print(counter_strategy(G,psi,method="bellman-ford"))
     # print(G.edges(data=True))
+    print(G.winners())
     W = optimal_strategy_pair(G, method="ACO")
-    print(W)
+    print(mean_payoff(G, 0, *W))
+    #print(W)
     # print(optimal_strategy_pair(G))
