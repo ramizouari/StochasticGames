@@ -3,6 +3,7 @@ from typing import Tuple, List, Dict, Any, Union
 
 import numpy as np
 
+import csp
 from csp import ConstraintSatisfactionProblem, Variable
 
 
@@ -67,15 +68,38 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
 \t{endline.join([f"{x} <= max({y},{z}) + {c}" for x, y, z, c in self.constraints])}
 """
 
+    def _repr_latex_(self):
+        endline = "\\\\"
+        output=endline.join(sorted([f"{x} &\leq {y} + {c}" for x, y, z, c in self.constraints]))
+        return fR"""System of {len(self.constraints)} equations:
+        \begin{{align*}}
+{output}
+\end{{align*}}"""
+
     def _consistency(self, constraint: Tuple[int, int, int, int], admissible_values: dict, Q: queue.Queue,
                      order: int = None):
+        """
+        Check the consistency of the system
+        :param constraint: The constraint to check
+        :param admissible_values: The admissible values for each variable
+        :param Q: The queue of variables to check
+        :param order: The order in which to check the constraint
+        :return: None
+        """
         if order is None:
+            # Check the consistency of the constraint for each order
             for k in range(3):
+                # Check the consistency of the constraint for the order k
                 self._consistency(constraint, admissible_values, Q, order=k)
         else:
+            # Check the consistency of the constraint for the order k
+            # P is the order in which the variables appear in the constraint
             P = [(order + k) % 3 for k in range(3)]
+            # I is the order in which the variables appear in the tuple H
             I = [(-order + k) % 3 for k in range(3)]
+            # c is the constant of the constraint
             c = constraint[-1]
+            # List of values to delete from the admissible values of the variable x
             toDelete = []
             for s in admissible_values[constraint[P[0]]]:
                 admissible = False
@@ -198,7 +222,7 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
         self.constraints = []
         self.mapper = {}
         self.equivalent_system = TernaryMaxAtomSystem()
-        self.counter = 0
+        self.variable_generator = csp.VariableGenerator(name="P")
 
     def add_constraint(self, x, Y, c):
         """
@@ -216,12 +240,13 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
             y = _Y.pop()
             z = _Y.pop()
             if (y, z) not in self.mapper:
-                self.mapper[(y, z)] = Variable(id=f"#{self.counter}")
-                self.mapper[(z, y)] = Variable(id=f"#{self.counter}")
-                self.counter += 1
-            w = self.mapper[(y, z)]
+                variable=self.variable_generator()
+                self.mapper[(y, z)] = variable
+                self.mapper[(z, y)] = variable
+                self.variables.add(variable)
+            w = self.mapper[(y, z)] # w is the variable that represents max(y,z)
             _Y.append(w)
-            self.equivalent_system.add_constraint(y, z, w, 0)
+            self.equivalent_system.add_constraint(w, y, z, 0)
         # We have m=length(_Y) is in {1,2}
         # In any case, this constraint will work for both cases
         self.equivalent_system.add_constraint(x, _Y[0], _Y[-1], c)
@@ -239,6 +264,25 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
         S_augmented = self.equivalent_system.solve(L, R, method=method)
         return {u: S_augmented[u] for u in self.variables}
 
+    def __repr__(self):
+        endline = "\n\t"
+        output = []
+        for x, Y, c in self.constraints:
+            args = ",".join([f"{y}" for y in Y])
+            output.append(f"{x} <= max({args}) + {c}")
+        return f"System of {len(self.constraints)} max constraints:\n\t" + endline.join(output)
+
+    def _repr_latex_(self):
+        endline = "\\\\\n\t"
+        output = []
+        for x, Y, c in self.constraints:
+            args = ",".join([f"{y}" for y in Y])
+            output.append(f"{x} & \\leq \\max({args}) + {c}")
+        return fR"""System of {len(self.constraints)} max constraints:
+        \begin{{align*}}
+        {endline.join(sorted(output))}
+        \end{{align*}}
+        """
 
 # This class represents a variable in a min max system
 # A min max system is a system of equations of the form
@@ -270,7 +314,7 @@ class MinMaxSystem(ConstraintSatisfactionProblem):
         self.constraints = []
         self.mapper = {}
         self.equivalent_system = MaxAtomSystem()
-        self.counter = 0
+        self.variable_generator = csp.VariableGenerator(name="S")
 
     def add_constraint(self, op, x, Y, C):
         """
@@ -299,8 +343,7 @@ class MinMaxSystem(ConstraintSatisfactionProblem):
             # z1 <= y1+c1, z2 <= y2+c2, ... , zn <= yn+cn
             for y, c in zip(Y, C):
                 if (y, c) not in self.mapper:
-                    self.mapper[(y, c)] = Variable(self.counter)
-                    self.counter += 1
+                    self.mapper[(y, c)] = self.variable_generator()
                 z = self.mapper[(y, c)]
                 Z.append(z)
                 self.equivalent_system.add_constraint(z, [y, y], c)
@@ -326,6 +369,17 @@ class MinMaxSystem(ConstraintSatisfactionProblem):
             args = ",".join([f"{y}+{c}" for y, c in zip(Y, C)])
             output.append(f"{x} <= {op}({args})")
         return f"System of {len(self.constraints)} min-max constraints:\n\t" + endline.join(output)
+
+    def _repr_latex_(self):
+        endline = "\\\\\n"
+        output = []
+        for op, x, Y, C in self.constraints:
+            args = ",".join([f"{y}+{c}" for y, c in zip(Y, C)])
+            output.append(f"{x} & \\leq \\{op}({args})")
+        return fR"""System of {len(self.constraints)} min-max constraints:
+        \begin{{align*}}
+        {endline.join(sorted(output))} 
+        \end{{align*}}"""
 
 
 if __name__ == "__main__":

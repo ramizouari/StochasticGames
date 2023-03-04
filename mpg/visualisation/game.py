@@ -33,14 +33,6 @@ class ColourDescription:
     def _repr_html_(self):
         return f"{self.colour._repr_html_()}: {self.description}"
 
-
-def colours_info():
-    print("Available colours:")
-    for name, value in inspect.getmembers(sys.modules[__name__]):
-        if name.endswith("_COLOUR"):
-            print(f"{name} = {value}")
-
-
 class Legend:
     """
     A legend for a graph visualisation.
@@ -152,7 +144,7 @@ class StrategyVisualiser(EdgeColourer):
 
     def legend(self) -> EdgeLegend:
         return EdgeLegend([
-            ColourDescription(EDGE_COLOUR, "No strategy"),
+            ColourDescription(EDGE_COLOUR, "Not in either player's strategy"),
             ColourDescription(PLAYER_1_COLOUR, "Player 1's strategy"),
             ColourDescription(PLAYER_2_COLOUR, "Player 2's strategy"),
             ColourDescription(SHARED_COLOUR, "Shared strategy"),
@@ -194,18 +186,19 @@ class WinnerVisualiser(NodeColourer):
     If both players have a winning strategy starting at that node, the node is coloured in a third colour.
     If neither player has a winning strategy starting at that node, the node is coloured in a fourth colour.
     """
-    def __init__(self, game: MeanPayoffGraph):
+    def __init__(self, game: MeanPayoffGraph,strategy1=None, strategy2=None):
         """
         Initialise the visualiser.
         :param game: The game to visualise.
         """
+        if strategy1 is None or strategy2 is None:
+            strategy1, strategy2 = mpg.optimal_strategy_pair(game)
         # W is a dictionary of nodes and whether they are winners
-        W = mpg.winners(game, *mpg.optimal_strategy_pair(game=game))
+        W = mpg.winners(game, strategy1, strategy2)
         # W1 is a dictionary of nodes and whether they are winners for player 1
         self.W1={u[0]:W[u] for u in W if u[1]==MeanPayoffGraph.player0}
         # W2 is a dictionary of nodes and whether they are winners for player 2
         self.W2={u[0] :not W[u] for u in W if u[1]==MeanPayoffGraph.player1}
-
 
     def __call__(self, index: Any, node: vg.NodeMetadata):
         """
@@ -246,12 +239,22 @@ class MPGVisualisation(GraphVisualisation):
     def __init__(self, game: MeanPayoffGraph):
         super().__init__(graph=game)
 
-    def set_node_color_mapping(self, node_color_mapping):
+    def set_node_color_mapping(self, node_color_mapping) -> None:
+        """
+        Set the node colour mapping.
+        :param node_color_mapping: The node colour mapping. If this is a class, it is instantiated with the game as an argument.
+        :return: None
+        """
         if inspect.isclass(node_color_mapping):
             node_color_mapping = node_color_mapping(game=self.graph)
         super().set_node_color_mapping(node_color_mapping)
 
-    def set_edge_color_mapping(self, edge_color_mapping):
+    def set_edge_color_mapping(self, edge_color_mapping) -> None:
+        """
+        Set the edge colour mapping.
+        :param edge_color_mapping: The edge colour mapping. If this is a class, it is instantiated with the game as an argument.
+        :return: None
+        """
         if inspect.isclass(edge_color_mapping):
             edge_color_mapping = edge_color_mapping(game=self.graph)
         super().set_edge_color_mapping(edge_color_mapping)

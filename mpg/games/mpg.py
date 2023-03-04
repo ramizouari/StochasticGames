@@ -7,6 +7,24 @@ import numpy as np
 from csp import max_atom as ma
 from csp.max_atom import MinMaxSystem
 from graph import algorithms as graph_algorithms
+from algbera import TropicalInteger
+
+
+class VertexVariable(ma.Variable):
+    """
+    This class represents a vertex variable in the MPG CSP.
+    """
+
+    def __init__(self,vertex: Any, turn):
+        """
+        Initialize a new vertex variable
+        :param name: The name of the variable
+        :param domain: The domain of the variable
+        """
+        name=f"V_{turn}({vertex})"
+        super().__init__(id=(vertex,turn),name=name)
+
+
 
 
 class MeanPayoffGraph(nx.DiGraph):
@@ -23,6 +41,7 @@ class MeanPayoffGraph(nx.DiGraph):
     """
 The first player is called the Max player, his goal is to maximize the mean-payoff.
     """
+
     player1: int = 1
     """
 The second player is called the Min player, his goal is to minimize the mean-payoff.
@@ -86,12 +105,11 @@ The second player is called the Min player, his goal is to minimize the mean-pay
         S = ma.MinMaxSystem()
         BG = self.as_bipartite()
         for u in BG.nodes:
-            _, p = u
+            vertex, p = u
             V = [v for v in BG.succ[u]]
             L = [BG[u][v]["weight"] for v in V]
-            namer = lambda v: f"@{v[0]}P{v[1]}"
-            S.add_constraint("min" if p == 1 else "max", ma.Variable(id=u, name=namer(u)),
-                             [ma.Variable(id=v, name=namer(v)) for v in V], L)
+            S.add_constraint("min" if p == 1 else "max", VertexVariable(vertex=vertex, turn=p),
+                             [VertexVariable(vertex=successor, turn=q) for successor,q in V], L)
         return S
 
     def dual(self) -> "MeanPayoffGraph":
@@ -184,16 +202,61 @@ def optimal_strategy_pair(game: MeanPayoffGraph, method=MinMaxSystem.DEFAULT_MET
             R = assignment[Y[0]] + C[0]
             strategy[u.id[0]] = Y[0].id[0]
             for y, c in zip(Y, C):
-                if assignment[y] + c > R:
+                if assignment[y] + c >= R:
                     R = assignment[y] + c
                     strategy[u.id[0]] = y.id[0]
         else:
             R = assignment[Y[0]] + C[0]
             counter_strategy[u.id[0]] = Y[0].id[0]
             for y, c in zip(Y, C):
-                if assignment[y] + c < R:
+                if assignment[y] + c <= R:
                     R = assignment[y] + c
                     counter_strategy[u.id[0]] = y.id[0]
+    return strategy, counter_strategy
+
+
+# This function is used to get optimal strategies from a graph
+# It returns a pair of strategies, one for each player
+def strategy_pair_tropical(game: MeanPayoffGraph, iters=100, L=-np.inf, R=+np.inf) -> \
+        Tuple[Dict[Any, Any], Dict[Any, Any]]:
+    """
+    This function is used to get approximate optimal strategies from a mean payoff graph using the tropical method
+    :param iters: The number of iterations
+    :param game: The mean payoff graph
+    :param L: The lower bound
+    :param R: The upper bound
+    :return: A pair of strategies, one for each player. The first strategy is the strategy of the first player, the second
+    strategy is the strategy of the second player
+    """
+    f: Dict[Any, float] = {u: 0 for u in game.nodes}
+    g: Dict[Any, float] = {u: 0 for u in game.nodes}
+    for i in range(2 * iters):
+        h = f if i % 2 == 0 else g
+        tmp = h.copy()
+        op = max if i % 2 == 0 else min
+        for u in game.nodes:
+            for v in game.succ[u]:
+                tmp[u] = op(tmp[u], game[u][v]["weight"] + h[v])
+                if tmp[u] < L:
+                    tmp[u] = -np.inf
+                if tmp[u] > R:
+                    g[u] = +np.inf
+        if i % 2 == 0:
+            f = tmp
+        else:
+            g = tmp
+    strategy = {}
+    counter_strategy = {}
+    for u in game.nodes:
+        A = -np.inf
+        B = np.inf
+        for v in game.succ[u]:
+            if game[u][v]["weight"] + f[v] >= A:
+                strategy[u] = v
+                A = game[u][v]["weight"] + f[v]
+            if game[u][v]["weight"] + g[v] <= B:
+                counter_strategy[u] = v
+                B = game[u][v]["weight"] + g[v]
     return strategy, counter_strategy
 
 
@@ -243,6 +306,8 @@ def counter_strategy(game: MeanPayoffGraph, psi: Dict[Any, Any], source=0, metho
     # If the counter-player is 0, we need to compute the dual graph
     if player == MeanPayoffGraph.player0:
         game = game.dual()
+    # Compute the cost of the strategy for each node
+    # TODO: This can be done more efficiently
     strategyCost = {u: 0 for u in game.nodes}
     for u in game.nodes:
         for v in game.succ[u]:
@@ -250,12 +315,15 @@ def counter_strategy(game: MeanPayoffGraph, psi: Dict[Any, Any], source=0, metho
             if v == psi[u]:
                 strategyCost[u] = l
     # The one-player equivalent game
+    # The equivalent game is build differently depending on the player
     G1 = nx.DiGraph()
     for u in game.nodes:
+        # If the player is 1, we need to add the edges from the dual graph
         if player == MeanPayoffGraph.player1:
             for v in game.succ[psi[u]]:
                 L = game[psi[u]][v]["weight"]
                 G1.add_edge(u, v, weight=L + strategyCost[u], label=L + strategyCost[u])
+        # If the player is 0, we need to add the edges from the original graph
         else:
             for v in game.succ[u]:
                 L = game[u][v]["weight"]
@@ -282,7 +350,11 @@ def counter_strategy(game: MeanPayoffGraph, psi: Dict[Any, Any], source=0, metho
             # 1. Detect negative cycles
             if nx.negative_edge_cycle(G1):
                 # 2. Finds a negative cycle
-                C = nx.find_negative_cycle(G1, source=source)
+                try:
+                    C = nx.find_negative_cycle(G1, source=source)
+                except nx.NetworkXError:
+                    # If there is no negative cycle starting from the source, we return any strategy
+                    return {u: next(iter(game.succ[u])) for u in game.nodes}
                 S = set(C)
                 Q = queue.Queue()
                 Q.put(source)
@@ -361,20 +433,32 @@ def mean_payoff(game: MeanPayoffGraph, starting_position, strategy1,
     :param starting_turn: The starting player
     :return: The mean payoff
     """
+    # The graph is converted into a bipartite graph
     BG = game.as_bipartite()
+    # The visited array is used to detect cycles
     visited = {u: False for u in BG.nodes}
+    # The total payoff array is used to compute the mean payoff
     total_payoff = {u: 0 for u in BG.nodes}
+    # The payoff of the last visited node
     last_payoff = 0
+    # The index of each node
     index = {u: 0 for u in BG.nodes}
+    # The index of the last visited node
     last_index = 0
+    # The starting node of the bipartite graph
     U = (starting_position, starting_turn)
     while not visited[U]:
+        # The current position and the current player
         current_position, current_player = U
+        # The next position and the next player
         V = (strategy1[current_position] if not current_player else strategy2[current_position], not current_player)
         next_position, next_player = V
         visited[U] = True
+        # If the next node has already been visited, then a cycle has been detected
         if visited[V]:
+            # The number of nodes in the cycle
             n = last_index - index[V]
+            # The mean payoff is computed
             return (last_payoff + game[current_position][next_position]["weight"] - total_payoff[V]) / n
         else:
             total_payoff[V] = last_payoff + game[current_position][next_position]["weight"]

@@ -38,6 +38,29 @@ class Variable:
         return self.id.__hash__()
 
 
+class VariableGenerator:
+    """
+    A generator of variables.
+    """
+    def __init__(self,name=None):
+        self.id = 0
+        self.name=name
+        if name is None:
+            self.name = Variable.default_name
+
+    def variable_name(self,id):
+        return f"{self.name}[{id}]"
+
+    def __call__(self) -> Variable:
+        """
+        Generate a new variable.
+        :param name: The name of the variable. If None, the name is set by default to "X[id]".
+        :return: The new variable.
+        """
+        self.id += 1
+        return Variable(self.id, self.variable_name(self.id))
+
+
 # This class represents a constraint satisfaction problem
 class ConstraintSatisfactionProblem(abc.ABC):
     """
@@ -66,3 +89,4 @@ class ConstraintSatisfactionProblem(abc.ABC):
         """
         admissible_values = self.solve(L, R)
         return all(len(admissible_values[u]) > 0 for u in self.variables)
+
