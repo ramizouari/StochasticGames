@@ -193,25 +193,31 @@ def optimal_strategy_pair(game: MeanPayoffGraph, method=MinMaxSystem.DEFAULT_MET
     :return: A pair of strategies, one for each player. The first strategy is the strategy of the first player, the second
     strategy is the strategy of the second player
     """
+    # We first solve the min-max offset system associated to the MPG
     S = game.as_min_max_system()
     assignment = S.solve(method=method)
+    # We then solve the min-max offset system associated to the dual MPG
+    # TODO: Prove that this transformation is correct
+    SD= game.dual().as_min_max_system()
+    counter_assignment= SD.solve(method=method)
+    # We then compute the optimal strategies
     strategy = {}
     counter_strategy = {}
-    for op, u, Y, C in S.constraints:
-        if op == "max":
-            R = assignment[Y[0]] + C[0]
-            strategy[u.id[0]] = Y[0].id[0]
-            for y, c in zip(Y, C):
-                if assignment[y] + c >= R:
-                    R = assignment[y] + c
-                    strategy[u.id[0]] = y.id[0]
-        else:
-            R = assignment[Y[0]] + C[0]
-            counter_strategy[u.id[0]] = Y[0].id[0]
-            for y, c in zip(Y, C):
-                if assignment[y] + c <= R:
-                    R = assignment[y] + c
-                    counter_strategy[u.id[0]] = y.id[0]
+    # We iterate over the two systems
+    for current_system, current_assigment, current_strategy in zip([S, SD], [assignment, counter_assignment], [strategy, counter_strategy]):
+        # We iterate over the constraints
+        for op, u, Y, C in current_system.constraints:
+            if op == "max":
+                R = current_assigment[Y[0]] + C[0]
+                current_strategy[u.id[0]] = Y[0].id[0]
+                # We iterate over the successors of the current vertex
+                # We find the one with the highest value
+                # This is the optimal strategy with respect to the current system
+                # TODO: Prove that this gives optimal strategy
+                for y, c in zip(Y, C):
+                    if current_assigment[y] + c >= R:
+                        R = current_assigment[y] + c
+                        current_strategy[u.id[0]] = y.id[0]
     return strategy, counter_strategy
 
 

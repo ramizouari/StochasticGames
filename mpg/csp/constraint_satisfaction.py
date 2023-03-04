@@ -13,7 +13,7 @@ class Variable:
     The default name of a nameless variable.
     """
 
-    def __init__(self, id = None, name: str = None):
+    def __init__(self, id=None, name: str = None):
         """
         Initialise a variable.
         :param id: The id of the variable. If None, a new id is generated. id must be hashable.
@@ -23,7 +23,8 @@ class Variable:
         if name is None:
             self.name = f"X[{self.id}]"
         else:
-            self.name=name
+            self.name = name
+
     pass
 
     def __repr__(self):
@@ -42,13 +43,14 @@ class VariableGenerator:
     """
     A generator of variables.
     """
-    def __init__(self,name=None):
+
+    def __init__(self, name=None):
         self.id = 0
-        self.name=name
+        self.name = name
         if name is None:
             self.name = Variable.default_name
 
-    def variable_name(self,id):
+    def variable_name(self, id):
         return f"{self.name}[{id}]"
 
     def __call__(self) -> Variable:
@@ -71,7 +73,7 @@ class ConstraintSatisfactionProblem(abc.ABC):
         self.variables = set()
 
     @abc.abstractmethod
-    def solve(self,*args,**kwargs) -> Dict[Variable, Any]:
+    def solve(self, *args, **kwargs) -> Dict[Variable, Any]:
         """
         Solve the constraint satisfaction problem.
         :param args: Arguments to the solver.
@@ -80,7 +82,7 @@ class ConstraintSatisfactionProblem(abc.ABC):
         """
         pass
 
-    def satisfiable(self, L=None, R=None)-> bool:
+    def satisfiable(self, L=None, R=None) -> bool:
         """
         Check if the constraint satisfaction problem is satisfiable.
         :param L: The lower bound on the admissible values.
@@ -90,3 +92,5 @@ class ConstraintSatisfactionProblem(abc.ABC):
         admissible_values = self.solve(L, R)
         return all(len(admissible_values[u]) > 0 for u in self.variables)
 
+    def admissible(self, assignment: Dict[Variable, Any]) -> bool:
+        pass

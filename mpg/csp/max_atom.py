@@ -192,6 +192,17 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
             self.solve(L, R, method=method)
         return all(map(lambda u: u > -np.inf, self.assignment))
 
+    def admissible(self,assignment:Dict[Variable,Any]):
+        """
+        Return True if the assignment is admissible
+        :param assignment: The assignment to check
+        :return: True if the assignment is admissible
+        """
+        for x,y,z,c in self.constraints:
+            if assignment[x] > max(assignment[y],assignment[z])+c:
+                return False
+        return True
+
 
 # This class represents a variable in a max atom system
 # A max atom system is a system of equations of the form
@@ -283,6 +294,17 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
         {endline.join(sorted(output))}
         \end{{align*}}
         """
+
+    def admissible(self,assignment:Dict[Variable,Any]):
+        """
+        Return True if the assignment is admissible
+        :param assignment: The assignment to check
+        :return: True if the assignment is admissible
+        """
+        for x,Y,c in self.constraints:
+            if assignment[x] > max([assignment[y] for y in Y])+c:
+                return False
+        return True
 
 # This class represents a variable in a min max system
 # A min max system is a system of equations of the form
@@ -381,6 +403,20 @@ class MinMaxSystem(ConstraintSatisfactionProblem):
         {endline.join(sorted(output))} 
         \end{{align*}}"""
 
+    def admissible(self,assignment:Dict[Variable,Any]):
+        """
+        Return True if the assignment is admissible
+        :param assignment: The assignment to check
+        :return: True if the assignment is admissible
+        """
+        for op, x, Y, C in self.constraints:
+            if op == "min":
+                if assignment[x] > min([assignment[y] + c for y, c in zip(Y, C)]):
+                    return False
+            else:
+                if assignment[x] > max([assignment[y] + c for y, c in zip(Y, C)]):
+                    return False
+        return True
 
 if __name__ == "__main__":
     system = TernaryMaxAtomSystem()
