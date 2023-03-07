@@ -70,7 +70,7 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
 
     def _repr_latex_(self):
         endline = "\\\\"
-        output=endline.join(sorted([f"{x} &\leq {y} + {c}" for x, y, z, c in self.constraints]))
+        output=endline.join(sorted([fR"{x} &\leq \max({y},{z}) + {c}" for x, y, z, c in self.constraints]))
         return fR"""System of {len(self.constraints)} equations:
         \begin{{align*}}
 {output}
@@ -254,10 +254,9 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
                 variable=self.variable_generator()
                 self.mapper[(y, z)] = variable
                 self.mapper[(z, y)] = variable
-                self.variables.add(variable)
+                self.equivalent_system.add_constraint(variable, y, z, 0)
             w = self.mapper[(y, z)] # w is the variable that represents max(y,z)
             _Y.append(w)
-            self.equivalent_system.add_constraint(w, y, z, 0)
         # We have m=length(_Y) is in {1,2}
         # In any case, this constraint will work for both cases
         self.equivalent_system.add_constraint(x, _Y[0], _Y[-1], c)

@@ -60,8 +60,13 @@ class VariableGenerator:
         :return: The new variable.
         """
         self.id += 1
-        return Variable(self.id, self.variable_name(self.id))
+        return Variable((self.id,self), self.variable_name(self.id))
 
+    def __eq__(self, other):
+        return self is other
+
+    def __hash__(self):
+        return id(self)
 
 # This class represents a constraint satisfaction problem
 class ConstraintSatisfactionProblem(abc.ABC):

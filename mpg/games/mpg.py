@@ -15,16 +15,14 @@ class VertexVariable(ma.Variable):
     This class represents a vertex variable in the MPG CSP.
     """
 
-    def __init__(self,vertex: Any, turn):
+    def __init__(self, vertex: Any, turn):
         """
         Initialize a new vertex variable
         :param name: The name of the variable
         :param domain: The domain of the variable
         """
-        name=f"V_{turn}({vertex})"
-        super().__init__(id=(vertex,turn),name=name)
-
-
+        name = f"V_{turn}({vertex})"
+        super().__init__(id=(vertex, turn), name=name)
 
 
 class MeanPayoffGraph(nx.DiGraph):
@@ -109,7 +107,7 @@ The second player is called the Min player, his goal is to minimize the mean-pay
             V = [v for v in BG.succ[u]]
             L = [BG[u][v]["weight"] for v in V]
             S.add_constraint("min" if p == 1 else "max", VertexVariable(vertex=vertex, turn=p),
-                             [VertexVariable(vertex=successor, turn=q) for successor,q in V], L)
+                             [VertexVariable(vertex=successor, turn=q) for successor, q in V], L)
         return S
 
     def dual(self) -> "MeanPayoffGraph":
@@ -198,13 +196,14 @@ def optimal_strategy_pair(game: MeanPayoffGraph, method=MinMaxSystem.DEFAULT_MET
     assignment = S.solve(method=method)
     # We then solve the min-max offset system associated to the dual MPG
     # TODO: Prove that this transformation is correct
-    SD= game.dual().as_min_max_system()
-    counter_assignment= SD.solve(method=method)
+    SD = game.dual().as_min_max_system()
+    counter_assignment = SD.solve(method=method)
     # We then compute the optimal strategies
     strategy = {}
     counter_strategy = {}
     # We iterate over the two systems
-    for current_system, current_assigment, current_strategy in zip([S, SD], [assignment, counter_assignment], [strategy, counter_strategy]):
+    for current_system, current_assigment, current_strategy in zip([S, SD], [assignment, counter_assignment],
+                                                                   [strategy, counter_strategy]):
         # We iterate over the constraints
         for op, u, Y, C in current_system.constraints:
             if op == "max":
@@ -463,14 +462,14 @@ def mean_payoff(game: MeanPayoffGraph, starting_position, strategy1,
         # If the next node has already been visited, then a cycle has been detected
         if visited[V]:
             # The number of nodes in the cycle
-            n = last_index - index[V]
+            n = last_index - index[V] + 1
             # The mean payoff is computed
             return (last_payoff + game[current_position][next_position]["weight"] - total_payoff[V]) / n
         else:
             total_payoff[V] = last_payoff + game[current_position][next_position]["weight"]
             last_payoff = total_payoff[V]
-        index[V] = last_index
         last_index += 1
+        index[V] = last_index
         U = V
 
 
@@ -486,10 +485,54 @@ def mean_payoffs(game: MeanPayoffGraph, strategy1, strategy2) -> Dict[Tuple[Any,
     :param strategy2: The strategy of the second player
     :return: The mean payoff as a function of the position and the player. The key is a tuple (position, player)
     """
-    payoffs = {}
-    for s, p in game.as_bipartite().nodes:
-        payoffs[(s, p)] = mean_payoff(game, s, strategy1, strategy2, starting_turn=p)
-    return payoffs
+    # The graph is converted into a bipartite graph
+    BG = game.as_bipartite()
+    # The visited array is used to detect cycles
+    visited = {u: False for u in BG.nodes}
+    has_value = {u: False for u in BG.nodes}
+    # The total payoff array is used to compute the mean payoff
+    total_payoff = {u: 0 for u in BG.nodes}
+    # The payoff of the last visited node
+    # The index of each node
+    index = {u: 0 for u in BG.nodes}
+    # The index of the last visited node
+    # The mean payoffs
+    MPOs = {}
+    for starting_position, starting_turn in BG.nodes:
+        last_index = 0
+        last_payoff = 0
+        # The starting node of the bipartite graph
+        U = (starting_position, starting_turn)
+        if visited[U]:
+            continue
+        L = []
+        MPO_source = 0
+        while not visited[U]:
+            L.append(U)
+            # The current position and the current player
+            current_position, current_player = U
+            # The next position and the next player
+            V = (strategy1[current_position] if not current_player else strategy2[current_position], not current_player)
+            next_position, next_player = V
+            visited[U] = True
+            # If the next node has already been visited, then a cycle has been detected
+            if visited[V] and not has_value[V]:
+                # The number of nodes in the cycle
+                n = last_index - index[V] + 1
+                # The mean payoff is computed
+                MPOs[V] = (last_payoff + game[current_position][next_position]["weight"] - total_payoff[V]) / n
+                has_value[V] = True
+            elif not visited[V]:
+                total_payoff[V] = last_payoff + game[current_position][next_position]["weight"]
+                last_payoff = total_payoff[V]
+            last_index += 1
+            index[V] = last_index
+            U = V
+        for V in L:
+            if not has_value[V]:
+                MPOs[V] = MPOs[U]
+                has_value[V] = True
+    return MPOs
 
 
 # This function is used to get the winner of a game
@@ -530,14 +573,14 @@ def winners(game: MeanPayoffGraph, strategy1, strategy2) -> Dict[Tuple[Any, Any]
 
 
 if __name__ == "__main__":
-    G = mpg_from_file("data/test01.in", ignore_header=1)
+    import visualisation.game as vgame
+
+    G = MeanPayoffGraph()
+    G.add_edge(0, 1, 5)
+    G.add_edge(0, 2, -5)
+    G.add_edge(2, 1, 3)
+    G.add_edge(2, 0, -6)
+    G.add_edge(1, 0, -6)
     G.closure()
-    Z = "1 2 3 6 5 6 1 1".split()
-    psi = dict(zip(range(len(Z)), map(int, Z)))
-    # print(counter_strategy(G,psi,method="bellman-ford"))
-    # print(G.edges(data=True))
-    print(G.winners())
-    W = optimal_strategy_pair(G, method="ACO")
-    print(mean_payoff(G, 0, *W))
-    # print(W)
-    # print(optimal_strategy_pair(G))
+    S1, S2 = optimal_strategy_pair(G)
+    print(mean_payoffs(G, S1, S2))
