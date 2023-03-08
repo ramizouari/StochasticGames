@@ -3,6 +3,9 @@ import sys
 from copy import deepcopy
 from typing import Dict, Any, List
 
+from matplotlib.axes import Axes
+from matplotlib.legend_handler import HandlerPatch
+
 from visualisation import colors
 from visualisation.graph import GraphVisualisation
 import visualisation.graph as vg
@@ -10,6 +13,7 @@ from games import MeanPayoffGraph
 import inspect
 from games import mpg
 from visualisation.colors import Colour
+import matplotlib.patches as mpatches
 
 CURRENT_POSITION_COLOUR: Colour = Colour("olive")
 PLAYER_1_COLOUR: Colour = Colour("grass green")
@@ -26,6 +30,10 @@ class ColourDescription:
     def __init__(self, colour: colors.Colour, description: str):
         self.colour = colour
         self.description = description
+
+
+    def __iter__(self):
+        return iter((self.colour, self.description))
 
     def __repr__(self):
         return f"{self.description} ({self.colour})"
@@ -226,15 +234,15 @@ class WinnerVisualiser(NodeColourer):
         """
         return NodeLegend([
             ColourDescription(NODE_COLOUR, "The starting position is losing for both players"),
-            ColourDescription(PLAYER_1_COLOUR, "If player 1 starts, he is a winner"),
-            ColourDescription(PLAYER_2_COLOUR, "If player 2 starts, he is a winner"),
+            ColourDescription(PLAYER_1_COLOUR, "Player 1 wins"),
+            ColourDescription(PLAYER_2_COLOUR, "PLayer 2 wins"),
             ColourDescription(SHARED_COLOUR, "The starting position is winning for both players"),
         ])
 
 
 class MPGVisualisation(GraphVisualisation):
     """
-    Visualise a mean payoff graph.
+    Visualise a mean payoff graph using yfiles.
     """
     def __init__(self, game: MeanPayoffGraph):
         super().__init__(graph=game)
@@ -261,3 +269,81 @@ class MPGVisualisation(GraphVisualisation):
 
     def legend(self) -> Legend:
         return self.node_color_mapping.legend() + self.edge_color_mapping.legend()
+
+
+def make_legend_arrow(legend, orig_handle,
+                      xdescent, ydescent,
+                      width, height, fontsize):
+    """
+    Make a legend arrow.
+    :param legend:
+    :param orig_handle:
+    :param xdescent:
+    :param ydescent:
+    :param width:
+    :param height:
+    :param fontsize:
+    :return:
+    """
+    p = mpatches.FancyArrow(0, 0.5*height, width, 0, length_includes_head=True, head_width=0.75*height )
+    return p
+
+class MPGPlot(vg.GraphPlot):
+    """
+    A plot for a mean payoff graph using matplotlib.
+    """
+    def __init__(self, game: MeanPayoffGraph,layout=None):
+        super().__init__(graph=game,layout=layout)
+        self.node_color_mapping = None
+        self.edge_color_mapping = None
+
+    def set_node_color_mapping(self, node_color_mapping) -> None:
+        """
+        Set the node colour mapping.
+        :param node_color_mapping: The node colour mapping. If this is a class, it is instantiated with the game as an argument.
+        :return: None
+        """
+        if inspect.isclass(node_color_mapping):
+            node_color_mapping = node_color_mapping(game=self.graph)
+        if node_color_mapping is None:
+            self.kwargs["node_color"] = None
+        else:
+            self.kwargs["node_color"] = [node_color_mapping(k,node) for k,node in enumerate(self.nodes) ]
+        self.node_color_mapping=node_color_mapping
+
+    def set_edge_color_mapping(self, edge_color_mapping) -> None:
+        """
+        Set the edge colour mapping.
+        :param edge_color_mapping: The edge colour mapping. If this is a class, it is instantiated with the game as an argument.
+        :return: None
+        """
+        if inspect.isclass(edge_color_mapping):
+            edge_color_mapping = edge_color_mapping(game=self.graph)
+        if edge_color_mapping is None:
+            self.kwargs["edge_color"] = None
+        else:
+            self.kwargs["edge_color"] = [edge_color_mapping(k,edge) for k,edge in enumerate(self.edges) ]
+        self.edge_color_mapping=edge_color_mapping
+
+
+    def legend(self) -> Legend:
+        return self.node_color_mapping.legend() + self.edge_color_mapping.legend()
+
+    def plot(self, ax=None, show_legend=True) -> Axes:
+        """
+        Plot the graph.
+        :param ax: The axis to plot on.
+        :return: The axis.
+        """
+        ax=super().plot(ax=ax)
+        legend = self.legend()
+        if legend:
+            nodes=[]
+            for i, (colour, description) in enumerate(self.node_color_mapping.legend()):
+                nodes.append(ax.scatter([], [], c=colour.hex, label=description))
+            arrows=[]
+            for i, (colour, description) in enumerate(self.edge_color_mapping.legend()):
+                arrows.append(ax.plot([], [], c=colour.hex,label=description))
+            if show_legend:
+                ax.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
+        return ax
