@@ -233,10 +233,10 @@ class WinnerVisualiser(NodeColourer):
         :return: The legend for the visualisation.
         """
         return NodeLegend([
-            ColourDescription(NODE_COLOUR, "The starting position is losing for both players"),
-            ColourDescription(PLAYER_1_COLOUR, "Player 1 wins"),
-            ColourDescription(PLAYER_2_COLOUR, "PLayer 2 wins"),
-            ColourDescription(SHARED_COLOUR, "The starting position is winning for both players"),
+            ColourDescription(NODE_COLOUR, "Second player to start wins"),
+            ColourDescription(PLAYER_1_COLOUR, "Player 1 wins no matter who starts"),
+            ColourDescription(PLAYER_2_COLOUR, "PLayer 2 wins no matter who starts"),
+            ColourDescription(SHARED_COLOUR, "First player to start wins"),
         ])
 
 
@@ -271,6 +271,7 @@ class MPGVisualisation(GraphVisualisation):
         return self.node_color_mapping.legend() + self.edge_color_mapping.legend()
 
 
+# TODO: Use this to make a legend for the edge colours.
 def make_legend_arrow(legend, orig_handle,
                       xdescent, ydescent,
                       width, height, fontsize):
@@ -333,15 +334,18 @@ class MPGPlot(vg.GraphPlot):
         """
         Plot the graph.
         :param ax: The axis to plot on.
+        :param show_legend: Whether to show the legend.
         :return: The axis.
         """
         ax=super().plot(ax=ax)
         legend = self.legend()
         if legend:
             nodes=[]
+            # This is a bit of a hack to get the legend to work and show the nodes
             for i, (colour, description) in enumerate(self.node_color_mapping.legend()):
                 nodes.append(ax.scatter([], [], c=colour.hex, label=description))
             arrows=[]
+            # This is a bit of a hack to get the legend to work and show the arrows
             for i, (colour, description) in enumerate(self.edge_color_mapping.legend()):
                 arrows.append(ax.plot([], [], c=colour.hex,label=description))
             if show_legend:
