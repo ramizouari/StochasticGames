@@ -146,6 +146,33 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
                     Q.put(u)
         return assignment
 
+    def _arc_consistency_optimized_set(self, L=None, R=None) -> Dict[Variable, int]:
+        # init AC lists
+        K = np.sum(np.fromiter((np.abs(c) for x, y, z, c in self.constraints), dtype=int))
+        if L is None:
+            L = -K
+        if R is None:
+            R = K
+        assignment = {u: R for u in self.variables}
+        # prepare rhs list
+        rhs_constraints = self.rhs_constraints
+
+        # init queue
+        S = set()
+        for u in self.variables:
+            S.add(u)
+        while len(S) > 0:
+            v = next(iter(S))
+            S.remove(v)
+            for u, w, c in rhs_constraints[v]:
+                newValue = max(assignment[v], assignment[w]) + c
+                if newValue < L:
+                    newValue = -np.inf
+                if newValue < assignment[u]:
+                    assignment[u] = newValue
+                    S.add(u)
+        return assignment
+
     def solve(self, L=None, R=None, method=DEFAULT_METHOD) -> Union[Dict[Variable, Any], None]:
         """
         Solve the system of equations
@@ -177,6 +204,8 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
 
             case "ACO" | "arc_consistency_optimized" | "arc-consistency-optimized":
                 self.assignment = self._arc_consistency_optimized(L=L, R=R)
+            case "ACOS" | "arc_consistency_optimized_set" | "arc-consistency-optimized-set":
+                self.assignment = self._arc_consistency_optimized_set(L=L, R=R)
         return self.assignment
 
     # Return True if there is an assignment on which every value is finite
