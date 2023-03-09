@@ -83,9 +83,12 @@ class GraphPlot(AbstractGraphGraphics):
         if ax is None:
             fig, ax = plt.subplots()
         layout = self.layout(self.graph)
-        nx.draw(self.graph, ax=ax, pos=layout, **self.kwargs)
+        for e in self.edges:
+            u,v=e["start"],e["end"]
+            layout[u,v] = (layout[u][0], layout[v][1])
+        nx.draw(self.graph, ax=ax, pos=layout, **self.kwargs,connectionstyle='arc3, rad = 0.1')
         nx.draw_networkx_edge_labels(self.graph, ax=ax, pos=layout,
-                                     edge_labels=nx.get_edge_attributes(self.graph, "weight"))
+                                     edge_labels=nx.get_edge_attributes(self.graph, "weight"),label_pos=0.65)
         nx.draw_networkx_labels(self.graph, ax=ax, pos=layout)
         return ax
 

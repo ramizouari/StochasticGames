@@ -135,20 +135,13 @@ class StrategyVisualiser(EdgeColourer):
     def __call__(self, index: Any, edge: vg.EdgeMetadata):
         u = edge["start"]
         v = edge["end"]
-        match [self.strategy1 is not None and v == self.strategy1[u],
-               self.strategy2 is not None and v == self.strategy2[u]]:
-            case [True, True]:
-                colour = SHARED_COLOUR
-            case [False, True]:
-                colour = PLAYER_2_COLOUR
-                pass
-            case [True, False]:
-                colour = PLAYER_1_COLOUR
-                pass
-            case _:
-                colour = EDGE_COLOUR
-                pass
-        return colour.hex
+        mapper= {
+            (False, False): EDGE_COLOUR,
+            (True, False): PLAYER_1_COLOUR,
+            (False, True): PLAYER_2_COLOUR,
+            (True, True): SHARED_COLOUR,
+        }
+        return mapper[(self.strategy1 and self.strategy1[u] == v, self.strategy2 and self.strategy2[u] == v)].hex
 
     def legend(self) -> EdgeLegend:
         return EdgeLegend([
