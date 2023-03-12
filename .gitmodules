@@ -1,0 +1,3 @@
+[submodule "mpgcpp/CPLibrary"]
+	path = mpgcpp/CPLibrary
+	url = git@github.com:ramizouari/CPLibrary.git

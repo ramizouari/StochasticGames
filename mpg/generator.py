@@ -10,6 +10,7 @@ import games.mpg as mpg
 import pandas as pd
 import numpy as np
 from graph import random_graph as rg
+import mpgio
 
 
 class Callback(abc.ABC):
@@ -58,19 +59,9 @@ class SaveGraphCallback(StepCallback):
 
     def save(self,iteration:int,n:int,c:int,p:float,graph:mpg.MeanPayoffGraph,row:Dict,**kwargs):
         filename=f"gnp_uniform_mpg_{n}_{c}_{iteration}"
-        match self.save_as:
-            case "pickle":
-                pickle.dump(graph,open(f"{self.directory}/{filename}.gpickle","wb"))
-            case "graphml":
-                nx.write_graphml(graph,f"{self.directory}/{filename}.graphml")
-            case "weighted_edgelist":
-                if self.compression:
-                    nx.write_weighted_edgelist(graph,f"{self.directory}/{filename}.edgelist.gz")
-                else:
-                    nx.write_weighted_edgelist(graph,f"{self.directory}/{filename}.edgelist")
-            case _:
-                raise ValueError("Unknown save_as value")
+        mpgio.save_mpg(f"{self.directory}/{filename}",graph,save_as=self.save_as,compression=self.compression)
         row["filename"]=filename
+
 
 def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,callbacks:List[Callback]=None) -> pd.DataFrame:
     """
@@ -137,9 +128,9 @@ def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,cal
     return pd.DataFrame(benchmark)
 
 if __name__=="__main__":
-    N=np.arange(2,101)**2
+    N=np.arange(2,40)**2
     C=np.arange(1,11,2)
     seed=932
-    callbacks=[ProgressCallback(), SaveGraphCallback("/run/media/ramizouari/INTENSO/MPG/dataset", "weighted_edgelist", compression=True)]
-    benchmark=generate_gnp_uniform_mpg(N,C,iterations=10,seed=seed,callbacks=callbacks,a=-1,b=1)
+    callbacks=[ProgressCallback(), SaveGraphCallback("/run/media/ramizouari/INTENSO/MPG/dataset/test", "weighted_edgelist", compression=True)]
+    benchmark=generate_gnp_uniform_mpg(N=N,C=C,iterations=10,seed=seed,callbacks=callbacks,a=-1,b=1)
     benchmark.to_csv("/run/media/ramizouari/INTENSO/MPG/benchmark_gnp_random_mpg.csv",index=False)
