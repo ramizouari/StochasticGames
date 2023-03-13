@@ -107,9 +107,11 @@ def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,cal
     for n in N:
         if P is not None:
             C = np.round(P * n).astype(int)
-        for c in C:
+        elif C is not None:
+            P = C / n
+        for c,p in zip(C,P):
             for i in range(iterations):
-                p=min(c/n,1)
+                p=min(p,1)
                 start=timeit.default_timer()
                 execution_start_time=datetime.now()
                 graph=rg.gnp_random_mpg(n,p,distribution="integers",low=a,high=b,endpoint=True)
@@ -128,9 +130,10 @@ def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,cal
     return pd.DataFrame(benchmark)
 
 if __name__=="__main__":
-    N=np.arange(2,40)**2
+    N=np.arange(2,32)**2
     C=np.arange(1,11,2)
+    P=np.array([0.01,0.05,0.1,0.2,0.5,0.8,1])
     seed=932
-    callbacks=[ProgressCallback(), SaveGraphCallback("/run/media/ramizouari/INTENSO/MPG/dataset/test", "weighted_edgelist", compression=True)]
-    benchmark=generate_gnp_uniform_mpg(N=N,C=C,iterations=10,seed=seed,callbacks=callbacks,a=-1,b=1)
-    benchmark.to_csv("/run/media/ramizouari/INTENSO/MPG/benchmark_gnp_random_mpg.csv",index=False)
+    callbacks=[ProgressCallback(), SaveGraphCallback("/run/media/ramizouari/INTENSO/MPG/dataset/dense", "weighted_edgelist", compression=True)]
+    benchmark=generate_gnp_uniform_mpg(N=N,P=P,iterations=10,seed=seed,callbacks=callbacks,a=-1,b=1)
+    benchmark.to_csv("/run/media/ramizouari/INTENSO/MPG/benchmark_gnp_random_mpg_dense.csv",index=False)

@@ -113,7 +113,7 @@ public:
     }
 
     [[nodiscard]] size_t count_nodes() const override
-    {
+    {w
         return original->count_nodes();
     }
 
