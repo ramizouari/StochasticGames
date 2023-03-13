@@ -60,6 +60,7 @@ public:
     }
 
     virtual void set_weight(int source,int target,R weight)=0;
+
     void set_weight(DirectedEdge<R> e)
     {
         set_weight(e.source,e.target,e.weight);
@@ -240,13 +241,13 @@ namespace Implementation
 }
 
 template<typename R>
-concept MPG=requires(R r)
+concept MPG=requires(R r,int i,int j)
 {
     typename R::weights_type;
     {r.count_nodes()}->std::convertible_to<size_t>;
     {r.get_edges()}->std::convertible_to<std::vector<DirectedEdge<typename R::weights_type>>>;
-    {r.get_weight(0,0)}->std::convertible_to<std::optional<typename R::weights_type>>;
-    {r.set_weight(0,0,typename R::weights_type())};
+    {r.get_weight(i,j)}->std::convertible_to<std::optional<typename R::weights_type>>;
+    {r.set_weight(i,j,typename R::weights_type())};
     {r.dual()}->std::convertible_to<MeanPayoffGameBase<typename R::weights_type>*>;
 };
 

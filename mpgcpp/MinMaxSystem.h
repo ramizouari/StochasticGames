@@ -168,7 +168,7 @@ public:
                 S.reserve(Z.size());
                 for (auto &z: Z)
                 {
-                    if(!mapper.count({z.variable,z.offset}))
+                    if(!mapper.contains({z.variable,z.offset}))
 
                     {
                         auto y=*factory.create();
