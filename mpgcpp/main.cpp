@@ -1,6 +1,7 @@
 #include <iostream>
 #include "MeanPayoffGame.h"
 #include "MinMaxSystem.h"
+#include "MPGReader.h"
 #include <fstream>
 #include <boost/iostreams/filtering_streambuf.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
@@ -11,7 +12,7 @@ int main(int argc, char *argv[]) {
     std::vector<std::tuple<int,int,int>> edges;
     if(argc>1)
     {
-        std::ifstream file(argv[1], std::ios_base::in | std::ios_base::binary);
+        /*std::ifstream file(argv[1], std::ios_base::in | std::ios_base::binary);
         boost::iostreams::filtering_streambuf<boost::iostreams::input> in;
         in.push(boost::iostreams::gzip_decompressor());
         in.push(file);
@@ -22,7 +23,10 @@ int main(int argc, char *argv[]) {
             edges.emplace_back(u, v, w);
             m++;
             n=std::max({n,u+1,v+1});
-        }
+        }*/
+        MPGFileReader<Implementation::Matrix::MeanPayoffGame<int>> reader(argv[1]);
+        MPG auto game=reader.read();
+        n=game.count_nodes();
     }
     else
     {

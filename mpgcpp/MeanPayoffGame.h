@@ -28,9 +28,14 @@ protected:
     virtual void add_edge_impl(int source, int target, R weight)=0;
     inline static constexpr class NullDual_t{} NullDual{};
     explicit MeanPayoffGameBase(NullDual_t){}
+    virtual void set_dual(MeanPayoffGameBase<R> *dual)
+    {
+        dual_game.reset(dual);
+    }
 public:
     using weights_type=R;
     MeanPayoffGameBase();
+    MeanPayoffGameBase(MeanPayoffGameBase &&other) noexcept;
 
     void add_edge(int source,int target,R weight)
     {
@@ -92,6 +97,12 @@ protected:
     {
         original->add_edge(target, source, -weight);
     }
+
+    void set_dual(MeanPayoffGameBase<R> *dual) override
+    {
+        original=dual;
+    }
+
 public:
     using weights_type=R;
     DualMeanPayoffGame(MeanPayoffGameBase<R> *original): MeanPayoffGameBase<R>(MeanPayoffGameBase<R>::NullDual),original(original){}
@@ -113,16 +124,22 @@ public:
     }
 
     [[nodiscard]] size_t count_nodes() const override
-    {w
+    {
         return original->count_nodes();
     }
-
+    friend class MeanPayoffGameBase<R>;
 };
 
 template<typename R>
 MeanPayoffGameBase<R>::MeanPayoffGameBase()
 {
     dual_game=std::make_unique<DualMeanPayoffGame<R>>(this);
+}
+
+template<typename R>
+MeanPayoffGameBase<R>::MeanPayoffGameBase(MeanPayoffGameBase && other) noexcept: edges(std::move(other.edges)),dual_game(std::move(other.dual_game))
+{
+    dual_game->set_dual(this);
 }
 
 namespace Implementation
