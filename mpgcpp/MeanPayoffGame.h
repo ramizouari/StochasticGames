@@ -258,14 +258,14 @@ namespace Implementation
 }
 
 template<typename R>
-concept MPG=requires(R r,int i,int j)
+concept MPG=requires(R *r,int i,int j)
 {
     typename R::weights_type;
-    {r.count_nodes()}->std::convertible_to<size_t>;
-    {r.get_edges()}->std::convertible_to<std::vector<DirectedEdge<typename R::weights_type>>>;
-    {r.get_weight(i,j)}->std::convertible_to<std::optional<typename R::weights_type>>;
-    {r.set_weight(i,j,typename R::weights_type())};
-    {r.dual()}->std::convertible_to<MeanPayoffGameBase<typename R::weights_type>*>;
+    {r->count_nodes()}->std::convertible_to<size_t>;
+    {r->get_edges()}->std::convertible_to<std::vector<DirectedEdge<typename R::weights_type>>>;
+    {r->get_weight(i,j)}->std::convertible_to<std::optional<typename R::weights_type>>;
+    {r->set_weight(i,j,typename R::weights_type())};
+    {r->dual()}->std::convertible_to<MeanPayoffGameBase<typename R::weights_type>*>;
 };
 
 namespace Bipartite
@@ -361,9 +361,9 @@ std::vector<int> optimal_strategy(const Game &game,Bipartite::Player player,Solv
     auto solution=solver.solve(system.to_nary_max_system().to_max_atom_system());
     std::vector<int> strategy(game.count_nodes());
     std::vector<order_closure<R>> values(game.count_nodes(),inf_min);
-    for(auto e:game.get_edges()) if(solution[Bipartite::encode(e.source,Bipartite::PLAYER_0)]+e.weight >= values[e.source])
+    for(auto e:game.get_edges()) if(solution[Bipartite::encode(e.target,Bipartite::PLAYER_1)]+e.weight >= values[e.source])
     {
-        values[e.source]=solution[Bipartite::encode(e.source,Bipartite::PLAYER_0)]+e.weight;
+        values[e.source]=solution[Bipartite::encode(e.target,Bipartite::PLAYER_1)]+e.weight;
         strategy[e.source]=e.target;
     }
     return strategy;

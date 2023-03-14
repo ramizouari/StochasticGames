@@ -85,7 +85,7 @@ using BZ2Decompressor=GenericDecompressor<boost::iostreams::bzip2_decompressor>;
 using LZMADecompressor=GenericDecompressor<boost::iostreams::lzma_decompressor>;
 
 template<MPG Game,class DecompressionStream>
-class MPGWeightedEdgeReaderCompressed : public DecompressionStream, public MPGWeightedEdgeReader<Game>
+class MPGWeightedEdgeReaderCompressed : protected DecompressionStream, public MPGWeightedEdgeReader<Game>
 {
 
 public:
