@@ -36,6 +36,7 @@ public:
     using weights_type=R;
     MeanPayoffGameBase();
     MeanPayoffGameBase(MeanPayoffGameBase &&other) noexcept;
+    MeanPayoffGameBase(const MeanPayoffGameBase &other);
 
     void add_edge(int source,int target,R weight)
     {
@@ -140,6 +141,13 @@ template<typename R>
 MeanPayoffGameBase<R>::MeanPayoffGameBase(MeanPayoffGameBase && other) noexcept: edges(std::move(other.edges)),dual_game(std::move(other.dual_game))
 {
     dual_game->set_dual(this);
+}
+template<typename R>
+MeanPayoffGameBase<R>::MeanPayoffGameBase(const MeanPayoffGameBase &other):edges(other.edges)
+{
+    dual_game=std::make_unique<DualMeanPayoffGame<R>>(this);
+    for(auto e:edges)
+        dual_game->edges.emplace_back(e.source,e.target,-e.weight);
 }
 
 namespace Implementation
@@ -255,6 +263,44 @@ namespace Implementation
             }
         };
     }
+
+    namespace TreeMap
+    {
+        template<typename R>
+        class MeanPayoffGame: public MeanPayoffGameBase<R> {
+            int n;
+            std::vector<std::map<int, R>> adjacency_list;
+            bool is_original = true;
+        protected:
+            void add_edge_impl(int source, int target, R weight) override
+            {
+                adjacency_list[source][target] = weight;
+            }
+        public:
+            using weights_type=R;
+            explicit MeanPayoffGame(int n) : n(n), adjacency_list(n) {}
+
+            virtual ~MeanPayoffGame() {}
+
+            std::optional<R> get_weight(int source, int target) const override {
+                auto it = adjacency_list[source].find(target);
+                if (it == adjacency_list[source].end())
+                    return std::nullopt;
+                return it->second;
+            }
+
+            void set_weight(int source, int target, R weight) override {
+                adjacency_list[source][target] = weight;
+            }
+
+            [[nodiscard]] size_t count_nodes() const override
+            {
+                return n;
+            }
+        };
+        namespace Hash=HashMap;
+        namespace Map=TreeMap;
+    }
 }
 
 template<typename R>
@@ -276,6 +322,8 @@ namespace Bipartite
         PLAYER_0,
         PLAYER_1
     };
+
+
     int encode(int vertex,int player)
     {
         return (vertex<<1)+player;
@@ -284,12 +332,12 @@ namespace Bipartite
     struct Vertex
     {
         int vertex;
-        int player;
+        Player player;
     };
 
     Vertex decode(int vertex)
     {
-        return {vertex>>1,vertex&1};
+        return {vertex>>1,static_cast<Player>(vertex&1)};
     }
 
     int encode(const Vertex &v)
@@ -375,4 +423,23 @@ StrategyPair optimal_strategy_pair(const Game &game, Solver &solver)
     return {optimal_strategy(game,Bipartite::PLAYER_0,solver),optimal_strategy(game,Bipartite::PLAYER_1,solver)};
 }
 
+template<MPG Game,typename Solver>
+std::map<std::pair<int,Bipartite::Player>,Bipartite::Player> winner(const Game &game, Solver &solver)
+{
+    using R=typename Game::weights_type;
+    MinMaxSystem<R> system=mean_payoff_game_to_min_max_system(game);
+    auto solution=solver.solve(system.to_nary_max_system().to_max_atom_system());
+    std::map<std::pair<int,Bipartite::Player>,Bipartite::Player> winner;
+    for(auto variable:system.get_variables())
+    {
+        auto s=variable.get_id();
+        auto [v,player]=Bipartite::decode(s);
+        if(solution[s]>inf_min)
+            winner[{v,player}]=Bipartite::PLAYER_0;
+        else
+            winner[{v,player}]=Bipartite::PLAYER_1;
+    }
+    return winner;
+
+}
 #endif //MPGCPP_MEANPAYOFFGAME_H

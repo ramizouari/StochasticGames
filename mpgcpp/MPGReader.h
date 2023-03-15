@@ -15,6 +15,7 @@
 #include <boost/iostreams/filter/lzma.hpp>
 #include <regex>
 #include <utility>
+#include <filesystem>
 #include "MeanPayoffGame.h"
 
 template<MPG Game>
@@ -72,6 +73,7 @@ public:
         in.push(DecompressionStream());
         in.push(compressed);
         uncompressed=std::make_unique<std::istream>(&in);
+        uncompressed->exceptions(std::ios::badbit);
     }
     std::istream& stream()
     {
@@ -145,4 +147,11 @@ Game mpg_from_file(const std::string& file_name)
 {
     return MPGFileReader<Game>(file_name).read();
 }
+
+template<MPG Game>
+Game mpg_from_file(const std::filesystem::path &file_name)
+{
+    return mpg_from_file<Game>(file_name.string());
+}
+
 #endif //MPGCPP_MPGREADER_H

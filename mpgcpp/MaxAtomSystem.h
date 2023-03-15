@@ -228,6 +228,7 @@ class MaxAtomSolver
 {
 public:
     virtual Map solve(const MaxAtomSystem<R> &system)=0;
+    virtual ~MaxAtomSolver()= default;
 };
 
 template<typename Map,typename R>

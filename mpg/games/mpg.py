@@ -566,10 +566,8 @@ def winners(game: MeanPayoffGraph, strategy1, strategy2) -> Dict[Tuple[Any, Any]
     :return: The winners of a game as a function of the starting position and the starting player.
     The key is a tuple (position, player).
     """
-    winners = {}
-    for s, p in game.as_bipartite().nodes:
-        winners[(s, p)] = winner(game, s, strategy1, strategy2, starting_turn=p)
-    return winners
+    MPGs=mean_payoffs(game, strategy1, strategy2)
+    return {u:MPGs[u]  >= 0 for u in MPGs}
 
 
 if __name__ == "__main__":
