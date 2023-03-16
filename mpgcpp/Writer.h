@@ -15,19 +15,31 @@ namespace Result {
 
     class Writer {
     public:
+        enum Type
+        {
+            STRING,
+            NUMBER,
+            BOOLEAN,
+            ARRAY,
+            OBJECT
+        };
         virtual void writeHeader();
         virtual void writeFooter();
         virtual void writeData(const std::map<std::string, std::string> &data) = 0;
         virtual ~Writer() = default;
+        virtual void addType(const std::string &name, Type type);
+
+    protected:
+        std::map<std::string, Type> types;
     };
 
     class StreamWriter : public Writer {
     protected:
         std::ostream *stream;
     public:
-        StreamWriter(std::ostream *stream);
+        explicit StreamWriter(std::ostream *stream);
         void writeData(const std::map<std::string, std::string> &data) override;
-        virtual ~StreamWriter() = default;
+        ~StreamWriter() override = default;
     };
 
     class FileWriter : public StreamWriter {
@@ -35,7 +47,7 @@ namespace Result {
         std::ofstream file;
     public:
         explicit FileWriter(const std::string& filename);
-        virtual ~FileWriter() = default;
+        ~FileWriter() override = default;
     };
 
     class CSVWriter : public FileWriter
@@ -54,21 +66,12 @@ namespace Result {
 
         bool firstItem=true;
     public:
-        enum Type
-        {
-            STRING,
-            NUMBER,
-            BOOLEAN,
-            ARRAY,
-            OBJECT
-        };
+
         explicit JSONWriter(const std::string& filename);
-        void addType(const std::string &name, Type type);
         void writeData(const std::map<std::string, std::string> &data) override;
         void writeHeader() override;
         void writeFooter() override;
     private:
-        std::map<std::string, Type> types;
     };
 
     class HumanWriter : public StreamWriter
@@ -88,6 +91,7 @@ namespace Result {
         void writeHeader() override;
         void writeFooter() override;
         void addWriter(Writer *writer);
+        void addType(const std::string &name, Type type) override;
     };
 
     class MultipleWriterUnique : public Writer
@@ -99,6 +103,7 @@ namespace Result {
         void writeHeader() override;
         void writeFooter() override;
         void addWriter(Writer *writer);
+        void addType(const std::string &name, Type type) override;
     };
 
     class ParallelWriter : public Writer {
@@ -109,6 +114,7 @@ namespace Result {
         void writeData(const std::map<std::string, std::string> &data) override;
         void writeHeader() override;
         void writeFooter() override;
+        void addType(const std::string &name, Type type) override;
     };
 } // Result
 

@@ -166,4 +166,8 @@ namespace Options
         return H;
     }
 
+    std::strong_ordering operator<=>(Verbosity a, Verbosity b) {
+        return static_cast<int>(a) <=> static_cast<int>(b);
+    }
+
 }

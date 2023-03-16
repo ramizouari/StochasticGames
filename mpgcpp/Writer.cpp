@@ -14,6 +14,10 @@ namespace Result {
 
     }
 
+    void Writer::addType(const std::string &name, JSONWriter::Type type) {
+        types[name]=type;
+    }
+
     StreamWriter::StreamWriter(std::ostream *stream) : stream(stream)
     {
     }
@@ -50,8 +54,17 @@ namespace Result {
     void CSVWriter::writeData(const std::map<std::string, std::string> &data) {
         for(int i=0;i<header.size();i++)
         {
-            if(data.contains(header[i]))
-                file << '"' << data.at(header[i]) << '"';
+            if(data.contains(header[i])) switch (types[header[i]])
+            {
+                case STRING:
+                case ARRAY:
+                case OBJECT:
+                    file<<"\""<<data.at(header[i])<<"\"";
+                    break;
+                default:
+                    file<<data.at(header[i]);
+                    break;
+            }
             if(i<header.size()-1)
                 file<<separator;
             else file<<std::endl;
@@ -91,10 +104,6 @@ namespace Result {
         file<<"]";
     }
 
-    void JSONWriter::addType(const std::string &name, JSONWriter::Type type) {
-        types[name]=type;
-    }
-
     MultipleWriter::MultipleWriter(const std::vector<Writer *> &writers): writers(writers)
     {
     }
@@ -120,6 +129,11 @@ namespace Result {
         writers.push_back(writer);
     }
 
+    void MultipleWriter::addType(const std::string &name, Writer::Type type) {
+        for(auto writer:writers)
+            writer->addType(name,type);
+    }
+
     MultipleWriterUnique::MultipleWriterUnique() = default;
 
     void MultipleWriterUnique::writeHeader() {
@@ -139,6 +153,11 @@ namespace Result {
 
     void MultipleWriterUnique::addWriter(Writer *writer) {
         writers.emplace_back(writer);
+    }
+
+    void MultipleWriterUnique::addType(const std::string &name, Writer::Type type) {
+        for(auto& writer:writers)
+            writer->addType(name,type);
     }
 
     HumanWriter::HumanWriter(std::ostream *stream) : StreamWriter(stream) {
@@ -171,5 +190,9 @@ namespace Result {
 
     ParallelWriter::ParallelWriter(Writer &writer) : writer(writer)
     {
+    }
+
+    void ParallelWriter::addType(const std::string &name, Writer::Type type) {
+        writer.addType(name,type);
     }
 } // Result

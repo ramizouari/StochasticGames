@@ -36,6 +36,8 @@ namespace Options
         ARC_CONSISTENCY,FIXED_POINT
     };
 
+    std::strong_ordering operator<=>(Verbosity a,Verbosity b);
+
 
     std::istream& operator>>(std::istream& H,OutputFormat& format);
     std::istream& operator>>(std::istream& H,Mode& mode);

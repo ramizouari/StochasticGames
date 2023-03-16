@@ -113,7 +113,7 @@ template<MPG Game>
 class MPGFileReader : public MPGReader<Game> {
     std::string file_name;
 public:
-  explicit MPGFileReader(std::string  file_name): file_name(std::move(file_name)){}
+  explicit MPGFileReader(std::string file_name): file_name(std::move(file_name)){}
 
     Game read() override
     {

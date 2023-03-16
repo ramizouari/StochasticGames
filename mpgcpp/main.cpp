@@ -6,7 +6,6 @@
 #include "ProgramOptions.h"
 #include <boost/program_options.hpp>
 #include <filesystem>
-#include <boost/log/trivial.hpp>
 #include <future>
 #include <syncstream>
 #include "concurrentqueue/concurrentqueue.h"
@@ -63,12 +62,50 @@ void process_game(const std::filesystem::path& path,Result::ParallelWriter& outp
     synced_output << "Calculating optimal strategy for graph " << path << std::endl;
     std::optional<StrategyPair> strategy;
     try{
-        std::chrono::high_resolution_clock::time_point start=std::chrono::high_resolution_clock::now();
-        strategy=optimal_strategy_pair(*graph,*solver);
-        std::chrono::high_resolution_clock::time_point end=std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed_seconds = end-start;
-        data["running_time"]=std::to_string(elapsed_seconds.count());
-        synced_output << "Elapsed time: " << elapsed_seconds.count() << " seconds" << std::endl;
+        if(vm["running-time"].as<bool>())
+        {
+            std::chrono::high_resolution_clock::time_point start=std::chrono::high_resolution_clock::now();
+            strategy=optimal_strategy_pair(*graph,*solver);
+            std::chrono::high_resolution_clock::time_point end=std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> elapsed_seconds = end-start;
+            data["running_time"]=std::to_string(elapsed_seconds.count());
+            synced_output << "Elapsed time: " << elapsed_seconds.count() << " seconds" << std::endl;
+        }
+        else
+            strategy=optimal_strategy_pair(*graph,*solver);
+        if(vm["mean-payoffs"].as<bool>())
+        {
+            synced_output << "Calculating mean payoffs for graph " << path << std::endl;
+            auto MPOs=mean_payoffs(*graph,*strategy);
+            auto &[MPO0,MPO1]=MPOs;
+            std::ostringstream S0,S1;
+            using Options::operator<<;
+            S0 << MPO0;
+            S1 << MPO1;
+            data["mean_payoffs_max"]=S0.str();
+            data["mean_payoffs_min"]=S1.str();
+            if(vm["winners"].as<bool>())
+            {
+                synced_output << "Calculating winners for graph " << path << std::endl;
+                auto [W0,W1]=winners(*graph,MPOs);
+                std::ostringstream S0,S1;
+                S0 << W0;
+                S1 << W1;
+                data["winners_max"]=S0.str();
+                data["winners_min"]=S1.str();
+            }
+        }
+        else if(vm["winners"].as<bool>())
+        {
+            synced_output << "Calculating winners for graph " << path << std::endl;
+            auto [W0,W1]=winners(*graph,*strategy);
+            std::ostringstream S0,S1;
+            using Options::operator<<;
+            S0 << W0;
+            S1 << W1;
+            data["winners_max"]=S0.str();
+            data["winners_min"]=S1.str();
+        }
     }
     catch (std::exception& e)
     {
@@ -102,11 +139,11 @@ int main(int argc, char *argv[]) {
              "Mode of the program, either discard or resume. discard will redo all the calculations, resume will resume the calculations from the last point.")
             ("output,o", po::value<std::filesystem::path>(), "Output file for the results")
             ("verbose,v", po::value<Verbosity>()->default_value(Verbosity::INFO), "Verbosity level (0-3)")
-            ("calculate-winners", po::value<bool>()->default_value(true),
+            ("winners", po::value<bool>()->default_value(false),
              "Calculate the winners on a mean payoff graph for each vertex and each starting player")
-            ("calculate-mean-payoffs", po::value<bool>()->default_value(true),
+            ("mean-payoffs", po::value<bool>()->default_value(false),
              "Calculate the mean payoffs for each vertex and each starting player")
-            ("calculate-running-time", po::value<bool>()->default_value(true),
+            ("running-time", po::value<bool>()->default_value(true),
              "Calculate the running time for each graph")
             ("output-format", po::value<OutputFormat>()->default_value(OutputFormat::CSV), "Format of the output file")
             ("dataset", po::value<std::string>()->default_value("dataset"), "Name of the dataset")
@@ -128,8 +165,9 @@ int main(int argc, char *argv[]) {
         std::cout << "You must specify a folder containing graphs" << std::endl;
         return 1;
     }
-    if (!vm.count("output")) {
-        std::cout << "You must specify an output folder" << std::endl;
+    if (!vm.count("output"))
+    {
+        std::cout << "You must specify an output file" << std::endl;
         return 1;
     }
 
@@ -137,7 +175,8 @@ int main(int argc, char *argv[]) {
     std::filesystem::path output_file = vm["output"].as<std::filesystem::path>();
     Result::MultipleWriterUnique outputWriter;
     Result::ParallelWriter parallelWriter(outputWriter);
-    std::vector<std::string> headers = {"dataset", "graph", "running_time", "min_strategy", "max_strategy", "status"};
+    std::vector<std::string> headers = {"dataset", "graph", "running_time", "min_strategy", "max_strategy", "status",
+                                        "mean_payoffs_min", "mean_payoffs_max", "winners_min", "winners_max"};
     switch (vm["output-format"].as<OutputFormat>()) {
         case OutputFormat::CSV:
             outputWriter.addWriter(new Result::CSVWriter(output_file, headers, vm["separator"].as<char>()));
@@ -145,16 +184,21 @@ int main(int argc, char *argv[]) {
         case OutputFormat::JSON: {
             auto writer = new Result::JSONWriter(output_file);
             outputWriter.addWriter(writer);
-            writer->addType("dataset", Result::JSONWriter::STRING);
-            writer->addType("graph", Result::JSONWriter::Type::STRING);
-            writer->addType("running_time", Result::JSONWriter::Type::NUMBER);
-            writer->addType("min_strategy", Result::JSONWriter::Type::ARRAY);
-            writer->addType("max_strategy", Result::JSONWriter::Type::ARRAY);
             break;
         }
     }
     outputWriter.addWriter(new Result::HumanWriter(&std::cout));
     outputWriter.writeHeader();
+    outputWriter.addType("dataset", Result::JSONWriter::STRING);
+    outputWriter.addType("graph", Result::JSONWriter::Type::STRING);
+    outputWriter.addType("running_time", Result::JSONWriter::Type::NUMBER);
+    outputWriter.addType("min_strategy", Result::JSONWriter::Type::ARRAY);
+    outputWriter.addType("max_strategy", Result::JSONWriter::Type::ARRAY);
+    outputWriter.addType("status", Result::JSONWriter::Type::STRING);
+    outputWriter.addType("mean_payoffs_min", Result::JSONWriter::Type::ARRAY);
+    outputWriter.addType("mean_payoffs_max", Result::JSONWriter::Type::ARRAY);
+    outputWriter.addType("winners_min", Result::JSONWriter::Type::ARRAY);
+    outputWriter.addType("winners_max", Result::JSONWriter::Type::ARRAY);
     moodycamel::ConcurrentQueue<std::filesystem::path> queue;
     for (const auto &path: std::filesystem::recursive_directory_iterator(graphs_folder)) if (std::filesystem::is_regular_file(path))
             queue.enqueue(path);
