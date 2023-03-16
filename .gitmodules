@@ -1,3 +1,6 @@
 [submodule "mpgcpp/CPLibrary"]
 	path = mpgcpp/CPLibrary
 	url = git@github.com:ramizouari/CPLibrary.git
+[submodule "mpgcpp/concurrentqueue"]
+	path = mpgcpp/concurrentqueue
+	url = https://github.com/cameron314/concurrentqueue

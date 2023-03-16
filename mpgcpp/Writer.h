@@ -9,6 +9,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
+#include <memory>
 
 namespace Result {
 
@@ -50,15 +51,65 @@ namespace Result {
 
     class JSONWriter : public FileWriter
     {
+
         bool firstItem=true;
     public:
+        enum Type
+        {
+            STRING,
+            NUMBER,
+            BOOLEAN,
+            ARRAY,
+            OBJECT
+        };
         explicit JSONWriter(const std::string& filename);
+        void addType(const std::string &name, Type type);
         void writeData(const std::map<std::string, std::string> &data) override;
         void writeHeader() override;
         void writeFooter() override;
-
+    private:
+        std::map<std::string, Type> types;
     };
 
+    class HumanWriter : public StreamWriter
+    {
+    public:
+        explicit HumanWriter(std::ostream *stream);
+        void writeHeader() override;
+        void writeData(const std::map<std::string, std::string> &data) override;
+    };
+
+    class MultipleWriter : public Writer
+    {
+        std::vector<Writer*> writers;
+    public:
+        explicit MultipleWriter(const std::vector<Writer*> &writers={});
+        void writeData(const std::map<std::string, std::string> &data) override;
+        void writeHeader() override;
+        void writeFooter() override;
+        void addWriter(Writer *writer);
+    };
+
+    class MultipleWriterUnique : public Writer
+    {
+        std::vector<std::unique_ptr<Writer>> writers;
+    public:
+        explicit MultipleWriterUnique();
+        void writeData(const std::map<std::string, std::string> &data) override;
+        void writeHeader() override;
+        void writeFooter() override;
+        void addWriter(Writer *writer);
+    };
+
+    class ParallelWriter : public Writer {
+        std::mutex mutex;
+        Writer & writer;
+    public:
+        explicit ParallelWriter(Writer &writer);
+        void writeData(const std::map<std::string, std::string> &data) override;
+        void writeHeader() override;
+        void writeFooter() override;
+    };
 } // Result
 
 #endif //MPGCPP_WRITER_H

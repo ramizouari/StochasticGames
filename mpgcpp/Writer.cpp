@@ -50,7 +50,8 @@ namespace Result {
     void CSVWriter::writeData(const std::map<std::string, std::string> &data) {
         for(int i=0;i<header.size();i++)
         {
-            file<<data.at(header[i]);
+            if(data.contains(header[i]))
+                file << '"' << data.at(header[i]) << '"';
             if(i<header.size()-1)
                 file<<separator;
             else file<<std::endl;
@@ -68,7 +69,15 @@ namespace Result {
         file<<"{";
         for(auto &item:data)
         {
-            file<<"\""<<item.first<<"\""<<":"<<"\""<<item.second<<"\"";
+            switch (types[item.first])
+            {
+                case STRING:
+                    file<<"\""<<item.first<<"\""<<":"<<"\""<<item.second<<"\"";
+                    break;
+                default:
+                    file<<"\""<<item.first<<"\""<<":"<<item.second;
+                    break;
+            }
             if(item.first!=data.rbegin()->first)
                 file<<",\n";
         }
@@ -80,5 +89,87 @@ namespace Result {
     }
     void JSONWriter::writeFooter() {
         file<<"]";
+    }
+
+    void JSONWriter::addType(const std::string &name, JSONWriter::Type type) {
+        types[name]=type;
+    }
+
+    MultipleWriter::MultipleWriter(const std::vector<Writer *> &writers): writers(writers)
+    {
+    }
+
+    void MultipleWriter::writeData(const std::map<std::string, std::string> &data)
+    {
+        for(auto writer:writers)
+            writer->writeData(data);
+    }
+
+    void MultipleWriter::writeHeader() {
+        for(auto writer:writers)
+            writer->writeHeader();
+    }
+
+    void MultipleWriter::writeFooter() {
+        for(auto writer:writers)
+            writer->writeFooter();
+    }
+
+    void MultipleWriter::addWriter(Writer *writer)
+    {
+        writers.push_back(writer);
+    }
+
+    MultipleWriterUnique::MultipleWriterUnique() = default;
+
+    void MultipleWriterUnique::writeHeader() {
+        for(auto& writer:writers)
+            writer->writeHeader();
+    }
+
+    void MultipleWriterUnique::writeFooter() {
+        for(auto& writer:writers)
+            writer->writeFooter();
+    }
+
+    void MultipleWriterUnique::writeData(const std::map<std::string, std::string> &data) {
+        for(auto& writer:writers)
+            writer->writeData(data);
+    }
+
+    void MultipleWriterUnique::addWriter(Writer *writer) {
+        writers.emplace_back(writer);
+    }
+
+    HumanWriter::HumanWriter(std::ostream *stream) : StreamWriter(stream) {
+
+    }
+
+    void HumanWriter::writeHeader() {
+        (*stream)<<"Result:"<<std::endl;
+    }
+
+    void HumanWriter::writeData(const std::map<std::string, std::string> &data) {
+        (*stream) << "Results:" << std::endl;
+        for(auto &item:data)
+            (*stream)<< '\t' <<item.first<<": "<<item.second<< '\n';
+    }
+
+    void ParallelWriter::writeHeader() {
+        writer.writeHeader();
+    }
+
+    void ParallelWriter::writeFooter() {
+        writer.writeFooter();
+    }
+
+    void ParallelWriter::writeData(const std::map<std::string, std::string> &data) {
+        mutex.lock();
+        writer.writeData(data);
+        mutex.unlock();
+    }
+
+    ParallelWriter::ParallelWriter(Writer &writer) : writer(writer)
+    {
     }
 } // Result
