@@ -22,21 +22,21 @@ void process_game(const std::filesystem::path& path,Result::ParallelWriter& outp
     std::unique_ptr<MeanPayoffGameBase<integer>> graph;
     std::unique_ptr<MaxAtomSolver<std::vector<order_closure<integer>>,integer>> solver;
     try {
-        switch (vm["graph-implementation"].as<GraphImplementation>()) {
+        switch (vm["graph-implementation"].as<Options::GraphImplementation>()) {
             using namespace Implementation;
-            case GraphImplementation::ADJACENCY_LIST_VECTOR:
+            case Options::GraphImplementation::ADJACENCY_LIST_VECTOR:
                 graph = std::make_unique<Matrix::MeanPayoffGame<integer>>(
                         mpg_from_file<Matrix::MeanPayoffGame<integer>>(path));
                 break;
-            case GraphImplementation::ADJACENCY_LIST_TREE:
+            case Options::GraphImplementation::ADJACENCY_LIST_TREE:
                 graph = std::make_unique<TreeMap::MeanPayoffGame<integer>>(
                         mpg_from_file<TreeMap::MeanPayoffGame<integer>>(path));
                 break;
-            case GraphImplementation::ADJACENCY_LIST_HASH:
+            case Options::GraphImplementation::ADJACENCY_LIST_HASH:
                 graph = std::make_unique<HashMap::MeanPayoffGame<integer>>(
                         mpg_from_file<HashMap::MeanPayoffGame<integer>>(path));
                 break;
-            case GraphImplementation::ADJACENCY_MATRIX:
+            case Options::GraphImplementation::ADJACENCY_MATRIX:
                 graph = std::make_unique<Matrix::MeanPayoffGame<integer>>(
                         mpg_from_file<Matrix::MeanPayoffGame<integer>>(path));
                 break;
@@ -50,13 +50,13 @@ void process_game(const std::filesystem::path& path,Result::ParallelWriter& outp
         return;
     }
 
-    switch(vm["max-solver"].as<SolverImplementation>())
+    switch(vm["max-solver"].as<Options::SolverImplementation>())
     {
         using namespace Implementation;
-        case SolverImplementation::ARC_CONSISTENCY:
+        case Options::SolverImplementation::ARC_CONSISTENCY:
             solver = std::make_unique<Vector::MaxAtomSystemSolver<integer>>();
             break;
-        case SolverImplementation::FIXED_POINT:
+        case Options::SolverImplementation::FIXED_POINT:
             solver = std::make_unique<Vector::MaxAtomSystemSolverFixedPoint<integer>>();
             break;
     }
@@ -80,6 +80,7 @@ void process_game(const std::filesystem::path& path,Result::ParallelWriter& outp
     }
 
     std::ostringstream S0,S1;
+    using Options::operator<<;
     S0 << strategy->strategy_0;
     S1 << strategy->strategy_1;
     data["max_strategy"]=S0.str();
@@ -92,6 +93,8 @@ void process_game(const std::filesystem::path& path,Result::ParallelWriter& outp
 int main(int argc, char *argv[]) {
     namespace po = boost::program_options;
     po::options_description desc("Command Line options");
+    unsigned int cpus=1;
+    using namespace Options;
     desc.add_options()
             ("help,h", "produce help message")
             ("graphs-folder,f", po::value<std::filesystem::path>(), "Read the folder that contains graphs")
@@ -156,10 +159,10 @@ int main(int argc, char *argv[]) {
     for (const auto &path: std::filesystem::recursive_directory_iterator(graphs_folder)) if (std::filesystem::is_regular_file(path))
             queue.enqueue(path);
 
-    unsigned int count_threads = vm["threads"].as<unsigned int>();
-    if(count_threads ==0)
-        count_threads = std::thread::hardware_concurrency();
-    if(count_threads > 1)
+    cpus = vm["threads"].as<unsigned int>();
+    if(cpus ==0)
+        cpus = std::thread::hardware_concurrency();
+    if(cpus == 1)
     {
         std::filesystem::path path;
         while (queue.try_dequeue(path))
@@ -168,8 +171,8 @@ int main(int argc, char *argv[]) {
     else
     {
         std::vector<std::thread> executors;
-        executors.reserve(count_threads);
-        for (int i = 0; i < count_threads; ++i)
+        executors.reserve(cpus);
+        for (int i = 0; i < cpus; ++i)
         {
             executors.emplace_back(
                 [&queue, &vm, &parallelWriter]()

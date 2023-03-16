@@ -8,6 +8,7 @@
 #include "MinMaxSystem.h"
 #include <optional>
 #include <memory>
+#include <numeric>
 
 template<typename R>
 struct DirectedEdge
@@ -397,6 +398,14 @@ struct StrategyPair
 {
     std::vector<int> strategy_0;
     std::vector<int> strategy_1;
+    auto& operator[](Bipartite::Player player)
+    {
+        return player==Bipartite::PLAYER_0?strategy_0:strategy_1;
+    }
+    const auto& operator[](Bipartite::Player player) const
+    {
+        return player==Bipartite::PLAYER_0?strategy_0:strategy_1;
+    }
 };
 
 template<MPG Game,typename Solver>
@@ -442,4 +451,110 @@ std::map<std::pair<int,Bipartite::Player>,Bipartite::Player> winner(const Game &
     return winner;
 
 }
+
+template<typename Real>
+struct MeanPayoffsPair
+{
+    std::vector<Real> payoffs_0;
+    std::vector<Real> payoffs_1;
+    auto & operator[](Bipartite::Player player)
+    {
+        if(player==Bipartite::PLAYER_0)
+            return payoffs_0;
+        else
+            return payoffs_1;
+    }
+    const auto & operator[](Bipartite::Player player) const
+    {
+        if(player==Bipartite::PLAYER_0)
+            return payoffs_0;
+        else
+            return payoffs_1;
+    }
+};
+
+struct WinnersPair
+{
+    std::vector<Bipartite::Player> winner_0;
+    std::vector<Bipartite::Player> winner_1;
+    auto & operator[](Bipartite::Player player)
+    {
+        if(player==Bipartite::PLAYER_0)
+            return winner_0;
+        else
+            return winner_1;
+    }
+    const auto & operator[](Bipartite::Player player) const
+    {
+        if(player==Bipartite::PLAYER_0)
+            return winner_0;
+        else
+            return winner_1;
+    }
+};
+
+template<typename weights_type,typename Real>
+MeanPayoffsPair<Real> mean_payoffs(const MeanPayoffGameBase<weights_type> &game, const StrategyPair &strategy_pair)
+{
+    using R=weights_type;
+    auto n=game.count_nodes();
+    std::vector<bool> visited(2*n),has_value(2*n);
+    MeanPayoffsPair<Real> payoffs{std::vector<Real>(n), std::vector<Real>(n)};
+    for(int i=0;i<(2*n);i++) if(!visited[i])
+    {
+        std::vector<int> path;
+        int current=i,length=0;
+        Real mean_payoff=0;
+        std::vector<Real> payoffs_sum(2*n);
+        while(!visited[current])
+        {
+            length++;
+            visited[current]=true;
+            path.push_back(current);
+            int next;
+            if(Bipartite::get_player(current)==Bipartite::PLAYER_0)
+                next=Bipartite::encode(strategy_pair.strategy_0[Bipartite::decode(current).vertex],Bipartite::PLAYER_1);
+            else
+                next=Bipartite::encode(strategy_pair.strategy_1[Bipartite::decode(current).vertex],Bipartite::PLAYER_0);
+
+            if(has_value[next])
+                mean_payoff=payoffs[Bipartite::get_player(next)][Bipartite::decode(next).vertex];
+            else
+            {
+                if(visited[next])
+                {
+                    Real long_payoff= game.get_weight(Bipartite::decode(current).vertex, Bipartite::decode(next).vertex).value() +
+                            payoffs_sum[current];
+                    Real short_payoff=payoffs_sum[next];
+                    mean_payoff=(long_payoff-short_payoff)/length;
+                }
+                else
+                    payoffs_sum[next]=game.get_weight(Bipartite::decode(current).vertex, Bipartite::decode(next).vertex).value() +
+                            payoffs_sum[current];
+            }
+            current=next;
+        }
+        for(auto k:path) if(!has_value[k])
+        {
+            has_value[k]=true;
+            payoffs[Bipartite::get_player(k)][Bipartite::decode(k).vertex]=mean_payoff;
+        }
+
+    }
+}
+
+template<typename weights_type,typename Real>
+WinnersPair winners(const MeanPayoffGameBase<weights_type>& game, const StrategyPair &strategy_pair)
+{
+    using R=weights_type;
+    auto n=game.count_nodes();
+    std::vector<bool> visited(2*n),has_value(2*n);
+    WinnersPair winners{std::vector<Bipartite::Player>(n), std::vector<Bipartite::Player>(n)};
+    MeanPayoffsPair<Real> MPGs=mean_payoffs(game,strategy_pair);
+    std::transform(MPGs.payoffs_0.begin(),MPGs.payoffs_0.end(),winners.winner_0.begin(),[](auto x){return x>=0?Bipartite::PLAYER_0:Bipartite::PLAYER_1;});
+    std::transform(MPGs.payoffs_1.begin(),MPGs.payoffs_1.end(),winners.winner_1.begin(),[](auto x){return x>=0?Bipartite::PLAYER_0:Bipartite::PLAYER_1;});
+    return winners;
+}
+
+
 #endif //MPGCPP_MEANPAYOFFGAME_H
