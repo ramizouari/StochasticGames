@@ -1,7 +1,7 @@
 #include <iostream>
-#include "MeanPayoffGame.h"
-#include "MinMaxSystem.h"
-#include "MPGReader.h"
+#include "game/MeanPayoffGame.h"
+#include "csp/MinMaxSystem.h"
+#include "mpgio/MPGReader.h"
 #include "Writer.h"
 #include "ProgramOptions.h"
 #include <boost/program_options.hpp>

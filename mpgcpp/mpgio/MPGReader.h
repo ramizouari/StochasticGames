@@ -16,7 +16,7 @@
 #include <regex>
 #include <utility>
 #include <filesystem>
-#include "MeanPayoffGame.h"
+#include "game/MeanPayoffGame.h"
 
 template<MPG Game>
 class MPGReader

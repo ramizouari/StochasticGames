@@ -4,3 +4,7 @@
 [submodule "mpgcpp/concurrentqueue"]
 	path = mpgcpp/concurrentqueue
 	url = https://github.com/cameron314/concurrentqueue
+[submodule "mpgcpp/pybind11"]
+	path = mpgcpp/pybind11
+	url = https://github.com/pybind/pybind11
+	branch = stable

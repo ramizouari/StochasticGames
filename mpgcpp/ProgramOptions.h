@@ -31,6 +31,16 @@ namespace Options
         ADJACENCY_LIST_VECTOR,ADJACENCY_LIST_TREE,ADJACENCY_LIST_HASH,ADJACENCY_MATRIX
     };
 
+    enum class GraphFormat
+    {
+        WEIGHTED_EDGE_LIST
+    };
+
+    enum class Compression
+    {
+        None=0,GZip,BZip2,LZMA
+    };
+
     enum class SolverImplementation
     {
         ARC_CONSISTENCY,FIXED_POINT

@@ -335,12 +335,14 @@ class MPGPlot(vg.GraphPlot):
         if legend:
             nodes=[]
             # This is a bit of a hack to get the legend to work and show the nodes
-            for i, (colour, description) in enumerate(self.node_color_mapping.legend()):
-                nodes.append(ax.scatter([], [], c=colour.hex, label=description))
+            if self.node_color_mapping is not None:
+                for i, (colour, description) in enumerate(self.node_color_mapping.legend()):
+                    nodes.append(ax.scatter([], [], c=colour.hex, label=description))
             arrows=[]
             # This is a bit of a hack to get the legend to work and show the arrows
-            for i, (colour, description) in enumerate(self.edge_color_mapping.legend()):
-                arrows.append(ax.plot([], [], c=colour.hex,label=description))
-            if show_legend:
+            if self.edge_color_mapping is not None:
+                for i, (colour, description) in enumerate(self.edge_color_mapping.legend()):
+                    arrows.append(ax.plot([], [], c=colour.hex,label=description))
+            if show_legend and len(nodes)+len(arrows)>0:
                 ax.legend(bbox_to_anchor=(1.04, 1), loc="upper left")
         return ax
