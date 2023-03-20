@@ -20,7 +20,7 @@ class MaxAtomConstraint
 public:
     Variable x,y,z;
     R c;
-    MaxAtomConstraint(Variable &x,Variable &y,Variable &z,R c):x(x),y(y),z(z),c(c){}
+    MaxAtomConstraint(Variable x,Variable y,Variable z,R c):x(std::move(x)),y(std::move(y)),z(std::move(z)),c(c){}
 
 };
 

@@ -82,6 +82,19 @@ std::vector<std::tuple<int,int,int>> from_python_edges(const py::list &l)
     return v;
 }
 
+MaxAtomSystem<integer> from_max_atom_constraint(const py::list &l)
+{
+    MaxAtomSystem<integer> v;
+    for (int i=0; i<py::len(l); i++)
+    {
+        py::tuple t=py::extract<py::tuple>(l[i]);
+        v.add_constraint(Variable(py::extract<integer>(t[0])),
+                         Variable(py::extract<integer>(t[1])),
+                         Variable(py::extract<integer>(t[2])),
+                         py::extract<integer>(t[3]));
+    }
+    return v;
+}
 template<typename T>
 py::list to_list(const std::vector<T> &v)
 {
@@ -201,6 +214,22 @@ py::tuple mean_payoffs_file(const std::string &filename)
     return to_python_mean_payoffs(meanPayoff0, meanPayoff1);
 }
 
+py::list arc_consistency(const py::list &_system)
+{
+    auto system=from_max_atom_constraint(_system);
+    Implementation::Vector::MaxAtomSystemSolver<integer> solver;
+    auto solution = solver.solve(system);
+    py::list solution_python;
+    for(auto value:solution)
+    {
+        if(value==inf_min)
+            solution_python.append("-inf");
+        else
+            solution_python.append(std::get<integer>(value));
+    }
+    return solution_python;
+}
+
 BOOST_PYTHON_MODULE(mpgcpp)
 {
     using namespace boost::python;
@@ -210,4 +239,5 @@ BOOST_PYTHON_MODULE(mpgcpp)
     def("winners_file_cxx", winners_file);
     def("mean_payoffs_edges_cxx", mean_payoffs_edges);
     def("mean_payoffs_file_cxx", mean_payoffs_file);
+    def("arc_consistency_cxx", arc_consistency);
 }
