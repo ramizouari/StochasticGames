@@ -41,6 +41,7 @@ else()
     set_target_properties(MPGPyWrapper PROPERTIES OUTPUT_NAME ${WRAPPER_NAME})
     target_link_libraries(MPGPyWrapper Boost::iostreams Boost::program_options Boost::log pthread Boost::python)
 
+    # Set the default install location for the python wrapper
     if (NOT MPG_PYTHON)
         set(PARENT "${CMAKE_CURRENT_SOURCE_DIR}/..")
         set(MPG_PYTHON "${PARENT}/mpg/wrapper")
@@ -49,6 +50,8 @@ else()
         message(STATUS "Python wrapper will be installed to ${MPG_PYTHON}")
     endif()
 
+    # Install the python wrapper
     install(TARGETS MPGPyWrapper DESTINATION ${MPG_PYTHON})
+    # Install the python wrapper script
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_NAME}.py" DESTINATION ${MPG_PYTHON})
 endif()
