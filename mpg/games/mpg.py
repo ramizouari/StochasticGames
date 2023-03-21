@@ -4,10 +4,9 @@ from typing import Dict, Any, Union, Tuple
 import networkx as nx
 import numpy as np
 
-from csp import max_atom as ma
-from csp.max_atom import MinMaxSystem
-from graph import algorithms as graph_algorithms
-from algbera import TropicalInteger
+from ..csp import max_atom as ma
+from ..csp.max_atom import MinMaxSystem
+from ..graph import algorithms as graph_algorithms
 
 
 class VertexVariable(ma.Variable):

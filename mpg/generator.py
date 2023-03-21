@@ -6,11 +6,11 @@ from typing import List, Callable, TypedDict, Dict
 import networkx as nx
 import pickle
 
-import games.mpg as mpg
+import .games.mpg as mpg
 import pandas as pd
 import numpy as np
-from graph import random_graph as rg
-import mpgio
+from .graph import random_graph as rg
+import .mpgio
 
 
 class Callback(abc.ABC):

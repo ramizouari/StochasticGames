@@ -4,7 +4,7 @@ from typing import Type, Union
 import networkx as nx
 import numpy as np
 
-from games import mpg
+from .games import mpg
 
 def get_compression(compression:Union[None,bool,str]) -> Union[str,None]:
     """

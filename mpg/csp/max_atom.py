@@ -3,8 +3,7 @@ from typing import Tuple, List, Dict, Any, Union
 
 import numpy as np
 
-import csp
-from csp import ConstraintSatisfactionProblem, Variable
+from ..csp import ConstraintSatisfactionProblem, Variable, VariableGenerator
 
 
 # This class represents a variable in a ternary max atom system
@@ -262,7 +261,7 @@ class MaxAtomSystem(ConstraintSatisfactionProblem):
         self.constraints = []
         self.mapper = {}
         self.equivalent_system = TernaryMaxAtomSystem()
-        self.variable_generator = csp.VariableGenerator(name="P")
+        self.variable_generator = VariableGenerator(name="P")
 
     def add_constraint(self, x, Y, c):
         """
@@ -364,7 +363,7 @@ class MinMaxSystem(ConstraintSatisfactionProblem):
         self.constraints = []
         self.mapper = {}
         self.equivalent_system = MaxAtomSystem()
-        self.variable_generator = csp.VariableGenerator(name="S")
+        self.variable_generator = VariableGenerator(name="S")
 
     def add_constraint(self, op, x, Y, C):
         """
