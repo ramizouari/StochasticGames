@@ -3,7 +3,7 @@ from typing import Tuple, List, Dict, Any, Union
 
 import numpy as np
 
-from ..csp import ConstraintSatisfactionProblem, Variable, VariableGenerator
+from . import ConstraintSatisfactionProblem, Variable, VariableGenerator
 
 
 # This class represents a variable in a ternary max atom system

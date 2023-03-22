@@ -154,6 +154,14 @@ class StrategyVisualiser(EdgeColourer):
             ColourDescription(SHARED_COLOUR, "Shared strategy"),
         ])
 
+class DefaultEdgeColourer(EdgeColourer):
+    def __call__(self, index: Any, edge: vg.EdgeMetadata):
+        return EDGE_COLOUR.hex
+
+    def legend(self) -> EdgeLegend:
+        return EdgeLegend([
+            ColourDescription(EDGE_COLOUR, "Edge"),
+        ])
 
 class NodeColourer(abc.ABC):
     def __call__(self, index: int, node: vg.NodeMetadata):
@@ -162,6 +170,16 @@ class NodeColourer(abc.ABC):
     @abc.abstractmethod
     def legend(self) -> NodeLegend:
         pass
+
+
+class DefaultNodeColourer(NodeColourer):
+    def __call__(self, index: Any, node: vg.NodeMetadata):
+        return NODE_COLOUR.hex
+
+    def legend(self) -> NodeLegend:
+        return NodeLegend([
+            ColourDescription(NODE_COLOUR, "Node"),
+        ])
 
 
 class PositionVisualiser(NodeColourer):
@@ -296,8 +314,8 @@ class MPGPlot(vg.GraphPlot):
 
     def __init__(self, game: MeanPayoffGraph, layout=None):
         super().__init__(graph=game, layout=layout)
-        self.node_color_mapping = None
-        self.edge_color_mapping = None
+        self.node_color_mapping = DefaultNodeColourer()
+        self.edge_color_mapping = DefaultEdgeColourer()
 
     def set_node_color_mapping(self, node_color_mapping) -> None:
         """
@@ -339,7 +357,7 @@ class MPGPlot(vg.GraphPlot):
         """
         ax = super().plot(ax=ax)
         legend = self.legend()
-        if legend:
+        if show_legend and legend:
             nodes = []
             # This is a bit of a hack to get the legend to work and show the nodes
             if self.node_color_mapping is not None:

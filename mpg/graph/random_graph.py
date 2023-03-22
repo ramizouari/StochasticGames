@@ -3,7 +3,7 @@ from typing import Union, TypeVar, Type
 import networkx as nx
 import numpy as np
 
-from games import mpg
+from ..games import mpg
 
 graph_generator = np.random.Generator(np.random.MT19937())
 
