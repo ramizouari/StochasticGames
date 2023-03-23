@@ -1,8 +1,8 @@
 from typing import Dict, Any, Union, List, Tuple
 
-import mpgcpp
-from csp.max_atom import MaxAtomSystem
-from games import MeanPayoffGraph
+from. import mpgcpp
+from ..csp.max_atom import MaxAtomSystem
+from ..games import MeanPayoffGraph
 
 def solve_max_atom_csp(system: MaxAtomSystem,as_dict=True) -> Union[List[Any],Dict[str, Any]]:
     """
@@ -33,12 +33,12 @@ def optimal_strategy_pair(game: Union[MeanPayoffGraph,str], as_dict=None) -> Uni
     match game:
         case MeanPayoffGraph():
             if as_dict is None:
-                dict = True
+                as_dict = True
             mapper = dict(zip(game.nodes, range(len(game.nodes))))
             game_cxx: List[Tuple[int, int, int]] = []
             n=len(game.nodes)
             for u, v in game.edges:
-                game_cxx.append((mapper[u], mapper[v], game.edges[u, v]['weight']))
+                game_cxx.append((mapper[u], mapper[v], int(game.edges[u, v]['weight'])))
             S_max, S_min = mpgcpp.optimal_strategy_pair_edges_cxx(game_cxx)
             inverse_mapper = {mapper[k]: k for k in mapper}
             S_max = [inverse_mapper[i] for i in S_max]
@@ -49,8 +49,8 @@ def optimal_strategy_pair(game: Union[MeanPayoffGraph,str], as_dict=None) -> Uni
             pass
         case _:
             if as_dict is None:
-                dict = False
-            S_max,S_min=mpgcpp.optimal_strategy_pair_file_cxx(game)
+                as_dict = False
+            S_max,S_min=mpgcpp.optimal_strategy_pair_file_cxx(game_cxx)
             if as_dict:
                 raise RuntimeError("Argument as_dict is not supported for file input")
 
