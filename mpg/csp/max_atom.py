@@ -205,6 +205,9 @@ class TernaryMaxAtomSystem(ConstraintSatisfactionProblem):
                 self.assignment = self._arc_consistency_optimized(L=L, R=R)
             case "ACOS" | "arc_consistency_optimized_set" | "arc-consistency-optimized-set":
                 self.assignment = self._arc_consistency_optimized_set(L=L, R=R)
+            case "ACOCXX" | "arc_consistency_optimized_cxx" | "arc-consistency-optimized-cxx":
+                from ..wrapper import arc_consistency
+                self.assignment = arc_consistency(self)
         return self.assignment
 
     # Return True if there is an assignment on which every value is finite

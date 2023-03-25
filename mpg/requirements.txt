@@ -1,0 +1,9 @@
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+tensorflow
+jupyterlab
+yfiles_jupyter_graphs
+networkx

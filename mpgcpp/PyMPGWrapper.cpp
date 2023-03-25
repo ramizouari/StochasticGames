@@ -2,6 +2,9 @@
 #include <iostream>
 #include "game/MeanPayoffGame.h"
 #include "mpgio/MPGReader.h"
+#include <boost/mpl/for_each.hpp>
+#include <boost/mpl/list.hpp>
+#include <boost/type_index.hpp>
 
 namespace py = boost::python;
 //TO list
@@ -71,27 +74,30 @@ namespace py = boost::python;
 //    return v;
 //}
 
-std::vector<std::tuple<int,int,int>> from_python_edges(const py::list &l)
+template<typename R>
+std::vector<std::tuple<int,int,R>> from_python_edges(const py::list &l)
 {
-    std::vector<std::tuple<int,int,int>> v;
+    std::vector<std::tuple<int,int,R>> v;
     for (int i=0; i<py::len(l); i++)
     {
         py::tuple t=py::extract<py::tuple>(l[i]);
-        v.emplace_back(py::extract<int>(t[0]),py::extract<int>(t[1]),py::extract<int>(t[2]));
+        v.emplace_back(py::extract<int>(t[0]),py::extract<int>(t[1]),py::extract<R>(t[2]));
     }
     return v;
 }
 
-MaxAtomSystem<integer> from_max_atom_constraint(const py::list &l)
+
+template<typename R>
+MaxAtomSystem<R> from_max_atom_constraint(const py::list &l)
 {
-    MaxAtomSystem<integer> v;
+    MaxAtomSystem<R> v;
     for (int i=0; i<py::len(l); i++)
     {
         py::tuple t=py::extract<py::tuple>(l[i]);
         v.add_constraint(Variable(py::extract<integer>(t[0])),
                          Variable(py::extract<integer>(t[1])),
                          Variable(py::extract<integer>(t[2])),
-                         py::extract<integer>(t[3]));
+                         py::extract<R>(t[3]));
     }
     return v;
 }
@@ -134,42 +140,45 @@ py::tuple to_python_winners(const std::vector<bool>&p1,const std::vector<bool> &
     return py::make_tuple(to_list(p1),to_list(p2));
 }
 
+template<typename R>
 py::tuple optimal_strategy_pair_edges(const py::list &_edges)
 {
-    std::vector<std::tuple<int,int,int>> edges=from_python_edges(_edges);
+    std::vector<std::tuple<int,int,R>> edges=from_python_edges<R>(_edges);
     int n=0;
     for (auto [u,v,w] : edges) {
         n = std::max(n, u+1);
         n = std::max(n, v+1);
     }
-    Implementation::HashMap::MeanPayoffGame<integer> mpg(n);
+    Implementation::HashMap::MeanPayoffGame<R> mpg(n);
     for (auto [u,v,w] : edges)
         mpg.add_edge(u,v,w);
-    Implementation::Vector::MaxAtomSystemSolver<integer> solver;
+    Implementation::Vector::MaxAtomSystemSolver<R> solver;
     auto [strategy0, strategy1] = optimal_strategy_pair(mpg, solver);
     return to_python_pair_strategies(strategy0, strategy1);
 }
 
+template<typename R>
 py::tuple optimal_strategy_pair_file(const std::string &filename)
 {
-    MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<integer>>(filename);
-    Implementation::Vector::MaxAtomSystemSolver<integer> solver;
+    MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<R>>(filename);
+    Implementation::Vector::MaxAtomSystemSolver<R> solver;
     auto [strategy0, strategy1] = optimal_strategy_pair(mpg, solver);
     return to_python_pair_strategies(strategy0, strategy1);
 }
 
+template<typename R>
 py::tuple winners_edges(const py::list &_edges)
 {
-    std::vector<std::tuple<int,int,int>> edges=from_python_edges(_edges);
+    std::vector<std::tuple<int,int,R>> edges=from_python_edges<R>(_edges);
     int n=0;
     for (auto [u,v,w] : edges) {
         n = std::max(n, u+1);
         n = std::max(n, v+1);
     }
-    Implementation::HashMap::MeanPayoffGame<integer> mpg(n);
+    Implementation::HashMap::MeanPayoffGame<R> mpg(n);
     for (auto [u,v,w] : edges)
         mpg.add_edge(u,v,w);
-    Implementation::Vector::MaxAtomSystemSolver<integer> solver;
+    Implementation::Vector::MaxAtomSystemSolver<R> solver;
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto [winners0, winners1] = winners(mpg, strategyPair);
     std::vector<bool> winners0_bool(winners0.begin(), winners0.end());
@@ -177,10 +186,11 @@ py::tuple winners_edges(const py::list &_edges)
     return to_python_winners(winners0_bool, winners1_bool);
 }
 
+template<typename R>
 py::tuple winners_file(const std::string &filename)
 {
-    MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<integer>>(filename);
-    Implementation::Vector::MaxAtomSystemSolver<integer> solver;
+    MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<R>>(filename);
+    Implementation::Vector::MaxAtomSystemSolver<R> solver;
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto [winners0, winners1] = winners(mpg, strategyPair);
     std::vector<bool> winners0_bool(winners0.begin(), winners0.end());
@@ -188,36 +198,39 @@ py::tuple winners_file(const std::string &filename)
     return to_python_winners(winners0_bool, winners1_bool);
 }
 
+template<typename R>
 py::tuple mean_payoffs_edges(const py::list &_edges)
 {
-    std::vector<std::tuple<int,int,int>> edges=from_python_edges(_edges);
+    std::vector<std::tuple<int,int,R>> edges=from_python_edges<R>(_edges);
     int n=0;
     for (auto [u,v,w] : edges) {
         n = std::max(n, u+1);
         n = std::max(n, v+1);
     }
-    Implementation::HashMap::MeanPayoffGame<integer> mpg(n);
+    Implementation::HashMap::MeanPayoffGame<R> mpg(n);
     for (auto [u,v,w] : edges)
         mpg.add_edge(u,v,w);
-    Implementation::Vector::MaxAtomSystemSolver<integer> solver;
+    Implementation::Vector::MaxAtomSystemSolver<R> solver;
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto [meanPayoff0, meanPayoff1] = mean_payoffs(mpg, strategyPair);
     return to_python_mean_payoffs(meanPayoff0, meanPayoff1);
 }
 
+template<typename R>
 py::tuple mean_payoffs_file(const std::string &filename)
 {
-    MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<integer>>(filename);
-    Implementation::Vector::MaxAtomSystemSolver<integer> solver;
+    MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<R>>(filename);
+    Implementation::Vector::MaxAtomSystemSolver<R> solver;
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto [meanPayoff0, meanPayoff1] = mean_payoffs(mpg, strategyPair);
     return to_python_mean_payoffs(meanPayoff0, meanPayoff1);
 }
 
+template<typename R>
 py::list arc_consistency(const py::list &_system)
 {
-    auto system=from_max_atom_constraint(_system);
-    Implementation::Vector::MaxAtomSystemSolver<integer> solver;
+    auto system=from_max_atom_constraint<R>(_system);
+    Implementation::Vector::MaxAtomSystemSolver<R> solver;
     auto solution = solver.solve(system);
     py::list solution_python;
     for(auto value:solution)
@@ -225,19 +238,39 @@ py::list arc_consistency(const py::list &_system)
         if(value==inf_min)
             solution_python.append("-inf");
         else
-            solution_python.append(std::get<integer>(value));
+            solution_python.append(std::get<R>(value));
     }
     return solution_python;
 }
 
+using Types=boost::mpl::list<int,integer, float, double>;
+
 BOOST_PYTHON_MODULE(mpgcpp)
 {
     using namespace boost::python;
-    def("optimal_strategy_pair_edges_cxx", optimal_strategy_pair_edges);
-    def("optimal_strategy_pair_file_cxx", optimal_strategy_pair_file);
-    def("winners_edges_cxx", winners_edges);
-    def("winners_file_cxx", winners_file);
-    def("mean_payoffs_edges_cxx", mean_payoffs_edges);
-    def("mean_payoffs_file_cxx", mean_payoffs_file);
-    def("arc_consistency_cxx", arc_consistency);
+    boost::mpl::for_each<Types>([](auto arg){
+        using R=decltype(arg);
+        auto name = boost::typeindex::type_id<R>().pretty_name();
+        auto ospe="optimal_strategy_pair_"+name+"_edges_cxx";
+        auto ospf="optimal_strategy_pair_"+name+"_file_cxx";
+        auto we="winners_"+name+"_edges_cxx";
+        auto wf="winners_"+name+"_file_cxx";
+        auto mpe="mean_payoffs_"+name+"_edges_cxx";
+        auto mpf="mean_payoffs_"+name+"_file_cxx";
+        auto ac="arc_consistency_"+name+"_cxx";
+        def(ospe.c_str(), optimal_strategy_pair_edges<R>);
+        def(ospf.c_str(), optimal_strategy_pair_file<R>);
+        def(we.c_str(), winners_edges<R>);
+        def(wf.c_str(), winners_file<R>);
+        def(mpe.c_str(), mean_payoffs_edges<R>);
+        def(mpf.c_str(), mean_payoffs_file<R>);
+        def(ac.c_str(), arc_consistency<R>);
+    });
+    def("optimal_strategy_pair_edges_cxx", optimal_strategy_pair_edges<integer>);
+    def("optimal_strategy_pair_file_cxx", optimal_strategy_pair_file<integer>);
+    def("winners_edges_cxx", winners_edges<integer>);
+    def("winners_file_cxx", winners_file<integer>);
+    def("mean_payoffs_edges_cxx", mean_payoffs_edges<integer>);
+    def("mean_payoffs_file_cxx", mean_payoffs_file<integer>);
+    def("arc_consistency_cxx", arc_consistency<integer>);
 }
