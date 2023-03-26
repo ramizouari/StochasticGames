@@ -23,6 +23,10 @@ class VertexVariable(ma.Variable):
         name = f"V_{turn}({vertex})"
         super().__init__(id=(vertex, turn), name=name)
 
+    def __iter__(self):
+        yield self.id[0]
+        yield self.id[1]
+
 
 class MeanPayoffGraph(nx.DiGraph):
     """

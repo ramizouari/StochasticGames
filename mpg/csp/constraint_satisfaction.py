@@ -53,6 +53,7 @@ class VariableGenerator:
     def variable_name(self, id):
         return f"{self.name}[{id}]"
 
+
     def __call__(self) -> Variable:
         """
         Generate a new variable.
