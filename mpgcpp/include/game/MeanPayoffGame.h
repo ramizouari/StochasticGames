@@ -4,7 +4,6 @@
 
 #ifndef MPGCPP_MEANPAYOFFGAME_H
 #define MPGCPP_MEANPAYOFFGAME_H
-#include "graph/graph.h"
 #include "csp/MinMaxSystem.h"
 #include <optional>
 #include <memory>
