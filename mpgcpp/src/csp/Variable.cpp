@@ -2,7 +2,7 @@
 // Created by ramizouari on 12/03/23.
 //
 
-#include "Variable.h"
+#include "csp/Variable.h"
 
 std::strong_ordering Variable::operator<=>(const uint64_t &other) const {
     return id<=>other;

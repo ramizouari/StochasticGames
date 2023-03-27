@@ -19,11 +19,15 @@ def _type_cxx_intermediate(edgetype):
                 raise ValueError("Unknown edge type")
     return edgetype_
 
+class IdentityMap:
+    def __getitem__(self, item):
+        return item
+
 def optimal_strategy_pair(game: Union[MeanPayoffGraph,str], as_dict=None,edgetype=None) -> Union[List[Any], Dict[str, Any]]:
     """
     Computes an optimal strategy pair for a mean payoff game
     :param game: The mean payoff game, either as a MeanPayoffGraph object or as a path to a file
-    :param timeout: The timeout in seconds
+    :param as_dict: If True, the result is returned as a dictionary, otherwise as a list
     :return: A dictionary containing the solution
     """
     n:int
@@ -31,7 +35,10 @@ def optimal_strategy_pair(game: Union[MeanPayoffGraph,str], as_dict=None,edgetyp
         case MeanPayoffGraph():
             if as_dict is None:
                 as_dict = True
-            mapper = dict(zip(game.nodes, range(len(game.nodes))))
+            if as_dict:
+                mapper = dict(zip(game.nodes, range(len(game.nodes))))
+            else:
+                mapper = IdentityMap()
             game_cxx: List[Tuple[int, int, int]] = []
             n=len(game.nodes)
             edgetype_ = None
@@ -51,10 +58,10 @@ def optimal_strategy_pair(game: Union[MeanPayoffGraph,str], as_dict=None,edgetyp
                     S_max, S_min = mpgcpp.optimal_strategy_pair_float_edges_cxx(game_cxx)
                 case _:
                     raise ValueError("Unknown edge type")
-            inverse_mapper = {mapper[k]: k for k in mapper}
-            S_max = [inverse_mapper[i] for i in S_max]
-            S_min = [inverse_mapper[i] for i in S_min]
             if as_dict:
+                inverse_mapper = {mapper[k]: k for k in mapper}
+                S_max = [inverse_mapper[i] for i in S_max]
+                S_min = [inverse_mapper[i] for i in S_min]
                 S_max = {u: S_max[i] for i, u in enumerate(game.nodes)}
                 S_min = {u: S_min[i] for i, u in enumerate(game.nodes)}
             pass
@@ -85,7 +92,10 @@ def winners(game: Union[MeanPayoffGraph,str], as_dict=True,edgetype=None) -> Uni
     n:int
     match game:
         case MeanPayoffGraph():
-            mapper = dict(zip(game.nodes, range(len(game.nodes))))
+            if as_dict:
+                mapper = dict(zip(game.nodes, range(len(game.nodes))))
+            else:
+                mapper = IdentityMap()
             game_cxx: List[Tuple[int, int, int]] = []
             n=len(game.nodes)
             edgetype_ = None
@@ -124,7 +134,10 @@ def mean_payoffs(game: Union[MeanPayoffGraph,str], as_dict=True,edgetype=None) -
     n:int
     match game:
         case MeanPayoffGraph():
-            mapper = dict(zip(game.nodes, range(len(game.nodes))))
+            if as_dict:
+                mapper = dict(zip(game.nodes, range(len(game.nodes))))
+            else:
+                mapper = IdentityMap()
             game_cxx: List[Tuple[int, int, int]] = []
             n=len(game.nodes)
             if edgetype is not None:

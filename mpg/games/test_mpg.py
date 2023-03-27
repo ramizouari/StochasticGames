@@ -1,5 +1,6 @@
 import pytest
 from . import mpg
+from ..graph import random_graph
 
 class MPGData:
     def __init__(self, game:mpg.MeanPayoffGraph, index:int, turn:int):
@@ -11,7 +12,7 @@ class MPGData:
         yield self.game
         yield self.index
         yield self.turn
-@pytest.fixture(scope='class', params=range(5))
+@pytest.fixture(scope='class', params=range(8))
 def special_mpg(request)->MPGData:
     n=request.param
     game=mpg.MeanPayoffGraph()
@@ -41,6 +42,11 @@ def special_mpg(request)->MPGData:
                                  (0, 1, 5)])
             if n==4:
                 turn=mpg.MeanPayoffGraph.player1
+        case _:
+            if n%2==0:
+                game= random_graph.gnm_random_mpg(n=10,m=20,seed=n,method="fast",loops=True,distribution="integers",low=-7,high=8)
+            else:
+                game= random_graph.gnp_random_mpg(n=10,p=0.5,seed=n,method="fast",loops=True,distribution="integers",low=-7,high=8)
     return MPGData(game, index, turn)
 
 class TestMPG:

@@ -2,17 +2,18 @@ cmake_minimum_required(VERSION 3.24)
 project(mpgcpp)
 
 set(CMAKE_CXX_STANDARD 20)
-set(HEADER_FILES game/MeanPayoffGame.h csp/Variable.h csp/MaxAtomSystem.h csp/MinMaxSystem.h IntRange.h mpgio/MPGReader.h Writer.h ProgramOptions.h)
-set(SOURCE_FILES csp/Variable.cpp Writer.cpp ProgramOptions.cpp)
+set(HEADER_FILES include/game/MeanPayoffGame.h include/csp/Variable.h include/csp/MaxAtomSystem.h include/csp/MinMaxSystem.h include/IntRange.h include/mpgio/MPGReader.h include/Writer.h include/ProgramOptions.h)
+set(SOURCE_FILES src/csp/Variable.cpp src/Writer.cpp src/ProgramOptions.cpp)
 #Headers
-include_directories(.)
-include_directories(CPLibrary/include)
-add_library(CPLibrary STATIC IMPORTED)
+include_directories(include)
+include_directories(external/CPLibrary/include)
+include_directories(external)
+
 # Include boost headers
 find_package(Boost COMPONENTS iostreams program_options log python REQUIRED)
 
-add_executable(MPGSolver MPGSolver.cpp ${HEADER_FILES} ${SOURCE_FILES})
-add_executable(MPGGenerator MPGGenerator.cpp ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(MPGSolver src/MPGSolver.cpp ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(MPGGenerator src/MPGGenerator.cpp ${HEADER_FILES} ${SOURCE_FILES})
 
 target_link_libraries(MPGSolver Boost::iostreams Boost::program_options Boost::log pthread)
 target_link_libraries(MPGGenerator Boost::iostreams Boost::program_options Boost::log pthread)
@@ -36,7 +37,7 @@ else()
     set(LIBRARY_NAME "${CMAKE_SHARED_LIBRARY_PREFIX}${WRAPPER_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}")
     configure_file(mpgcpp.template "${WRAPPER_NAME}.py")
 
-    add_library(MPGPyWrapper SHARED PyMPGWrapper.cpp ${HEADER_FILES} ${SOURCE_FILES})
+    add_library(MPGPyWrapper SHARED src/PyMPGWrapper.cpp ${HEADER_FILES} ${SOURCE_FILES})
 
     set_target_properties(MPGPyWrapper PROPERTIES OUTPUT_NAME ${WRAPPER_NAME})
     target_link_libraries(MPGPyWrapper Boost::iostreams Boost::program_options Boost::log pthread Boost::python)

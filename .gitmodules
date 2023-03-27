@@ -1,10 +1,10 @@
 [submodule "mpgcpp/CPLibrary"]
-	path = mpgcpp/CPLibrary
+	path = mpgcpp/external/CPLibrary
 	url = git@github.com:ramizouari/CPLibrary.git
 [submodule "mpgcpp/concurrentqueue"]
-	path = mpgcpp/concurrentqueue
+	path = mpgcpp/external/concurrentqueue
 	url = https://github.com/cameron314/concurrentqueue
 [submodule "mpgcpp/pybind11"]
-	path = mpgcpp/pybind11
+	path = mpgcpp/external/pybind11
 	url = https://github.com/pybind/pybind11
 	branch = stable

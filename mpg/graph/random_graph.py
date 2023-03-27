@@ -122,10 +122,10 @@ def gnm_random_graph_sinkless(n: int, m: int, create_using: Type[GraphType] = nx
     # Generate a set of edges
     S = set()
     for u in range(n):
-        v = generator.integers(0, n)
+        v = generator.integers(0, n,dtype=int)
         if not loops and u == v:
             while v == u:
-                v = generator.integers(0, n)
+                v = generator.integers(0, n,dtype=int)
         S.add((u, v))
         G.add_edge(u, v, weight=generator.random())
     match method:
@@ -139,11 +139,11 @@ def gnm_random_graph_sinkless(n: int, m: int, create_using: Type[GraphType] = nx
             return G
         case "fast":
             while len(S) < m:
-                u = generator.integers(0, n)
-                v = generator.integers(0, n)
+                u = generator.integers(0, n,dtype=int)
+                v = generator.integers(0, n,dtype=int)
                 if not loops and u == v:
                     while v == u:
-                        v = generator.integers(0, n)
+                        v = generator.integers(0, n,dtype=int)
                 G.add_edge(u, v, weight=generator.random())
                 S.add((u, v))
             return G

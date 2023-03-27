@@ -7,3 +7,4 @@ tensorflow
 jupyterlab
 yfiles_jupyter_graphs
 networkx
+pytest

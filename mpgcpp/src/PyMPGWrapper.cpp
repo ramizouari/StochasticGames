@@ -243,6 +243,37 @@ py::list arc_consistency(const py::list &_system)
     return solution_python;
 }
 
+template<typename T>
+struct named_type;
+
+template<>
+struct named_type<int>
+{
+    static constexpr const char* name = "int";
+    using type=int;
+};
+
+template<>
+struct named_type<float>
+{
+    static constexpr const char* name = "float";
+    using type=float;
+};
+
+template<>
+struct named_type<double>
+{
+    static constexpr const char* name = "double";
+    using type=double;
+};
+
+template<>
+struct named_type<integer>
+{
+    static constexpr const char* name = "integer";
+    using type=integer;
+};
+
 using Types=boost::mpl::list<int,integer, float, double>;
 
 BOOST_PYTHON_MODULE(mpgcpp)
@@ -250,7 +281,7 @@ BOOST_PYTHON_MODULE(mpgcpp)
     using namespace boost::python;
     boost::mpl::for_each<Types>([](auto arg){
         using R=decltype(arg);
-        auto name = boost::typeindex::type_id<R>().pretty_name();
+        std::string name = named_type<R>::name;
         auto ospe="optimal_strategy_pair_"+name+"_edges_cxx";
         auto ospf="optimal_strategy_pair_"+name+"_file_cxx";
         auto we="winners_"+name+"_edges_cxx";
