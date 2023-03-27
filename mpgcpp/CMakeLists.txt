@@ -55,3 +55,6 @@ else()
     # Install the python wrapper script
     install(FILES "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_NAME}.py" DESTINATION ${MPG_PYTHON})
 endif()
+
+set(MPG_SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+add_subdirectory(example)

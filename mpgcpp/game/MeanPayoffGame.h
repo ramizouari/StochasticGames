@@ -511,22 +511,24 @@ MeanPayoffsPair<Real> mean_payoffs(const MeanPayoffGameBase<weights_type> &game,
     using R=weights_type;
     auto n=game.count_nodes();
     std::vector<bool> visited(2*n),has_value(2*n);
+    std::vector<integer> length(2*n);
+    integer current_length=0;
     MeanPayoffsPair<Real> payoffs{std::vector<Real>(n), std::vector<Real>(n)};
     for(int i=0;i<(2*n);i++) if(!visited[i])
     {
         std::vector<int> path;
-        int current=i,length=0;
+        int current=i;
         Real mean_payoff=0;
         std::vector<Real> payoffs_sum(2*n);
+        length[i]=1;
         while(!visited[current])
         {
-            length++;
             visited[current]=true;
             path.push_back(current);
             int next;
             auto [u,player]=Bipartite::decode(current);
             auto v=strategy_pair[player][u];
-            next=Bipartite::encode(strategy_pair.strategy_0[u], !player);
+            next=Bipartite::encode(strategy_pair[player][u], !player);
 
             if(has_value[next])
                 mean_payoff=payoffs[!player][v];
@@ -536,10 +538,13 @@ MeanPayoffsPair<Real> mean_payoffs(const MeanPayoffGameBase<weights_type> &game,
                 {
                     Real long_payoff= game.get_weight(u, v).value() + payoffs_sum[current];
                     Real short_payoff=payoffs_sum[next];
-                    mean_payoff=(long_payoff-short_payoff)/length;
+                    mean_payoff=(long_payoff-short_payoff)/(length[current]-length[next]+1);
                 }
                 else
-                    payoffs_sum[next]=game.get_weight(u, v).value() + payoffs_sum[current];
+                {
+                    payoffs_sum[next] = game.get_weight(u, v).value() + payoffs_sum[current];
+                    length[next]=length[current]+1;
+                }
             }
             current=next;
         }
