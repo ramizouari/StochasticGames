@@ -103,6 +103,7 @@ else()
 
         include(GoogleTest)
         gtest_discover_tests(TernaryMaxAtomTest)
+        gtest_discover_tests(MaxAtomTest)
     endif()
 
 endif()
