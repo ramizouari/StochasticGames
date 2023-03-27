@@ -74,4 +74,9 @@ public:
     }
 };
 
+namespace Print
+{
+    std::ostream &operator<<(std::ostream &os, const Variable &variable);
+}
+
 #endif //MPGCPP_VARIABLE_H

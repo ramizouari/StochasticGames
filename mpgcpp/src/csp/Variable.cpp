@@ -27,3 +27,10 @@ Variable *VariableFactorySet::create() {
 void VariableFactorySet::add(const Variable& v) {
     predefined.insert(v);
 }
+
+namespace Print {
+    std::ostream &operator<<(std::ostream &os, const Variable &variable)
+    {
+        return os << '@' << variable.get_id();
+    }
+}
