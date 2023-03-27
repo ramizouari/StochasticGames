@@ -3,6 +3,7 @@
 //
 #include <gtest/gtest.h>
 #include "csp/MaxAtomSystem.h"
+#include "csp/MaxAtomSolver.h"
 #include <random>
 
 class incremental_random_engine

@@ -2,6 +2,7 @@
 #include <iostream>
 #include "game/MeanPayoffGame.h"
 #include "mpgio/MPGReader.h"
+#include "csp/MaxAtomSolver.h"
 #include <boost/mpl/for_each.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/type_index.hpp>

@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.24)
 project(mpgcpp)
+message(STATUS "Install directory: ${CMAKE_INSTALL_PREFIX}")
 
 set(CMAKE_CXX_STANDARD 20)
-set(HEADER_FILES include/game/MeanPayoffGame.h include/csp/Variable.h include/csp/MaxAtomSystem.h include/csp/MinMaxSystem.h include/IntRange.h include/mpgio/MPGReader.h include/Writer.h include/ProgramOptions.h)
+set(HEADER_FILES include/game/MeanPayoffGame.h include/csp/Variable.h include/csp/MaxAtomSystem.h include/csp/MinMaxSystem.h include/IntRange.h include/mpgio/MPGReader.h include/Writer.h include/ProgramOptions.h include/csp/MaxAtomSolver.h)
 set(SOURCE_FILES src/csp/Variable.cpp src/Writer.cpp src/ProgramOptions.cpp)
 #Headers
 include_directories(include)
@@ -20,8 +21,8 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 # Include boost headers
 find_package(Boost COMPONENTS iostreams program_options log python REQUIRED)
 
-add_executable(MPGSolver src/MPGSolver.cpp ${HEADER_FILES} ${SOURCE_FILES})
-add_executable(MPGGenerator src/MPGGenerator.cpp ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(MPGSolver src/MPGSolver.cpp ${HEADER_FILES} ${SOURCE_FILES} include/csp/MaxAtomSolver.h)
+add_executable(MPGGenerator src/MPGGenerator.cpp ${HEADER_FILES} ${SOURCE_FILES} include/csp/MaxAtomSolver.h)
 
 target_link_libraries(MPGSolver Boost::iostreams Boost::program_options Boost::log pthread)
 target_link_libraries(MPGGenerator Boost::iostreams Boost::program_options Boost::log pthread)
@@ -45,7 +46,7 @@ else()
     set(LIBRARY_NAME "${CMAKE_SHARED_LIBRARY_PREFIX}${WRAPPER_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}")
     configure_file(mpgcpp.template "${WRAPPER_NAME}.py")
 
-    add_library(MPGPyWrapper SHARED src/PyMPGWrapper.cpp ${HEADER_FILES} ${SOURCE_FILES})
+    add_library(MPGPyWrapper SHARED src/PyMPGWrapper.cpp ${HEADER_FILES} ${SOURCE_FILES} include/csp/MaxAtomSolver.h)
 
     set_target_properties(MPGPyWrapper PROPERTIES OUTPUT_NAME ${WRAPPER_NAME})
     target_link_libraries(MPGPyWrapper Boost::iostreams Boost::program_options Boost::log pthread Boost::python)
@@ -79,18 +80,29 @@ else()
         enable_testing()
 
         add_executable(
-                MPGTest
+                TernaryMaxAtomTest
                 tests/ternary_max_test.cpp
                 tests/ternary_max_double_test.cpp
                 src/csp/Variable.cpp
+                include/csp/MaxAtomSolver.h)
+        add_executable(
+                MaxAtomTest
+                tests/nary_max_test.cpp
+                tests/nary_max_double_test.cpp
+                tests/utils.cpp
+                src/csp/Variable.cpp
+                include/csp/MaxAtomSolver.h tests/utils.h tests/utils.cpp)
+        target_link_libraries(
+                TernaryMaxAtomTest
+                GTest::gtest_main
         )
         target_link_libraries(
-                MPGTest
+                MaxAtomTest
                 GTest::gtest_main
         )
 
         include(GoogleTest)
-        gtest_discover_tests(MPGTest)
+        gtest_discover_tests(TernaryMaxAtomTest)
     endif()
 
 endif()

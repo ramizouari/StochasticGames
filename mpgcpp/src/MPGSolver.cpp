@@ -9,6 +9,7 @@
 #include <future>
 #include <syncstream>
 #include "concurrentqueue/concurrentqueue.h"
+#include "csp/MaxAtomSolver.h"
 
 void process_game(const std::filesystem::path& path,Result::ParallelWriter& outputWriter, const boost::program_options::variables_map& vm)
 {

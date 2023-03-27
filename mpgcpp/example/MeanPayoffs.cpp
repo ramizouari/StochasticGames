@@ -4,6 +4,7 @@
 
 #include "game/MeanPayoffGame.h"
 #include "csp/MaxAtomSystem.h"
+#include "csp/MaxAtomSolver.h"
 #include <iostream>
 int main()
 {

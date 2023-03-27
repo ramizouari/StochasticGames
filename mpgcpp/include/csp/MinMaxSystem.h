@@ -145,7 +145,7 @@ public:
         return constraints;
     }
 
-    NaryMaxAtomSystem<R> to_nary_max_system()
+    NaryMaxAtomSystem<R> to_nary_max_system() const
     {
         NaryMaxAtomSystem<R> system;
         std::map<std::pair<Variable,R>,Variable> mapper;
@@ -182,6 +182,12 @@ public:
             }
         }
         return system;
+    }
+
+    [[nodiscard]]
+    size_t count_variables() const
+    {
+        return n;
     }
 };
 

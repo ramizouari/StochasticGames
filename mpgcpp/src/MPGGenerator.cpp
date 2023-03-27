@@ -4,6 +4,7 @@
 #include <iostream>
 #include "game/MeanPayoffGame.h"
 #include "csp/MinMaxSystem.h"
+#include "csp/MaxAtomSolver.h"
 #include "mpgio/MPGReader.h"
 #include "Writer.h"
 #include "ProgramOptions.h"
