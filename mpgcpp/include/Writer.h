@@ -10,6 +10,7 @@
 #include <fstream>
 #include <vector>
 #include <memory>
+#include <mutex>
 
 namespace Result {
 

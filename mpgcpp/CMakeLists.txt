@@ -3,8 +3,10 @@ project(mpgcpp)
 message(STATUS "Install directory: ${CMAKE_INSTALL_PREFIX}")
 
 set(CMAKE_CXX_STANDARD 20)
-set(HEADER_FILES include/game/MeanPayoffGame.h include/csp/Variable.h include/csp/MaxAtomSystem.h include/csp/MinMaxSystem.h include/IntRange.h include/mpgio/MPGReader.h include/Writer.h include/ProgramOptions.h include/csp/MaxAtomSolver.h)
-set(SOURCE_FILES src/csp/Variable.cpp src/Writer.cpp src/ProgramOptions.cpp)
+set(HEADER_FILES include/game/MeanPayoffGame.h include/csp/Variable.h include/csp/MaxAtomSystem.h
+        include/csp/MaxAtomSolver.h include/csp/MinMaxSystem.h include/IntRange.h include/ProgramOptions.h
+        include/csp/MaxAtomSolver.h)
+set(SOURCE_FILES src/csp/Variable.cpp)
 #Headers
 include_directories(include)
 include_directories(external/CPLibrary/include)
@@ -21,8 +23,9 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 # Include boost headers
 find_package(Boost COMPONENTS iostreams program_options log python REQUIRED)
 
-add_executable(MPGSolver src/MPGSolver.cpp ${HEADER_FILES} ${SOURCE_FILES} include/csp/MaxAtomSolver.h)
-add_executable(MPGGenerator src/MPGGenerator.cpp ${HEADER_FILES} ${SOURCE_FILES} include/csp/MaxAtomSolver.h)
+add_executable(MPGSolver src/MPGSolver.cpp ${HEADER_FILES} ${SOURCE_FILES} src/Writer.cpp src/ProgramOptions.cpp)
+add_executable(MPGGenerator src/MPGGenerator.cpp ${HEADER_FILES} ${SOURCE_FILES}
+        src/Writer.cpp src/ProgramOptions.cpp)
 
 target_link_libraries(MPGSolver Boost::iostreams Boost::program_options Boost::log pthread)
 target_link_libraries(MPGGenerator Boost::iostreams Boost::program_options Boost::log pthread)
