@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.24)
 project(mpgcpp)
+set(CMAKE_INSTALL_PREFIX "$ENV{HOME}")
 message(STATUS "Install directory: ${CMAKE_INSTALL_PREFIX}")
 
 set(CMAKE_CXX_STANDARD 20)
 set(HEADER_FILES include/game/MeanPayoffGame.h include/csp/Variable.h include/csp/MaxAtomSystem.h
         include/csp/MaxAtomSolver.h include/csp/MinMaxSystem.h include/IntRange.h include/ProgramOptions.h
-        include/csp/MaxAtomSolver.h)
+        include/csp/MaxAtomSolver.h include/csp/solver/ParallelMaxAtomSolver.h)
 set(SOURCE_FILES src/csp/Variable.cpp)
 #Headers
 include_directories(include)

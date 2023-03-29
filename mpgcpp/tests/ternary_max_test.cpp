@@ -4,12 +4,13 @@
 #include <gtest/gtest.h>
 #include "csp/MaxAtomSystem.h"
 #include "csp/MaxAtomSolver.h"
+#include "utils.h"
 
 using Print::operator<<;
 
 // Demonstrate some basic assertions.
 TEST(UnsatisfiableSystemsTest, UNSAT_1) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     system.add_constraint(0,0,0,-1);
     auto assignment=solver.solve(system);
@@ -19,7 +20,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_1) {
 }
 
 TEST(UnsatisfiableSystemsTest, UNSAT_2) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     system.add_constraint(0,0,0,-1);
     system.add_constraint(0,0,0,1);
@@ -30,7 +31,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_2) {
 }
 
 TEST(UnsatisfiableSystemsTest, UNSAT_3) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     system.add_constraint(0,0,0,-1);
     system.add_constraint(0,0,0,1);
@@ -43,7 +44,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_3) {
 
 
 TEST(UnsatisfiableSystemsTest, UNSAT_4) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     system.add_constraint(0,1,1,-1);
     system.add_constraint(1,0,0,-1);
@@ -53,7 +54,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_4) {
     ASSERT_EQ(assignment, expected);
 }
 TEST(UnsatisfiableSystemsTest, UNSAT_5) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     system.add_constraint(0,1,2,-1);
     system.add_constraint(1,0,2,-1);
@@ -68,7 +69,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_5) {
 constexpr int N_VARIABLES_LARGE=1000;
 
 TEST(UnsatisfiableSystemsTest, UNSAT_6) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     for(int i=0;i<N_VARIABLES_LARGE;i++)
         system.add_constraint(i,(i+1)%N_VARIABLES_LARGE,(i+2)%N_VARIABLES_LARGE,-50);
@@ -80,7 +81,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_6) {
 }
 
 TEST(UnsatisfiableSystemsTest, UNSAT_7) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     for(int i=0;i<N_VARIABLES_LARGE;i++) for(int j=0;j<N_VARIABLES_LARGE;j++)
         system.add_constraint(i,j,j,0);
@@ -106,7 +107,7 @@ void test_sat(Container && assignment, const MaxAtomSystem<integer> &system)
 }
 
 TEST(SatisfactionTest, SAT_1) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     system.add_constraint(0,0,0,0);
     auto assignment=solver.solve(system);
@@ -115,7 +116,7 @@ TEST(SatisfactionTest, SAT_1) {
 }
 
 TEST(SatisfactionTest, SAT_2) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     system.add_constraint(0,0,0,0);
     system.add_constraint(0,0,0,1);
@@ -125,7 +126,7 @@ TEST(SatisfactionTest, SAT_2) {
 }
 
 TEST(SatisfactionTest, SAT_3) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     system.add_constraint(0,0,0,0);
     system.add_constraint(0,0,0,1);
@@ -136,7 +137,7 @@ TEST(SatisfactionTest, SAT_3) {
 }
 
 TEST(SatisfactionTest, SAT_4) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     system.add_constraint(0,1,1,1);
     system.add_constraint(1,0,0,1);
@@ -146,7 +147,7 @@ TEST(SatisfactionTest, SAT_4) {
 }
 
 TEST(SatisfactionTest, SAT_5) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     for(int i=0;i<N_VARIABLES_LARGE;i++)
         system.add_constraint(i,(i+1)%N_VARIABLES_LARGE,(i+2)%N_VARIABLES_LARGE,50);
@@ -155,7 +156,7 @@ TEST(SatisfactionTest, SAT_5) {
 }
 
 TEST(SatisfactionTest, SAT_6) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     for(int i=0;i<N_VARIABLES_LARGE;i++) for(int j=0;j<N_VARIABLES_LARGE;j++)
         system.add_constraint(i,j,j,0);
@@ -165,7 +166,7 @@ TEST(SatisfactionTest, SAT_6) {
 }
 
 TEST(SatisfactionTest, SAT_7) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     MaxAtomSystem<integer> system;
     for(int i=0;i<N_VARIABLES_LARGE;i++) for(int j=0;j<N_VARIABLES_LARGE;j++)
             system.add_constraint(i,j,j,50);

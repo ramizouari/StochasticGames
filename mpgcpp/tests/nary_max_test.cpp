@@ -14,7 +14,7 @@ constexpr integer N_VARIABLES_MEDIUM=100;
 constexpr integer N_VARIABLES_SMALL=10;
 
 TEST(UnsatisfiableSystemsTest, UNSAT_1) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     system.add_constraint(0,{0,0},-1);
     auto assignment=solver.solve(system);
@@ -24,7 +24,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_1) {
 }
 
 TEST(UnsatisfiableSystemsTest, UNSAT_2) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     system.add_constraint(0,{0},-1);
     auto assignment=solver.solve(system);
@@ -34,7 +34,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_2) {
 }
 
 TEST(UnsatisfiableSystemsTest, UNSAT_3) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     system.add_constraint(0,{0,1,2,3},-1);
     system.add_constraint(1,{0,1,2,3},-1);
@@ -47,7 +47,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_3) {
 }
 
 TEST(UnsatisfiableSystemsTest, UNSAT_4) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     system.add_constraint(0,{1,2},-1);
     system.add_constraint(1,{0,2},-1);
@@ -59,7 +59,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_4) {
 }
 
 TEST(UnsatisfiableSystemsTest, UNSAT_5) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     system.add_constraint(0,{1,2},-1);
     system.add_constraint(1,{0,2},-1);
@@ -72,7 +72,7 @@ TEST(UnsatisfiableSystemsTest, UNSAT_5) {
 }
 
 TEST(UnsatisfiableSystemsTest, UNSAT_6) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     std::vector<Variable> vars;
     for(integer i=0;i<N_VARIABLES_LARGE;i++)
@@ -84,33 +84,6 @@ TEST(UnsatisfiableSystemsTest, UNSAT_6) {
     for(integer i=0;i<N_VARIABLES_LARGE;i++)
         expected[i]=-inf;
     ASSERT_EQ(assignment, expected) << "Expected Unsatisfiable System";
-}
-
-using Print::operator<<;
-
-template<typename T>
-inline std::ostream& operator<<(std::ostream& os, const std::vector<T>& c)
-{
-    os << "{";
-    for(int i=0;i<c.size();i++)
-        os << c[i] << (i==c.size()-1?"":",");
-    os << "}";
-    return os;
-}
-template<typename K,typename T>
-inline std::ostream& operator<<(std::ostream& os, const std::unordered_map<K,T>& c)
-{
-    os << "{";
-    int k=0;
-    for(auto it=c.begin();it!=c.end();++it)
-    {
-        k++;
-        auto [k,v]=*it;
-        os << k << "->" << v << (k==c.size()-1?"":",");
-    }
-
-    os << "}";
-    return os;
 }
 
 template<typename Container>
@@ -130,7 +103,7 @@ void test_sat(Container && assignment, const NaryMaxAtomSystem<integer> &system)
 
 
 TEST(SatisfactionTest, SAT_1) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     system.add_constraint(0,{0,1},-1);
     system.add_constraint(1,{0,1},-1);
@@ -139,7 +112,7 @@ TEST(SatisfactionTest, SAT_1) {
 }
 
 TEST(SatisfactionTest, SAT_2) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     system.add_constraint(0,{0,1},1);
     system.add_constraint(1,{0,1},2);
@@ -149,7 +122,7 @@ TEST(SatisfactionTest, SAT_2) {
 }
 
 TEST(SatisfactionTest, SAT_3) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     system.add_constraint(0,{0,1},1);
     system.add_constraint(1,{0,1},2);
@@ -161,7 +134,7 @@ TEST(SatisfactionTest, SAT_3) {
 
 
 TEST(SatisfactionTest, SAT_4) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     std::vector<Variable> vars;
     for(integer i=0;i<N_VARIABLES_LARGE;i++)
@@ -172,7 +145,7 @@ TEST(SatisfactionTest, SAT_4) {
     test_sat(assignment,system);
 }
 TEST(SatisfactionTest, SAT_5) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     std::vector<Variable> vars;
     for(integer i=0;i<N_VARIABLES_LARGE;i++)
@@ -184,7 +157,7 @@ TEST(SatisfactionTest, SAT_5) {
 }
 
 TEST(SatisfactionTest, SAT_6) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     for(integer i=0;i<N_VARIABLES_SMALL;i++) for(int j=1;j<(1<<N_VARIABLES_SMALL);j++)
     {
@@ -201,7 +174,7 @@ TEST(SatisfactionTest, SAT_6) {
 }
 
 TEST(SatisfactionTest, SAT_7) {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     for(integer i=0;i<N_VARIABLES_SMALL;i++) for(int j=1;j<(1<<N_VARIABLES_SMALL);j++)
         {
@@ -249,7 +222,7 @@ using SatisfiablePseudoRandomTest_10_100 = SatisfiablePseudoRandomTest<10,100>;
 
 void pseudo_random_test(SatisfiablePseudoRandomTestBase & testBase)
 {
-    Implementation::HashMap::MaxAtomSystemSolver<integer> solver;
+    DefaultMaxAtomSolver<integer> solver;
     NaryMaxAtomSystem<integer> system;
     for(int i=0;i<testBase.variables;i++)
     {

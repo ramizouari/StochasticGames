@@ -29,6 +29,11 @@ public:
     {
         return id;
     }
+
+    explicit operator std::uint64_t () const
+    {
+        return id;
+    }
 };
 
 namespace std

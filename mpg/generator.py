@@ -63,7 +63,27 @@ class SaveGraphCallback(StepCallback):
         row["filename"]=filename
 
 
-def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,callbacks:List[Callback]=None) -> pd.DataFrame:
+def _generate_gnp_uniform_mpg_instance(benchmark,n,p=None,c=None,a=-1,b=1,callbacks:List[Callback]=None) -> mpg.MeanPayoffGraph:
+    p = min(p, 1)
+    start = timeit.default_timer()
+    execution_start_time = datetime.now()
+    graph = rg.gnp_random_mpg(n, p, distribution="integers", low=a, high=b, endpoint=True)
+    end = timeit.default_timer()
+    execution_end_time = datetime.now()
+    row = {"n": n, "c": c, "p": p,
+           "execution_start": execution_start_time,
+           "execution_end": execution_end_time, "time": end - start,
+           "nodes": graph.number_of_nodes(), "edges": graph.number_of_edges(),
+           "distribution": f"integers({a},{b})"}
+    for callback in callbacks:
+        callback(n=n, c=c, p=p, graph=graph, execution_start_time=execution_start_time,
+                 execution_end_time=execution_end_time,
+                 execution_time=end - start, iteration=i, row=row)
+    benchmark.append(row)
+
+
+
+def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,loops=True,callbacks:List[Callback]=None) -> pd.DataFrame:
     """
     Benchmark the mpg.gnp_random_mpg function
     :param N: An array of values, each value is the number of nodes in the graph
@@ -112,21 +132,7 @@ def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,cal
         for c,p in zip(C,P):
             for i in range(iterations):
                 p=min(p,1)
-                start=timeit.default_timer()
-                execution_start_time=datetime.now()
-                graph=rg.gnp_random_mpg(n,p,distribution="integers",low=a,high=b,endpoint=True)
-                end=timeit.default_timer()
-                execution_end_time=datetime.now()
-                row={"n":n,"c":c,"p":p,
-                                    "execution_start":execution_start_time,
-                                    "execution_end":execution_end_time,"time":end-start,
-                                    "nodes":graph.number_of_nodes(),"edges":graph.number_of_edges(),
-                                    "distribution":f"integers({a},{b})"}
-                for callback in callbacks:
-                    callback(n=n,c=c,p=p,graph=graph,execution_start_time=execution_start_time,
-                             execution_end_time=execution_end_time,
-                             execution_time=end-start,iteration=i,row=row)
-                benchmark.append(row)
+                _generate_gnp_uniform_mpg_instance(benchmark,n=n,p=p,c=c,a=a,b=b,callbacks=callbacks)
     return pd.DataFrame(benchmark)
 
 if __name__=="__main__":

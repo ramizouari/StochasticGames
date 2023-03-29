@@ -14,7 +14,7 @@ constexpr integer N_VARIABLES_MEDIUM=100;
 constexpr integer N_VARIABLES_SMALL=10;
 
 TEST(UnsatisfiableSystemsDoubleTest, UNSAT_1) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     system.add_constraint(0,{0,0},-1);
     auto assignment=solver.solve(system);
@@ -24,7 +24,7 @@ TEST(UnsatisfiableSystemsDoubleTest, UNSAT_1) {
 }
 
 TEST(UnsatisfiableSystemsDoubleTest, UNSAT_2) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     system.add_constraint(0,{0},-1);
     auto assignment=solver.solve(system);
@@ -34,7 +34,7 @@ TEST(UnsatisfiableSystemsDoubleTest, UNSAT_2) {
 }
 
 TEST(UnsatisfiableSystemsDoubleTest, UNSAT_3) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     system.add_constraint(0,{0,1,2,3},-1);
     system.add_constraint(1,{0,1,2,3},-1);
@@ -47,7 +47,7 @@ TEST(UnsatisfiableSystemsDoubleTest, UNSAT_3) {
 }
 
 TEST(UnsatisfiableSystemsDoubleTest, UNSAT_4) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     system.add_constraint(0,{1,2},-1);
     system.add_constraint(1,{0,2},-1);
@@ -59,7 +59,7 @@ TEST(UnsatisfiableSystemsDoubleTest, UNSAT_4) {
 }
 
 TEST(UnsatisfiableSystemsDoubleTest, UNSAT_5) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     system.add_constraint(0,{1,2},-1);
     system.add_constraint(1,{0,2},-1);
@@ -72,7 +72,7 @@ TEST(UnsatisfiableSystemsDoubleTest, UNSAT_5) {
 }
 
 TEST(UnsatisfiableSystemsDoubleTest, UNSAT_6) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     std::vector<Variable> vars;
     for(integer i=0;i<N_VARIABLES_LARGE;i++)
@@ -86,32 +86,7 @@ TEST(UnsatisfiableSystemsDoubleTest, UNSAT_6) {
     ASSERT_EQ(assignment, expected) << "Expected Unsatisfiable System";
 }
 
-using Print::operator<<;
 
-template<typename T>
-inline std::ostream& operator<<(std::ostream& os, const std::vector<T>& c)
-{
-    os << "{";
-    for(int i=0;i<c.size();i++)
-        os << c[i] << (i==c.size()-1?"":",");
-    os << "}";
-    return os;
-}
-template<typename K,typename T>
-inline std::ostream& operator<<(std::ostream& os, const std::unordered_map<K,T>& c)
-{
-    os << "{";
-    int k=0;
-    for(auto it=c.begin();it!=c.end();++it)
-    {
-        k++;
-        auto [k,v]=*it;
-        os << k << "->" << v << (k==c.size()-1?"":",");
-    }
-
-    os << "}";
-    return os;
-}
 
 constexpr double EPS=0.0000001;
 
@@ -132,7 +107,7 @@ void test_sat_approx(Container && assignment, const NaryMaxAtomSystem<double> &s
 
 
 TEST(SatisfactionDoubleTest, SAT_1) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     system.add_constraint(0,{0,1},-1);
     system.add_constraint(1,{0,1},-1);
@@ -141,7 +116,7 @@ TEST(SatisfactionDoubleTest, SAT_1) {
 }
 
 TEST(SatisfactionDoubleTest, SAT_2) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     system.add_constraint(0,{0,1},1);
     system.add_constraint(1,{0,1},2);
@@ -151,7 +126,7 @@ TEST(SatisfactionDoubleTest, SAT_2) {
 }
 
 TEST(SatisfactionDoubleTest, SAT_3) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     system.add_constraint(0,{0,1},1);
     system.add_constraint(1,{0,1},2);
@@ -163,7 +138,7 @@ TEST(SatisfactionDoubleTest, SAT_3) {
 
 
 TEST(SatisfactionDoubleTest, SAT_4) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     std::vector<Variable> vars;
     for(integer i=0;i<N_VARIABLES_LARGE;i++)
@@ -174,7 +149,7 @@ TEST(SatisfactionDoubleTest, SAT_4) {
     test_sat_approx(assignment,system);
 }
 TEST(SatisfactionDoubleTest, SAT_5) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     std::vector<Variable> vars;
     for(integer i=0;i<N_VARIABLES_LARGE;i++)
@@ -182,43 +157,6 @@ TEST(SatisfactionDoubleTest, SAT_5) {
     for(int i=0;i<N_VARIABLES_LARGE;i++)
         system.add_constraint(i,vars,10);
     auto assignment=solver.solve(system);
-    test_sat_approx(assignment,system);
-}
-
-TEST(SatisfactionDoubleTest, SAT_6) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
-    NaryMaxAtomSystem<double> system;
-    for(integer i=0;i<N_VARIABLES_SMALL;i++) for(int j=1;j<(1<<N_VARIABLES_SMALL);j++)
-        {
-            std::bitset<N_VARIABLES_SMALL> B(j);
-            std::vector<Variable> vars;
-            for(int k=0;k<N_VARIABLES_SMALL;k++)
-                if(B[k])
-                    vars.emplace_back(k);
-            system.add_constraint(i,vars,j);
-        }
-    auto assignment=solver.solve(system);
-    std::cout  << "Assignment: " << assignment  << '\n';
-    test_sat_approx(assignment,system);
-}
-
-TEST(SatisfactionDoubleTest, SAT_7) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
-    NaryMaxAtomSystem<double> system;
-    for(integer i=0;i<N_VARIABLES_SMALL;i++) for(int j=1;j<(1<<N_VARIABLES_SMALL);j++)
-        {
-            std::bitset<N_VARIABLES_SMALL> B(j);
-            std::vector<Variable> vars;
-            for(int k=0;k<N_VARIABLES_SMALL;k++)
-                if(B[k])
-                    vars.emplace_back(k);
-            if(j%2==0)
-                system.add_constraint(i,vars,j);
-            else
-                system.add_constraint(i,vars,-j);
-        }
-    auto assignment=solver.solve(system);
-    std::cout  << "Assignment: " << assignment  << '\n';
     test_sat_approx(assignment,system);
 }
 
@@ -247,9 +185,45 @@ using SatisfiablePseudoRandomDoubleTest_20 = SatisfiablePseudoRandomDoubleTest<1
 using SatisfiablePseudoRandomDoubleTest_50 = SatisfiablePseudoRandomDoubleTest<1,50>;
 using SatisfiablePseudoRandomDoubleTest_100 = SatisfiablePseudoRandomDoubleTest<1,100>;
 
+TEST_F(SatisfiablePseudoRandomDoubleTest_1, SAT_6)
+{
+    DefaultMaxAtomSolver<double> solver;
+    NaryMaxAtomSystem<double> system;
+    for(integer i=0;i<N_VARIABLES_SMALL;i++) for(int j=1;j<(1<<N_VARIABLES_SMALL);j++)
+        {
+            std::bitset<N_VARIABLES_SMALL> B(j);
+            std::vector<Variable> vars;
+            for(int k=0;k<N_VARIABLES_SMALL;k++)
+                if(B[k])
+                    vars.emplace_back(k);
+            system.add_constraint(i,vars,D(engine)*this->B(engine));
+        }
+    auto assignment=solver.solve(system);
+    std::cout  << "Assignment: " << assignment  << '\n';
+    test_sat_approx(assignment,system);
+}
+
+TEST_F(SatisfiablePseudoRandomDoubleTest_1, SAT_7)
+{
+    DefaultMaxAtomSolver<double> solver;
+    NaryMaxAtomSystem<double> system;
+    for(integer i=0;i<N_VARIABLES_SMALL;i++) for(int j=1;j<(1<<N_VARIABLES_SMALL);j++)
+        {
+            std::bitset<N_VARIABLES_SMALL> B(j);
+            std::vector<Variable> vars;
+            for(int k=0;k<N_VARIABLES_SMALL;k++)
+                if(B[k])
+                    vars.emplace_back(k);
+            system.add_constraint(i,vars,D(engine));
+        }
+    auto assignment=solver.solve(system);
+    std::cout  << "Assignment: " << assignment  << '\n';
+    test_sat_approx(assignment,system);
+}
+
 void pseudo_random_test(SatisfiablePseudoRandomDoubleTestBase & testBase)
 {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     NaryMaxAtomSystem<double> system;
     for(int i=0;i<testBase.variables;i++)
     {

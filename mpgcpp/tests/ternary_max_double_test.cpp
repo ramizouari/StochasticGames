@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 #include "csp/MaxAtomSystem.h"
 #include "csp/MaxAtomSolver.h"
+#include "utils.h"
 #include <random>
 
 class incremental_random_engine
@@ -29,7 +30,7 @@ struct SatisfactionDoubleTest : public TestFixtureBase {
 
 // Demonstrate some basic assertions.
 TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_1) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     system.add_constraint(0,0,0,-1);
     auto assignment=solver.solve(system);
@@ -39,7 +40,7 @@ TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_1) {
 }
 
 TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_2) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     system.add_constraint(0,0,0,-1);
     system.add_constraint(0,0,0,1);
@@ -50,7 +51,7 @@ TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_2) {
 }
 
 TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_3) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     system.add_constraint(0,0,0,-1);
     system.add_constraint(0,0,0,1);
@@ -63,7 +64,7 @@ TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_3) {
 
 
 TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_4) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     system.add_constraint(0,1,1,-1);
     system.add_constraint(1,0,0,-1);
@@ -73,7 +74,7 @@ TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_4) {
     ASSERT_EQ(assignment, expected);
 }
 TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_5) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     system.add_constraint(0,1,2,-1);
     system.add_constraint(1,0,2,-1);
@@ -89,7 +90,7 @@ constexpr int N_VARIABLES_LARGE=1000,N_VARIABLES_MEDIUM=100,N_VARIABLES_SMALL=10
 
 
 TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_6) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     for(int i=0;i<N_VARIABLES_LARGE;i++)
         system.add_constraint(i,(i+1)%N_VARIABLES_LARGE,(i+2)%N_VARIABLES_LARGE,-50);
@@ -101,7 +102,7 @@ TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_6) {
 }
 
 TEST_F(UnsatisfiableSystemsDoubleTest, UNSAT_7) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     for(int i=0;i<N_VARIABLES_LARGE;i++) for(int j=0;j<N_VARIABLES_LARGE;j++)
         system.add_constraint(i,j,j,0);
@@ -126,12 +127,12 @@ void test_double_sat(Container && assignment, const MaxAtomSystem<double> &syste
         auto y=std::get<1>(C);
         auto z=std::get<2>(C);
         auto w=std::get<3>(C);
-        ASSERT_TRUE(assignment[x]<=assignment[y]+assignment[z]+w+EPSILON) << "Constraint " << x << "<=" << y << "+" << z << "+" << w << " violated";
+        ASSERT_TRUE(assignment[x.get_id()]<=assignment[y.get_id()]+assignment[z.get_id()]+w+EPSILON) << "Constraint " << x << "<=" << y << "+" << z << "+" << w << " violated";
     }
 }
 
 TEST_F(SatisfactionDoubleTest, SAT_1) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     system.add_constraint(0,0,0,0);
     auto assignment=solver.solve(system);
@@ -140,7 +141,7 @@ TEST_F(SatisfactionDoubleTest, SAT_1) {
 }
 
 TEST_F(SatisfactionDoubleTest, SAT_2) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     system.add_constraint(0,0,0,0);
     system.add_constraint(0,0,0,0.5);
@@ -150,7 +151,7 @@ TEST_F(SatisfactionDoubleTest, SAT_2) {
 }
 
 TEST_F(SatisfactionDoubleTest, SAT_3) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     system.add_constraint(0,0,0,0);
     system.add_constraint(0,0,0,0.2);
@@ -161,7 +162,7 @@ TEST_F(SatisfactionDoubleTest, SAT_3) {
 }
 
 TEST_F(SatisfactionDoubleTest, SAT_4) {
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     system.add_constraint(0,1,1,1.25);
     system.add_constraint(1,0,0,0.2);
@@ -172,7 +173,7 @@ TEST_F(SatisfactionDoubleTest, SAT_4) {
 
 TEST_F(SatisfactionDoubleTest, SAT_5) {
     std::uniform_real_distribution<double> random(-10,10);
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     for(int i=0;i<N_VARIABLES_LARGE;i++)
         system.add_constraint(i,(i+1)%N_VARIABLES_LARGE,(i+2)%N_VARIABLES_LARGE,random(engine));
@@ -182,7 +183,7 @@ TEST_F(SatisfactionDoubleTest, SAT_5) {
 
 TEST_F(SatisfactionDoubleTest, SAT_6) {
     std::uniform_real_distribution<double> random(-10,10);
-    Implementation::HashMap::MaxAtomSystemSolver<double> solver;
+    DefaultMaxAtomSolver<double> solver;
     MaxAtomSystem<double> system;
     for(int i=0;i<N_VARIABLES_MEDIUM;i++) for(int j=0;j<N_VARIABLES_MEDIUM;j++)
         system.add_constraint(i,j,j,random(engine));
