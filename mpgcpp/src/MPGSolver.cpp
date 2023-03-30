@@ -172,13 +172,13 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    std::filesystem::path graphs_folder = vm["graphs-folder"].as<std::filesystem::path>();
-    std::filesystem::path output_file = vm["output"].as<std::filesystem::path>();
+    std::filesystem::path graphs_folder = vm.at("graphs-folder").as<std::filesystem::path>();
+    std::filesystem::path output_file = vm.at("output").as<std::filesystem::path>();
     Result::MultipleWriterUnique outputWriter;
     Result::ParallelWriter parallelWriter(outputWriter);
     std::vector<std::string> headers = {"dataset", "graph", "running_time", "min_strategy", "max_strategy", "status",
                                         "mean_payoffs_min", "mean_payoffs_max", "winners_min", "winners_max"};
-    switch (vm["output-format"].as<OutputFormat>()) {
+    switch (vm.at("output-format").as<OutputFormat>()) {
         case OutputFormat::CSV:
             outputWriter.addWriter(new Result::CSVWriter(output_file, headers, vm["separator"].as<char>()));
             break;
