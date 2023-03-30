@@ -12,9 +12,9 @@
 template<typename R>
 struct DirectedEdge
 {
-    R weight;
     int source;
     int target;
+    R weight;
 public:
     DirectedEdge(int source,int target,R weight):source(source),target(target),weight(weight){}
 };

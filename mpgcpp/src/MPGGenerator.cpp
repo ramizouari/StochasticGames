@@ -174,7 +174,8 @@ int main(int argc, char *argv[]) {
     Result::MultipleWriterUnique outputWriter;
     Result::ParallelWriter parallelWriter(outputWriter);
     std::vector<std::string> headers = {"dataset", "graph", "running_time", "min_strategy", "max_strategy", "status",
-                                        "mean_payoffs_min", "mean_payoffs_max", "winners_min", "winners_max"};
+                                        "mean_payoffs_min", "mean_payoffs_max", "winners_min", "winners_max",
+                                        "adjacency_matrix", "weights_matrix"};
     switch (vm["output-format"].as<OutputFormat>()) {
         case OutputFormat::CSV:
             outputWriter.addWriter(new Result::CSVWriter(output_file, headers, vm["separator"].as<char>()));
@@ -197,6 +198,8 @@ int main(int argc, char *argv[]) {
     outputWriter.addType("mean_payoffs_max", Result::JSONWriter::Type::ARRAY);
     outputWriter.addType("winners_min", Result::JSONWriter::Type::ARRAY);
     outputWriter.addType("winners_max", Result::JSONWriter::Type::ARRAY);
+    outputWriter.addType("adjacency_matrix", Result::JSONWriter::Type::ARRAY);
+    outputWriter.addType("weights_matrix", Result::JSONWriter::Type::ARRAY);
     moodycamel::ConcurrentQueue<std::filesystem::path> queue;
     for (const auto &path: std::filesystem::recursive_directory_iterator(graphs_folder)) if (std::filesystem::is_regular_file(path))
             queue.enqueue(path);
