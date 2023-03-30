@@ -64,6 +64,7 @@ else()
         message(STATUS "Python wrapper will be installed to ${MPG_PYTHON}")
     endif()
 
+    install(TARGETS MPGSolver DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
     # Install the python wrapper
     install(TARGETS MPGPyWrapper DESTINATION ${MPG_PYTHON})
     # Install the python wrapper script
