@@ -1,5 +1,6 @@
 import abc
 import timeit
+from concurrent.futures import ThreadPoolExecutor
 from datetime import time,datetime
 from typing import List, Callable, TypedDict, Dict
 
@@ -81,7 +82,7 @@ def _generate_gnp_uniform_mpg_instance(benchmark,iteration,n,p=None,c=None,a=-1,
 
 
 
-def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,loops=True,callbacks:List[Callback]=None) -> pd.DataFrame:
+def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,loops=True,callbacks:List[Callback]=None,threads:int=None) -> pd.DataFrame:
     """
     Benchmark the mpg.gnp_random_mpg function
     :param N: An array of values, each value is the number of nodes in the graph
@@ -122,15 +123,20 @@ def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,loo
     benchmark:List[Dict]=[]
     if callbacks is None:
         callbacks=[]
+    use_threads = threads is not None and threads > 1
     for n in N:
         if P is not None:
             C = np.round(P * n).astype(int)
         elif C is not None:
             P = C / n
-        for c,p in zip(C,P):
-            for i in range(iterations):
-                p=min(p,1)
-                _generate_gnp_uniform_mpg_instance(benchmark,iteration=i,n=n,p=p,c=c,a=a,b=b,callbacks=callbacks)
+        with ThreadPoolExecutor(max_workers=threads) as executor:
+            for c,p in zip(C,P):
+                for i in range(iterations):
+                    p=min(p,1)
+                    if use_threads:
+                            executor.submit(_generate_gnp_uniform_mpg_instance,benchmark,iteration=i,n=n,p=p,c=c,a=a,b=b,callbacks=callbacks)
+                    else:
+                        _generate_gnp_uniform_mpg_instance(benchmark,iteration=i,n=n,p=p,c=c,a=a,b=b,callbacks=callbacks)
     return pd.DataFrame(benchmark)
 
 if __name__=="__main__":
@@ -150,6 +156,7 @@ if __name__=="__main__":
     parser.add_argument("--N",type=int,nargs="+",required=True,help="The number of nodes in the graph")
     parser.add_argument("--C",type=int,nargs="+",help="The expected number of edges for each node")
     parser.add_argument("--P",type=float,nargs="+",help="The probability of an edge existing")
+    parser.add_argument("--threads",type=int,help="The number of threads to use")
     args=parser.parse_args()
     N=np.array(args.N)
     P=None
@@ -160,5 +167,5 @@ if __name__=="__main__":
         P=np.array(args.P)
     callbacks=[ProgressCallback(), SaveGraphCallback(os.path.join(args.directory,args.dataset), args.save_as, compression=args.compression)]
     os.makedirs(os.path.join(args.directory,args.dataset),exist_ok=True)
-    benchmark=generate_gnp_uniform_mpg(N=N,P=P,C=C,iterations=args.iterations,seed=args.seed,callbacks=callbacks,a=args.a,b=args.b)
+    benchmark=generate_gnp_uniform_mpg(N=N,P=P,C=C,iterations=args.iterations,seed=args.seed,callbacks=callbacks,a=args.a,b=args.b,threads=args.threads)
     benchmark.to_csv(os.path.join(args.directory,args.output),index=False)
