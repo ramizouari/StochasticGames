@@ -107,6 +107,28 @@ void process_game(const std::filesystem::path& path,Result::ParallelWriter& outp
             data["winners_max"]=S0.str();
             data["winners_min"]=S1.str();
         }
+        if(vm["adjacency-matrix"].as<bool>())
+        {
+            synced_output << "Calculating adjacency matrix for graph " << path << std::endl;
+            std::ostringstream S;
+            std::vector<std::vector<integer>> adj(graph->count_nodes(),std::vector<integer>(graph->count_nodes()));
+            for(auto [u,v,w]:graph->get_edges())
+                adj[u][v]=1;
+            using Options::operator<<;
+            S << adj;
+            data["adjacency_matrix"]=S.str();
+        }
+        if(vm["weights-matrix"].as<bool>())
+        {
+            synced_output << "Calculating weights matrix for graph " << path << std::endl;
+            std::ostringstream S;
+            std::vector<std::vector<integer>> weights(graph->count_nodes(),std::vector<integer>(graph->count_nodes()));
+            for(auto [u,v,w]:graph->get_edges())
+                weights[u][v]=w;
+            using Options::operator<<;
+            S << weights;
+            data["weights_matrix"]=S.str();
+        }
     }
     catch (std::exception& e)
     {
@@ -140,12 +162,14 @@ int main(int argc, char *argv[]) {
              "Mode of the program, either discard or resume. discard will redo all the calculations, resume will resume the calculations from the last point.")
             ("output,o", po::value<std::filesystem::path>(), "Output file for the results")
             ("verbose,v", po::value<Verbosity>()->default_value(Verbosity::INFO), "Verbosity level (0-3)")
-            ("winners", po::value<bool>()->default_value(false),
+            ("winners", po::bool_switch(),
              "Calculate the winners on a mean payoff graph for each vertex and each starting player")
-            ("mean-payoffs", po::value<bool>()->default_value(false),
+            ("mean-payoffs", po::bool_switch(),
              "Calculate the mean payoffs for each vertex and each starting player")
-            ("running-time", po::value<bool>()->default_value(true),
+            ("running-time", po::bool_switch(),
              "Calculate the running time for each graph")
+             ("adjacency-matrix", po::bool_switch(), "Save also the adjacency matrix of the graph")
+             ("weights-matrix",po::bool_switch(), "Save also the weights matrix of the graph")
             ("output-format", po::value<OutputFormat>()->default_value(OutputFormat::CSV), "Format of the output file")
             ("dataset", po::value<std::string>()->default_value("dataset"), "Name of the dataset")
             ("graph-implementation",
