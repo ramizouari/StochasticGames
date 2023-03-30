@@ -3,11 +3,11 @@ import timeit
 from datetime import time,datetime
 from typing import List, Callable, TypedDict, Dict
 
-from .games.mpg import MeanPayoffGraph
+from mpg.games.mpg import MeanPayoffGraph
 import pandas as pd
 import numpy as np
-from .graph import random_graph as rg
-from . import mpgio
+from mpg.graph import random_graph as rg
+from mpg import mpgio
 
 
 class Callback(abc.ABC):
@@ -147,10 +147,9 @@ if __name__=="__main__":
     parser.add_argument("--save_as",type=str,default="weighted_edgelist",help="The format to save the graph in")
     parser.add_argument("--compression",action="store_true",default=True,help="Whether to compress the graph when saving")
     parser.add_argument("--output",type=str,default="benchmark_gnp_random_mpg.csv",help="The output file")
-    parser.add_argument("--N",type=int,nargs="+",default=[2,4,8,16,32,64,128,256,512,1024],help="The number of nodes in the graph")
-    parser.add_argument("--C",type=int,nargs="+",default=[1,2,4,8,16,32,64,128,256,512,1024],help="The expected number of edges for each node")
-    parser.add_argument("--P",type=float,nargs="+",default=[0.01,0.05,0.1,0.2,0.5,0.8,1],help="The probability of an edge existing")
-    parser.add_argument("--I",type=int,nargs="+",default=[1,2,4,8,16,32,64,128,256,512,1024],help="The expected number of edges for each node")
+    parser.add_argument("--N",type=int,nargs="+",required=True,help="The number of nodes in the graph")
+    parser.add_argument("--C",type=int,nargs="+",help="The expected number of edges for each node")
+    parser.add_argument("--P",type=float,nargs="+",help="The probability of an edge existing")
     args=parser.parse_args()
     N=np.array(args.N)
     P=None
@@ -159,6 +158,7 @@ if __name__=="__main__":
         C=np.array(args.C)
     if args.P is not None:
         P=np.array(args.P)
-    callbacks=[ProgressCallback(), SaveGraphCallback(args.directory, os.path.join(args.save_as,args.dataset), compression=args.compression)]
+    callbacks=[ProgressCallback(), SaveGraphCallback(os.path.join(args.directory,args.dataset), args.save_as, compression=args.compression)]
+    os.makedirs(os.path.join(args.directory,args.dataset),exist_ok=True)
     benchmark=generate_gnp_uniform_mpg(N=N,P=P,C=C,iterations=args.iterations,seed=args.seed,callbacks=callbacks,a=args.a,b=args.b)
-    benchmark.to_csv(os.path.join(args.save_as,args.output),index=False)
+    benchmark.to_csv(os.path.join(args.directory,args.output),index=False)
