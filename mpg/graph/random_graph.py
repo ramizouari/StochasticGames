@@ -4,6 +4,7 @@ import networkx as nx
 import numpy as np
 
 from ..games import mpg
+from numba import jit
 
 graph_generator = np.random.Generator(np.random.MT19937())
 
@@ -18,6 +19,7 @@ def set_generation_method(method):
 # The graph is guaranteed to be sinkless
 
 GraphType = TypeVar("GraphType", bound=Union[nx.DiGraph, nx.Graph, mpg.MeanPayoffGraph])
+
 
 
 def gnp_random_graph_sinkless(n: int, p: float, create_using: Type[GraphType] = nx.DiGraph, directed=None, seed=None,
