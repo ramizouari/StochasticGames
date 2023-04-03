@@ -6,6 +6,7 @@
 #include <boost/mpl/for_each.hpp>
 #include <boost/mpl/list.hpp>
 #include <boost/type_index.hpp>
+#include <boost/python/numpy.hpp>
 
 namespace py = boost::python;
 //TO list
@@ -187,6 +188,38 @@ py::tuple winners_edges(const py::list &_edges)
     return to_python_winners(winners0_bool, winners1_bool);
 }
 
+/*
+ * Length of the data is n²+2
+ * First n elements define the adjacency matrix
+ * Next n elements define the weights matrix
+ * Before last element is the vertex to start from
+ * Last element is the turn
+ * */
+template<typename R>
+int winners_tensorflow_matrix_flattened(const py::list &_data)
+{
+    int n=(py::len(_data)-2)/2;
+    n=std::round(std::sqrt(n));
+    if(2*n*n+2 != py::len(_data))
+        throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)) + " for n=" + std::to_string(n));
+    auto turn = static_cast<Bipartite::Player>(py::extract<R>(_data[n*n+1])==1);
+    int vertex = py::extract<R>(_data[n*n]);
+    Implementation::HashMap::MeanPayoffGame<R> mpg(n);
+    std::vector<bool> empty(n,true);
+    for(int i=0;i<n;i++) for(int j=0;j<n;j++) if(py::extract<R>(_data[i*n+j])!=0)
+    {
+        mpg.add_edge(i, j, py::extract<R>(_data[i * n + j + n * n]));
+        empty[i]=false;
+    }
+    std::string empty_str;
+    for(int i=0;i<n;i++) if(empty[i]) empty_str+=std::to_string(i)+" ";
+    if(!empty_str.empty()) throw std::runtime_error("Empty vertices: "+empty_str);
+    Implementation::Vector::MaxAtomSystemSolver<R> solver;
+    auto strategyPair = optimal_strategy_pair(mpg, solver);
+    auto W = winners(mpg, strategyPair);
+    return W[turn][vertex];
+}
+
 template<typename R>
 py::tuple winners_file(const std::string &filename)
 {
@@ -290,6 +323,7 @@ BOOST_PYTHON_MODULE(mpgcpp)
         auto mpe="mean_payoffs_"+name+"_edges_cxx";
         auto mpf="mean_payoffs_"+name+"_file_cxx";
         auto ac="arc_consistency_"+name+"_cxx";
+        auto wtfl="winners_tensorflow_"+name+"_matrix_flattened_cxx";
         def(ospe.c_str(), optimal_strategy_pair_edges<R>);
         def(ospf.c_str(), optimal_strategy_pair_file<R>);
         def(we.c_str(), winners_edges<R>);
@@ -297,6 +331,7 @@ BOOST_PYTHON_MODULE(mpgcpp)
         def(mpe.c_str(), mean_payoffs_edges<R>);
         def(mpf.c_str(), mean_payoffs_file<R>);
         def(ac.c_str(), arc_consistency<R>);
+        def(wtfl.c_str(), winners_tensorflow_matrix_flattened<R>);
     });
     def("optimal_strategy_pair_edges_cxx", optimal_strategy_pair_edges<integer>);
     def("optimal_strategy_pair_file_cxx", optimal_strategy_pair_file<integer>);

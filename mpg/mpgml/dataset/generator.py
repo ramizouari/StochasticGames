@@ -5,6 +5,7 @@ import mpg.graph.random_graph
 import networkx as nx
 import itertools
 import tensorflow_probability as tfb
+import mpg.wrapper as mpgwrapper
 
 
 def _convert_sparse_matrix_to_sparse_tensor(X, shape_hint):
@@ -63,21 +64,26 @@ def _generate_instances(n, p, seed, cardinality: int, target: bool, as_graph: bo
 
 
 def _generate_dense_instances(n, p, seed, cardinality: int, target: bool, weight_matrix: bool, flatten: bool):
-    adjacency_matrix_distribution: tfb.distributions.Distribution = tfb.distributions.Bernoulli(probs=p)
-    player_turn_distribution: tfb.distributions.Distribution = tfb.distributions.Bernoulli(probs=0.5)
+    bernoulli: tfb.distributions.Distribution = tfb.distributions.Bernoulli(probs=p)
     # discrete=tfb.distributions.DiscreteUniform(low=0,high=10)
     shape = (n, n) if not flatten else (n * n,)
-    W = tf.random.uniform(shape,-10, 11, dtype=tf.int32, seed=seed)
-    A = adjacency_matrix_distribution.sample(shape,seed=seed)
+    W = tf.random.uniform(shape,-10, 11, dtype=tf.int32)
+    adjacency_list=[]
+    for k in range(n):
+        adjacency_list.append(bernoulli.sample((n,)))
+        while tf.math.reduce_all(adjacency_list[k]==0):
+            adjacency_list[k] = bernoulli.sample((n,))
+    A= tf.concat(adjacency_list,0)
     W = tf.multiply(A, W)
-    vertex = tf.random.uniform((1,),0, n, dtype=np.int32, seed=seed)
-    player = player_turn_distribution.sample((1,))
+    vertex = tf.random.uniform((1,),0, n, dtype=np.int32)
+    player = bernoulli.sample((1,))
     if flatten:
         if weight_matrix:
             output = tf.cast(tf.concat([A, W, vertex, player], axis=0), dtype=tf.float32)
         else:
             output = tf.cast(tf.concat([A, W, vertex, player], axis=0), dtype=tf.float32)
         if target:
+            s=tf.py_function(lambda output:mpgwrapper.mpgcpp.winners_tensorflow_float_matrix_flattened_cxx(output.numpy().tolist()),inp=[output],Tout=tf.int32)
             return (output, 1)
         return output
     else:
@@ -91,8 +97,11 @@ def _generate_dense_instances(n, p, seed, cardinality: int, target: bool, weight
 
 
 class MPGGeneratedDenseDataset(tf.data.Dataset):
+
     def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
-                target: bool = False, weight_matrix: bool = True, flatten=False):
+                target: bool = False, weight_matrix: bool = True, flatten=False,seed=None):
+        if seed is None:
+            seed = np.random.randint(0, 1<<32)
         shape = None
         if flatten:
             if weight_matrix:
@@ -111,13 +120,17 @@ class MPGGeneratedDenseDataset(tf.data.Dataset):
 
         generated: tf.data.Dataset
         if cardinality == tf.data.INFINITE_CARDINALITY:
-            generated = tf.data.Dataset.counter()
+            generated = tf.data.Dataset.counter(start=seed, step=1)
         else:
-            generated = tf.data.Dataset.range(cardinality)
+            generated = tf.data.Dataset.range(seed,seed+cardinality)
         return generated.map(
             lambda seed: _generate_dense_instances(n, p, seed, cardinality, target, weight_matrix, flatten),
             num_parallel_calls=tf.data.experimental.AUTOTUNE
         )
+        #    range,
+        #    args=(n,p,cardinality, target, weight_matrix,flatten),
+        #    output_signature=signature
+        # )
 
     def __init__(self, n, p):
         pass
