@@ -217,7 +217,7 @@ int winners_tensorflow_matrix_flattened(const py::list &_data)
     Implementation::Vector::MaxAtomSystemSolver<R> solver;
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto W = winners(mpg, strategyPair);
-    return W[turn][vertex];
+    return static_cast<int>(W[turn][vertex]);
 }
 
 template<typename R>

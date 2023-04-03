@@ -83,8 +83,9 @@ def _generate_dense_instances(n, p, seed, cardinality: int, target: bool, weight
         else:
             output = tf.cast(tf.concat([A, W, vertex, player], axis=0), dtype=tf.float32)
         if target:
-            s=tf.py_function(lambda output:mpgwrapper.mpgcpp.winners_tensorflow_float_matrix_flattened_cxx(output.numpy().tolist()),inp=[output],Tout=tf.int32)
-            return (output, 1)
+            target_value=tf.py_function(lambda output:mpgwrapper.mpgcpp.winners_tensorflow_float_matrix_flattened_cxx(output.numpy().tolist()),inp=[output],Tout=tf.int32)
+            target_value=tf.reshape(tf.ensure_shape(target_value,()),shape=(1,))
+            return (output, tf.cast(target_value,dtype=tf.float32))
         return output
     else:
         if weight_matrix:
