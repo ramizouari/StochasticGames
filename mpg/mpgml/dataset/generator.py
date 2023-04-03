@@ -1,7 +1,10 @@
+import numba
 import numpy as np
 import tensorflow as tf
 import mpg.graph.random_graph
 import networkx as nx
+import itertools
+import tensorflow_probability as tfb
 
 
 def _convert_sparse_matrix_to_sparse_tensor(X, shape_hint):
@@ -27,10 +30,10 @@ def _as_tensor(A, as_dense: bool, shape_hint=None):
         return _convert_sparse_matrix_to_sparse_tensor(A, shape_hint)
 
 
-def _generate_instances(n,p,seed, cardinality: int, target: bool, as_graph: bool,
+def _generate_instances(n, p, seed, cardinality: int, target: bool, as_graph: bool,
                         adj_matrix: bool, weight_matrix: bool, as_dense: bool):
-    generator=np.random.Generator(np.random.MT19937(seed))
-    graph = mpg.graph.random_graph.gnp_random_mpg(n=n,p=p, seed=seed, method="fast", loops=True,
+    generator = np.random.Generator(np.random.MT19937(seed))
+    graph = mpg.graph.random_graph.gnp_random_mpg(n=n, p=p, seed=seed, method="fast", loops=True,
                                                   distribution="integers", low=0, high=10, endpoint=True)
     output = None
     if as_graph:
@@ -42,96 +45,99 @@ def _generate_instances(n,p,seed, cardinality: int, target: bool, as_graph: bool
             if as_dense:
                 output = tf.stack([A, W], axis=0)
             else:
-                output = tf.cast(_stack_sparse_tensors((2, n, n), A, W),dtype=tf.float32)
+                output = tf.cast(_stack_sparse_tensors((2, n, n), A, W), dtype=tf.float32)
 
         elif adj_matrix:
-            output = tf.cast(_as_tensor(nx.adjacency_matrix(graph, weight=None), as_dense=as_dense, shape_hint=(n, n)),dtype=tf.float32)
+            output = tf.cast(_as_tensor(nx.adjacency_matrix(graph, weight=None), as_dense=as_dense, shape_hint=(n, n)),
+                             dtype=tf.float32)
         elif weight_matrix:
-            output = tf.cast(_as_tensor(nx.adjacency_matrix(graph, weight="weight"), as_dense=as_dense, shape_hint=(n, n)),dtype=tf.float32)
-    starting=tf.constant([generator.integers(0,n),generator.integers(0,1,endpoint=True)])
+            output = tf.cast(
+                _as_tensor(nx.adjacency_matrix(graph, weight="weight"), as_dense=as_dense, shape_hint=(n, n)),
+                dtype=tf.float32)
+    starting = tf.constant([generator.integers(0, n), generator.integers(0, 1, endpoint=True)])
     if target:
         # TODO: Add target
-        return (output,starting,1)
+        return (output, starting, 1)
     else:
-        return (output,1)
-def _generate_dense_instances(n,p,seed, cardinality: int, target: bool, weight_matrix: bool,flatten:bool):
+        return (output, 1)
 
-    generator=np.random.Generator(np.random.MT19937(seed))
-    shape=(n,n) if not flatten else (n*n,)
-    W=generator.integers(-10,10,endpoint=True,size=shape)
-    A=generator.integers(0,2,endpoint=True,size=shape)
-    W=np.multiply(A,W)
-    vertex=generator.integers(0,n)
-    player=generator.integers(0,2,endpoint=True)
+
+def _generate_dense_instances(n, p, seed, cardinality: int, target: bool, weight_matrix: bool, flatten: bool):
+    adjacency_matrix_distribution: tfb.distributions.Distribution = tfb.distributions.Bernoulli(probs=p)
+    player_turn_distribution: tfb.distributions.Distribution = tfb.distributions.Bernoulli(probs=0.5)
+    # discrete=tfb.distributions.DiscreteUniform(low=0,high=10)
+    shape = (n, n) if not flatten else (n * n,)
+    W = tf.random.uniform(shape,-10, 11, dtype=tf.int32, seed=seed)
+    A = adjacency_matrix_distribution.sample(shape,seed=seed)
+    W = tf.multiply(A, W)
+    vertex = tf.random.uniform((1,),0, n, dtype=np.int32, seed=seed)
+    player = player_turn_distribution.sample((1,))
     if flatten:
         if weight_matrix:
-            output=tf.cast(tf.concat([A,W,(vertex,player)],axis=0),dtype=tf.float32)
+            output = tf.cast(tf.concat([A, W, vertex, player], axis=0), dtype=tf.float32)
         else:
-            output=tf.cast(tf.concat([A,(vertex,player)],axis=0),dtype=tf.float32)
+            output = tf.cast(tf.concat([A, W, vertex, player], axis=0), dtype=tf.float32)
         if target:
-            return (output,1)
+            return (output, 1)
         return output
     else:
         if weight_matrix:
-            output=tf.cast(tf.stack([A,W],axis=0),dtype=tf.float32)
+            output = tf.cast(tf.stack([A, W], axis=0), dtype=tf.float32)
         else:
-            output=tf.cast(A,dtype=tf.float32)
+            output = tf.cast(A, dtype=tf.float32)
         if target:
-            return (output,tf.constant([vertex,player]),1)
-        return (output,tf.constant([vertex,player]))
+            return (output, tf.constant([vertex, player]), 1)
+        return (output, tf.constant([vertex, player]))
+
+
 class MPGGeneratedDenseDataset(tf.data.Dataset):
-    def _generator(n,p,cardinality: int, target: bool, weight_matrix: bool,flatten):
-        if cardinality == tf.data.INFINITE_CARDINALITY:
-            seed = 0
-            while True:
-                yield _generate_dense_instances(n,p,seed, cardinality, target, weight_matrix, flatten)
-                seed += 1
-        else:
-            for sample_idx in range(cardinality):
-                yield _generate_dense_instances(n,p,sample_idx, cardinality, target, weight_matrix, flatten)
-
-
-    def __new__(cls,n,p, cardinality=tf.data.INFINITE_CARDINALITY,
-                target: bool = False,weight_matrix: bool =True,flatten =False):
+    def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
+                target: bool = False, weight_matrix: bool = True, flatten=False):
         shape = None
         if flatten:
             if weight_matrix:
-                shape=(2*n*n+2,)
+                shape = (2 * n * n + 2,)
             else:
-                shape=(n*n+2,)
+                shape = (n * n + 2,)
             signature = (tf.TensorSpec(shape=shape, dtype=tf.float32),)
         else:
             if weight_matrix:
-                shape=(2,n,n)
+                shape = (2, n, n)
             else:
-                shape=(n,n)
-            signature = (tf.TensorSpec(shape=shape, dtype=tf.float32),tf.TensorSpec(shape=(2,), dtype=tf.int32))
+                shape = (n, n)
+            signature = (tf.TensorSpec(shape=shape, dtype=tf.float32), tf.TensorSpec(shape=(2,), dtype=tf.int32))
         if target:
             signature = (*signature, tf.TensorSpec(shape=()))
-        return tf.data.Dataset.from_generator(
-            cls._generator,
-            args=(n,p,cardinality, target, weight_matrix,flatten),
-            output_signature=signature
+
+        generated: tf.data.Dataset
+        if cardinality == tf.data.INFINITE_CARDINALITY:
+            generated = tf.data.Dataset.counter()
+        else:
+            generated = tf.data.Dataset.range(cardinality)
+        return generated.map(
+            lambda seed: _generate_dense_instances(n, p, seed, cardinality, target, weight_matrix, flatten),
+            num_parallel_calls=tf.data.experimental.AUTOTUNE
         )
 
-    def __init__(self,n,p):
+    def __init__(self, n, p):
         pass
 
 
 class MPGGeneratedDataset(tf.data.Dataset):
-    def _generator(n,p,cardinality: int, target: bool, as_graph: bool,
+    def _generator(n, p, cardinality: int, target: bool, as_graph: bool,
                    adj_matrix: bool, weight_matrix: bool, as_dense: bool):
         if cardinality == tf.data.INFINITE_CARDINALITY:
             seed = 0
             while True:
-                yield _generate_instances(n,p,seed, cardinality, target, as_graph, adj_matrix, weight_matrix, as_dense)
+                yield _generate_instances(n, p, seed, cardinality, target, as_graph, adj_matrix, weight_matrix,
+                                          as_dense)
                 seed += 1
         else:
             for sample_idx in range(cardinality):
-                yield _generate_instances(n,p,sample_idx, cardinality, target, as_graph, adj_matrix, weight_matrix,
+                yield _generate_instances(n, p, sample_idx, cardinality, target, as_graph, adj_matrix, weight_matrix,
                                           as_dense)
 
-    def __new__(cls,n,p, cardinality=tf.data.INFINITE_CARDINALITY, target: bool = False, as_graph: bool = False,
+    def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY, target: bool = False, as_graph: bool = False,
                 adj_matrix: bool = True, weight_matrix: bool = True, as_dense: bool = True):
         shape = None
         if as_graph:
@@ -147,14 +153,14 @@ class MPGGeneratedDataset(tf.data.Dataset):
             TensorSpec = tf.TensorSpec
         else:
             TensorSpec = tf.SparseTensorSpec
-        signature = (TensorSpec(shape=shape),tf.TensorSpec(shape=(2,), dtype=tf.int32))
+        signature = (TensorSpec(shape=shape), tf.TensorSpec(shape=(2,), dtype=tf.int32))
         if target:
             signature = (*signature, tf.TensorSpec(shape=()))
         return tf.data.Dataset.from_generator(
             cls._generator,
-            args=(n,p,cardinality, target, as_graph, adj_matrix, weight_matrix, as_dense),
+            args=(n, p, cardinality, target, as_graph, adj_matrix, weight_matrix, as_dense),
             output_signature=signature
         )
 
-    def __init__(self,n,p):
+    def __init__(self, n, p):
         pass
