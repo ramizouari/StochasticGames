@@ -322,14 +322,14 @@ namespace Implementation::Parallel
         using MaxAtomSystemSolver=::Parallel::ParallelMaxAtomArcConsistencySolver<std::vector<order_closure<R>>,
                 std::vector<::Parallel::SharedType<order_closure<R>>>,R>;
         template<typename R>
-        using MaxAtomFixedPointSolver=::Parallel::ParallelMaxAtomFixedPointSolver<std::vector<order_closure<R>>,R>;
+        using MaxAtomSystemSolverFixedPoint=::Parallel::ParallelMaxAtomFixedPointSolver<std::vector<order_closure<R>>,R>;
     }
     namespace HashMap
     {
         template<typename R>
         using MaxAtomSystemSolver=MaxAtomArcConsistencySolver<std::unordered_map<Variable,order_closure<R>>,R>;
         template<typename R>
-        using MaxAtomFixedPointSolver=::Parallel::ParallelMaxAtomFixedPointSolver<std::unordered_map<Variable,order_closure<R>>,R>;
+        using MaxAtomSystemSolverFixedPoint=::Parallel::ParallelMaxAtomFixedPointSolver<std::unordered_map<Variable,order_closure<R>>,R>;
     }
 
     namespace TreeMap
@@ -337,7 +337,7 @@ namespace Implementation::Parallel
         template<typename R>
         using MaxAtomSystemSolver=MaxAtomArcConsistencySolver<std::map<Variable,order_closure<R>>,R>;
         template<typename R>
-        using MaxAtomFixedPointSolver=::Parallel::ParallelMaxAtomFixedPointSolver<std::map<Variable,order_closure<R>>,R>;
+        using MaxAtomSystemSolverFixedPoint=::Parallel::ParallelMaxAtomFixedPointSolver<std::map<Variable,order_closure<R>>,R>;
     }
 }
 

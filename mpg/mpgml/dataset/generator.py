@@ -65,39 +65,48 @@ def _generate_instances(n, p, seed, cardinality: int, target: bool, as_graph: bo
 def cast_all(dtype,*args):
     return tuple(tf.cast(arg, dtype) for arg in args)
 
+
+def _adj_matrix_generator(n, p):
+    A = np.zeros([n, n], dtype=np.uint8)
+    for k in range(n):
+        A[k, :] = np.random.binomial(1, p, n)
+        while A[k, :].sum() == 0:
+            A[k, :] = np.random.binomial(1, p, n)
+    return A
+
 def _generate_dense_instances(n, p, seeder, cardinality: int, target: bool, weight_matrix: bool, flatten: bool,
                               weight_distribution: tfp.distributions.Distribution, weight_type):
-    adjacency_distribution: tfp.distributions.Distribution = tfp.distributions.Bernoulli(probs=p)
+    adjacency_distribution: tfp.distributions.Distribution = tfp.distributions.Bernoulli(probs=p, dtype=tf.bool)
     turn_distribution: tfp.distributions.Distribution = tfp.distributions.Bernoulli(probs=0.5)
     # discrete=tfp.distributions.DiscreteUniform(low=0,high=10)
     shape = (n, n) if not flatten else (n * n,)
     W = weight_distribution.sample(shape, seed=seeder())
-    dtype=weight_distribution.dtype
-    adjacency_list = []
-    for k in range(n):
-        adjacency_list.append(adjacency_distribution.sample((n,), seed=seeder()))
-        while tf.math.reduce_all(adjacency_list[k] == 0):
-            adjacency_list[k] = adjacency_distribution.sample((n,), seed=seeder())
-    A = tf.cast(tf.concat(adjacency_list, 0),dtype=dtype)
+    dtype = weight_distribution.dtype
+    A = tf.numpy_function(_adj_matrix_generator, inp=[n, p], Tout=tf.uint8,stateful=True)
+    if flatten:
+        A = tf.reshape(A, shape=(-1,))
+    A = tf.cast(A, dtype=dtype)
     W = tf.multiply(A, W)
     vertex = tf.random.uniform((1,), 0, n, dtype=tf.int32, seed=seeder())
     player = turn_distribution.sample((1,), seed=seeder())
     if flatten:
         if weight_matrix:
-            output = tf.concat(cast_all(dtype,A, W, vertex, player), axis=0)
+            output = tf.concat(cast_all(dtype, A, W, vertex, player), axis=0)
         else:
-            output = tf.concat(cast_all(dtype,A, vertex, player), axis=0)
+            output = tf.concat(cast_all(dtype, A, vertex, player), axis=0)
         if target:
             if weight_type == tf.int32 or weight_type == tf.int64:
                 target_value = tf.py_function(
-                    lambda output: mpgwrapper.mpgcpp.winners_tensorflow_int_matrix_flattened_cxx(output.numpy().astype(np.int32).tolist()),
+                    lambda output: mpgwrapper.mpgcpp.winners_tensorflow_int_matrix_flattened_cxx(
+                        output.numpy().astype(np.int32).tolist()),
                     inp=[output], Tout=tf.int32)
             else:
                 target_value = tf.py_function(
-                    lambda output: mpgwrapper.mpgcpp.winners_tensorflow_float_matrix_flattened_cxx(output.numpy().astype(np.float32).tolist()),
+                    lambda output: mpgwrapper.mpgcpp.winners_tensorflow_float_matrix_flattened_cxx(
+                        output.numpy().astype(np.float32).tolist()),
                     inp=[output], Tout=tf.float32)
             target_value = tf.reshape(tf.ensure_shape(target_value, ()), shape=(1,))
-            return (tf.cast(output,dtype=tf.float32), tf.cast(target_value, dtype=tf.float32))
+            return (tf.cast(output, dtype=tf.float32), tf.cast(target_value, dtype=tf.float32))
         return output
     else:
         if weight_matrix:

@@ -11,12 +11,13 @@
 #include "csp/solver/ParallelMaxAtomSolver.h"
 
 namespace py = boost::python;
+namespace np = boost::python::numpy;
 
 template<typename R>
 using MPGInstance_t=Implementation::Vector::MeanPayoffGame<R>;
 
 template<typename R>
-using MPGSolver_t = Implementation::Parallel::Vector::MaxAtomSystemSolver<R>;
+using MPGSolver_t = Implementation::Vector::MaxAtomSystemSolver<R>;
 
 template<typename R>
 MPGInstance_t<R> MPGInstance(int n)
@@ -176,10 +177,41 @@ int winners_tensorflow_matrix_flattened(const py::list &_data)
     for(int i=0;i<n;i++) if(empty[i]) empty_str+=std::to_string(i)+" ";
     if(!empty_str.empty()) throw std::runtime_error("Empty vertices: "+empty_str);
     auto solver = MPGSolver<R>();
-    solver.set_bound_estimator(new LinearMaxAtomBoundEstimator<R>(1,100));
+    //solver.set_bound_estimator(new LinearMaxAtomBoundEstimator<R>(1,100));
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto W = winners(mpg, strategyPair);
     return static_cast<int>(W[turn][vertex]);
+}
+
+template<typename R>
+int winners_tensorflow_matrix_flattened_patched(const py::list &_data)
+{
+    constexpr size_t VERTEX_POS=-2;
+    constexpr size_t TURN_POS=-1;
+    auto L=py::len(_data);
+    if (L<3)
+        throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)));
+    int n=(L-2)/2;
+    n=std::round(std::sqrt(n));
+    if(2*n*n+2 != L)
+        throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)) + " for n=" + std::to_string(n));
+    auto turn = static_cast<Bipartite::Player>(py::extract<R>(_data[L+TURN_POS])==1);
+    int vertex = py::extract<R>(_data[L+VERTEX_POS]);
+    if(vertex<0 || vertex>=n)
+        throw std::runtime_error("Invalid vertex " + std::to_string(vertex) + " for n=" + std::to_string(n));
+    auto mpg = MPGInstance<R>(n);
+    std::vector<bool> empty(n,true);
+    for(int i=0;i<n;i++) for(int j=0;j<n;j++) if(py::extract<R>(_data[i*n+j])!=0)
+            {
+                mpg.add_edge(i, j, py::extract<R>(_data[i * n + j + n * n]));
+                empty[i]=false;
+            }
+    std::string empty_str;
+    for(int i=0;i<n;i++) if(empty[i]) empty_str+=std::to_string(i)+" ";
+    if(!empty_str.empty()) throw std::runtime_error("Empty vertices: "+empty_str);
+    auto solver = MPGSolver<R>();
+    solver.set_bound_estimator(new LinearMaxAtomBoundEstimator<R>(1,100));
+    return 1;
 }
 
 template<typename R>
@@ -286,6 +318,7 @@ BOOST_PYTHON_MODULE(mpgcpp)
         auto mpf="mean_payoffs_"+name+"_file_cxx";
         auto ac="arc_consistency_"+name+"_cxx";
         auto wtfl="winners_tensorflow_"+name+"_matrix_flattened_cxx";
+        auto wtf="winners_tensorflow_"+name+"_matrix_flattened_patched_cxx";
         def(ospe.c_str(), optimal_strategy_pair_edges<R>);
         def(ospf.c_str(), optimal_strategy_pair_file<R>);
         def(we.c_str(), winners_edges<R>);
@@ -294,6 +327,7 @@ BOOST_PYTHON_MODULE(mpgcpp)
         def(mpf.c_str(), mean_payoffs_file<R>);
         def(ac.c_str(), arc_consistency<R>);
         def(wtfl.c_str(), winners_tensorflow_matrix_flattened<R>);
+        def(wtf.c_str(), winners_tensorflow_matrix_flattened_patched<R>);
     });
     def("optimal_strategy_pair_edges_cxx", optimal_strategy_pair_edges<integer>);
     def("optimal_strategy_pair_file_cxx", optimal_strategy_pair_file<integer>);

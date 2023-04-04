@@ -22,7 +22,7 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 # Include boost headers
-find_package(Boost COMPONENTS iostreams program_options log python REQUIRED)
+find_package(Boost COMPONENTS iostreams program_options log REQUIRED)
 
 add_executable(MPGSolver src/MPGSolver.cpp ${HEADER_FILES} ${SOURCE_FILES} src/Writer.cpp src/ProgramOptions.cpp)
 add_executable(MPGGenerator src/MPGGenerator.cpp ${HEADER_FILES} ${SOURCE_FILES}
@@ -38,6 +38,7 @@ if (NOT ${PYTHON_INCLUDE_RESULT} EQUAL 0)
         message(WARNING "PYTHON_INCLUDE is not set. The python wrapper will not be built.")
     endif()
 else()
+    find_package(Boost COMPONENTS python REQUIRED)
     # Remove -I from the output of python3-config --includes
     string(REPLACE "-I" "" PYTHON_INCLUDE ${PYTHON_INCLUDE})
     message(STATUS "Python include: ${PYTHON_INCLUDE}")
