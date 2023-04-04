@@ -9,15 +9,19 @@
 #include <boost/python/numpy.hpp>
 #include <fstream>
 #include "csp/solver/ParallelMaxAtomSolver.h"
+#include "csp/solver/DenseSolver.h"
 
 namespace py = boost::python;
 namespace np = boost::python::numpy;
 
 template<typename R>
-using MPGInstance_t=Implementation::Vector::MeanPayoffGame<R>;
+using MPGInstance_t=Implementation::HashMap::MeanPayoffGame<R>;
 
 template<typename R>
 using MPGSolver_t = Implementation::Vector::MaxAtomSystemSolver<R>;
+
+template<typename R>
+using MPGSolverBase=  MaxAtomSolver<std::vector<order_closure<R>>,R>;
 
 template<typename R>
 MPGInstance_t<R> MPGInstance(int n)
@@ -30,6 +34,30 @@ MPGSolver_t<R> MPGSolver()
 {
     return MPGSolver_t<R>();
 };
+
+template<typename R>
+std::unique_ptr<MPGSolverBase<R>> MPGSolverInstance(const std::string &heuristic)
+{
+    auto& h=heuristic;
+    if (h=="normal")
+        return std::make_unique<MPGSolver_t<R>>();
+    else if(h=="dense")
+    {
+        auto s= std::make_unique<Implementation::Vector::DenseSolver<R>>();
+        s->set_bound_estimator(new LinearMaxAtomBoundEstimator<R>(2,20));
+        return s;
+    }
+    else if(h=="small-bound")
+    {
+        auto s= std::make_unique<MPGSolver_t<R>>();
+        s->set_bound_estimator(new LinearMaxAtomBoundEstimator<R>(2,10));
+        return s;
+    }
+    else if(h=="parallel")
+        return std::make_unique<Implementation::Parallel::Vector::MaxAtomSystemSolver<R>>();
+    else
+        throw std::runtime_error("Unknown heuristic");
+}
 
 template<typename R>
 std::vector<std::tuple<int,int,R>> from_python_edges(const py::list &l)
@@ -98,7 +126,7 @@ py::tuple to_python_winners(const std::vector<bool>&p1,const std::vector<bool> &
 }
 
 template<typename R>
-py::tuple optimal_strategy_pair_edges(const py::list &_edges)
+py::tuple optimal_strategy_pair_edges(const py::list &_edges, const std::string &heuristic)
 {
     std::vector<std::tuple<int,int,R>> edges=from_python_edges<R>(_edges);
     int n=0;
@@ -109,22 +137,22 @@ py::tuple optimal_strategy_pair_edges(const py::list &_edges)
     auto mpg = MPGInstance<R>(n);
     for (auto [u,v,w] : edges)
         mpg.add_edge(u,v,w);
-    auto solver = MPGSolver<R>();
-    auto [strategy0, strategy1] = optimal_strategy_pair(mpg, solver);
+    auto solver = MPGSolverInstance<R>(heuristic);
+    auto [strategy0, strategy1] = optimal_strategy_pair(mpg, *solver);
     return to_python_pair_strategies(strategy0, strategy1);
 }
 
 template<typename R>
-py::tuple optimal_strategy_pair_file(const std::string &filename)
+py::tuple optimal_strategy_pair_file(const std::string &filename, const std::string & heuristic)
 {
     MPG auto mpg=mpg_from_file<MPGInstance_t<R>>(filename);
-    auto solver = MPGSolver<R>();
-    auto [strategy0, strategy1] = optimal_strategy_pair(mpg, solver);
+    auto solver = MPGSolverInstance<R>(heuristic);
+    auto [strategy0, strategy1] = optimal_strategy_pair(mpg, *solver);
     return to_python_pair_strategies(strategy0, strategy1);
 }
 
 template<typename R>
-py::tuple winners_edges(const py::list &_edges)
+py::tuple winners_edges(const py::list &_edges, const std::string& heuristic)
 {
     std::vector<std::tuple<int,int,R>> edges=from_python_edges<R>(_edges);
     int n=0;
@@ -135,8 +163,8 @@ py::tuple winners_edges(const py::list &_edges)
     auto mpg = MPGInstance<R>(n);
     for (auto [u,v,w] : edges)
         mpg.add_edge(u,v,w);
-    auto solver = MPGSolver<R>();
-    auto strategyPair = optimal_strategy_pair(mpg, solver);
+    auto solver = MPGSolverInstance<R>(heuristic);
+    auto strategyPair = optimal_strategy_pair(mpg, *solver);
     auto [winners0, winners1] = winners(mpg, strategyPair);
     std::vector<bool> winners0_bool(winners0.begin(), winners0.end());
     std::vector<bool> winners1_bool(winners1.begin(), winners1.end());
@@ -151,7 +179,7 @@ py::tuple winners_edges(const py::list &_edges)
  * Last element is the turn
  * */
 template<typename R>
-int winners_tensorflow_matrix_flattened(const py::list &_data)
+int winners_tensorflow_matrix_flattened(const py::list &_data, const std::string& heuristic)
 {
     constexpr size_t VERTEX_POS=-2;
     constexpr size_t TURN_POS=-1;
@@ -176,15 +204,14 @@ int winners_tensorflow_matrix_flattened(const py::list &_data)
     std::string empty_str;
     for(int i=0;i<n;i++) if(empty[i]) empty_str+=std::to_string(i)+" ";
     if(!empty_str.empty()) throw std::runtime_error("Empty vertices: "+empty_str);
-    auto solver = MPGSolver<R>();
-    //solver.set_bound_estimator(new LinearMaxAtomBoundEstimator<R>(1,100));
-    auto strategyPair = optimal_strategy_pair(mpg, solver);
+    auto solver = MPGSolverInstance<R>(heuristic);
+    auto strategyPair = optimal_strategy_pair(mpg, *solver);
     auto W = winners(mpg, strategyPair);
     return static_cast<int>(W[turn][vertex]);
 }
 
 template<typename R>
-int winners_tensorflow_matrix_flattened_patched(const py::list &_data)
+int winners_tensorflow_matrix_flattened_patched(const py::list &_data, const std::string& heuristic)
 {
     constexpr size_t VERTEX_POS=-2;
     constexpr size_t TURN_POS=-1;
@@ -209,17 +236,16 @@ int winners_tensorflow_matrix_flattened_patched(const py::list &_data)
     std::string empty_str;
     for(int i=0;i<n;i++) if(empty[i]) empty_str+=std::to_string(i)+" ";
     if(!empty_str.empty()) throw std::runtime_error("Empty vertices: "+empty_str);
-    auto solver = MPGSolver<R>();
-    solver.set_bound_estimator(new LinearMaxAtomBoundEstimator<R>(1,100));
+    auto solver = MPGSolverInstance<R>(heuristic);
     return 1;
 }
 
 template<typename R>
-py::tuple winners_file(const std::string &filename)
+py::tuple winners_file(const std::string &filename, const std::string & heuristic)
 {
     MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<R>>(filename);
-    auto solver = MPGSolver<R>();
-    auto strategyPair = optimal_strategy_pair(mpg, solver);
+    auto solver = MPGSolverInstance<R>(heuristic);
+    auto strategyPair = optimal_strategy_pair(mpg, *solver);
     auto [winners0, winners1] = winners(mpg, strategyPair);
     std::vector<bool> winners0_bool(winners0.begin(), winners0.end());
     std::vector<bool> winners1_bool(winners1.begin(), winners1.end());
@@ -227,7 +253,7 @@ py::tuple winners_file(const std::string &filename)
 }
 
 template<typename R>
-py::tuple mean_payoffs_edges(const py::list &_edges)
+py::tuple mean_payoffs_edges(const py::list &_edges, const std::string &heuristic)
 {
     std::vector<std::tuple<int,int,R>> edges=from_python_edges<R>(_edges);
     int n=0;
@@ -238,14 +264,14 @@ py::tuple mean_payoffs_edges(const py::list &_edges)
     auto mpg = MPGInstance<R>(n);
     for (auto [u,v,w] : edges)
         mpg.add_edge(u,v,w);
-    auto solver= MPGSolver<R>();
-    auto strategyPair = optimal_strategy_pair(mpg, solver);
+    auto solver = MPGSolverInstance<R>(heuristic);
+    auto strategyPair = optimal_strategy_pair(mpg, *solver);
     auto [meanPayoff0, meanPayoff1] = mean_payoffs(mpg, strategyPair);
     return to_python_mean_payoffs(meanPayoff0, meanPayoff1);
 }
 
 template<typename R>
-py::tuple mean_payoffs_file(const std::string &filename)
+py::tuple mean_payoffs_file(const std::string &filename, const std::string &heuristic)
 {
     MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<R>>(filename);
     auto solver = MPGSolver<R>();
@@ -255,11 +281,14 @@ py::tuple mean_payoffs_file(const std::string &filename)
 }
 
 template<typename R>
-py::list arc_consistency(const py::list &_system)
+py::list arc_consistency(const py::list &_system,const std::string& heuristic)
 {
+    using Map=std::vector<order_closure<R>>;
     auto system=from_max_atom_constraint<R>(_system);
-    auto solver = MPGSolver<R>();
-    auto solution = solver.solve(system);
+    auto solver = MPGSolverInstance<R>(heuristic);
+
+
+    auto solution = solver->solve(system);
     py::list solution_python;
     for(auto value:solution)
     {
@@ -270,6 +299,7 @@ py::list arc_consistency(const py::list &_system)
     }
     return solution_python;
 }
+
 
 template<typename T>
 struct named_type;
@@ -319,6 +349,7 @@ BOOST_PYTHON_MODULE(mpgcpp)
         auto ac="arc_consistency_"+name+"_cxx";
         auto wtfl="winners_tensorflow_"+name+"_matrix_flattened_cxx";
         auto wtf="winners_tensorflow_"+name+"_matrix_flattened_patched_cxx";
+        auto ach="arc_consistency_heuristic_"+name+"_cxx";
         def(ospe.c_str(), optimal_strategy_pair_edges<R>);
         def(ospf.c_str(), optimal_strategy_pair_file<R>);
         def(we.c_str(), winners_edges<R>);
@@ -336,4 +367,6 @@ BOOST_PYTHON_MODULE(mpgcpp)
     def("mean_payoffs_edges_cxx", mean_payoffs_edges<integer>);
     def("mean_payoffs_file_cxx", mean_payoffs_file<integer>);
     def("arc_consistency_cxx", arc_consistency<integer>);
+    def("winners_tensorflow_matrix_flattened_cxx", winners_tensorflow_matrix_flattened<integer>);
+    def("winners_tensorflow_matrix_flattened_patched_cxx", winners_tensorflow_matrix_flattened_patched<integer>);
 }

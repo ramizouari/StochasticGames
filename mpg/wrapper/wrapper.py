@@ -23,7 +23,7 @@ class IdentityMap:
     def __getitem__(self, item):
         return item
 
-def optimal_strategy_pair(game: Union[MeanPayoffGraph,str], as_dict=None,edgetype=None) -> Union[List[Any], Dict[str, Any]]:
+def optimal_strategy_pair(game: Union[MeanPayoffGraph,str], as_dict=None,edgetype=None,heuristic="normal") -> Union[List[Any], Dict[str, Any]]:
     """
     Computes an optimal strategy pair for a mean payoff game
     :param game: The mean payoff game, either as a MeanPayoffGraph object or as a path to a file
@@ -51,11 +51,11 @@ def optimal_strategy_pair(game: Union[MeanPayoffGraph,str], as_dict=None,edgetyp
                 game_cxx.append((mapper[u], mapper[v], edgetype_(game.edges[u, v]['weight'])))
             match edgetype():
                 case int() | np.int64() | np.int32():
-                    S_max, S_min = mpgcpp.optimal_strategy_pair_edges_cxx(game_cxx)
+                    S_max, S_min = mpgcpp.optimal_strategy_pair_edges_cxx(game_cxx,heuristic)
                 case float() | np.float64():
-                    S_max, S_min = mpgcpp.optimal_strategy_pair_double_edges_cxx(game_cxx)
+                    S_max, S_min = mpgcpp.optimal_strategy_pair_double_edges_cxx(game_cxx,heuristic)
                 case np.float32():
-                    S_max, S_min = mpgcpp.optimal_strategy_pair_float_edges_cxx(game_cxx)
+                    S_max, S_min = mpgcpp.optimal_strategy_pair_float_edges_cxx(game_cxx,heuristic)
                 case _:
                     raise ValueError("Unknown edge type")
             if as_dict:
@@ -72,17 +72,17 @@ def optimal_strategy_pair(game: Union[MeanPayoffGraph,str], as_dict=None,edgetyp
                 edgetype = int
             match edgetype():
                 case int() | np.int64() | np.int32():
-                    S_max, S_min = mpgcpp.optimal_strategy_pair_file_cxx(game)
+                    S_max, S_min = mpgcpp.optimal_strategy_pair_file_cxx(game,heuristic)
                 case float() | np.float64():
-                    S_max, S_min = mpgcpp.optimal_strategy_pair_double_file_cxx(game)
+                    S_max, S_min = mpgcpp.optimal_strategy_pair_double_file_cxx(game,heuristic)
                 case np.float32():
-                    S_max, S_min = mpgcpp.optimal_strategy_pair_float_file_cxx(game)
+                    S_max, S_min = mpgcpp.optimal_strategy_pair_float_file_cxx(game,heuristic)
             if as_dict:
                 raise RuntimeError("Argument as_dict is not supported for file input")
 
     return S_max,S_min
 
-def winners(game: Union[MeanPayoffGraph,str], as_dict=True,edgetype=None) -> Union[List[Any], Dict[str, Any]]:
+def winners(game: Union[MeanPayoffGraph,str], as_dict=True,edgetype=None,heuristic="normal") -> Union[List[Any], Dict[str, Any]]:
     """
     Computes the winners of a mean payoff game
     :param game: The mean payoff game, either as a MeanPayoffGraph object or as a path to a file
@@ -108,11 +108,11 @@ def winners(game: Union[MeanPayoffGraph,str], as_dict=True,edgetype=None) -> Uni
                 game_cxx.append((mapper[u], mapper[v], edgetype_(game.edges[u, v]['weight'])))
             match edgetype():
                 case int() | np.int64() | np.int32():
-                    W_max, W_min = mpgcpp.winners_edges_cxx(game_cxx)
+                    W_max, W_min = mpgcpp.winners_edges_cxx(game_cxx,heuristic)
                 case float() | np.float64():
-                    W_max, W_min = mpgcpp.winners_double_edges_cxx(game_cxx)
+                    W_max, W_min = mpgcpp.winners_double_edges_cxx(game_cxx,heuristic)
                 case np.float32():
-                    W_max, W_min = mpgcpp.winners_float_edges_cxx(game_cxx)
+                    W_max, W_min = mpgcpp.winners_float_edges_cxx(game_cxx,heuristic)
             if as_dict:
                 W_max = {u: W_max[i] for i, u in enumerate(game.nodes)}
                 W_min = {u: W_min[i] for i, u in enumerate(game.nodes)}
@@ -124,7 +124,7 @@ def winners(game: Union[MeanPayoffGraph,str], as_dict=True,edgetype=None) -> Uni
 
     return W_max,W_min
 
-def mean_payoffs(game: Union[MeanPayoffGraph,str], as_dict=True,edgetype=None) -> Union[List[Any], Dict[str, Any]]:
+def mean_payoffs(game: Union[MeanPayoffGraph,str], as_dict=True,edgetype=None,heuristic="normal") -> Union[List[Any], Dict[str, Any]]:
     """
     Computes the mean payoffs of a mean payoff game
     :param game: The mean payoff game, either as a MeanPayoffGraph object or as a path to a file
@@ -149,11 +149,11 @@ def mean_payoffs(game: Union[MeanPayoffGraph,str], as_dict=True,edgetype=None) -
                 game_cxx.append((mapper[u], mapper[v], edgetype_(game.edges[u, v]['weight'])))
             match edgetype():
                 case int() | np.int64() | np.int32():
-                    M_max, M_min = mpgcpp.mean_payoffs_edges_cxx(game_cxx)
+                    M_max, M_min = mpgcpp.mean_payoffs_edges_cxx(game_cxx,heuristic)
                 case float() | np.float64():
-                    M_max, M_min = mpgcpp.mean_payoffs_double_edges_cxx(game_cxx)
+                    M_max, M_min = mpgcpp.mean_payoffs_double_edges_cxx(game_cxx,heuristic)
                 case np.float32():
-                    M_max, M_min = mpgcpp.mean_payoffs_float_edges_cxx(game_cxx)
+                    M_max, M_min = mpgcpp.mean_payoffs_float_edges_cxx(game_cxx,heuristic)
             if as_dict:
                 M_max = {u: M_max[i] for i, u in enumerate(game.nodes)}
                 M_min = {u: M_min[i] for i, u in enumerate(game.nodes)}
@@ -171,7 +171,7 @@ def _convert_assignment(x):
             return -np.inf
         case _:
             return x
-def arc_consistency(system:TernaryMaxAtomSystem,weighttype=None,as_dict=True):
+def arc_consistency(system:TernaryMaxAtomSystem,weighttype=None,as_dict=True,heuristic="normal"):
     """
     Solve the ternary max atom system using arc consistency
     :param system: The ternary max atom system
@@ -190,11 +190,11 @@ def arc_consistency(system:TernaryMaxAtomSystem,weighttype=None,as_dict=True):
         system_cxx.append((mapper[x],mapper[y],mapper[z],weighttype_(w)))
     match weighttype():
         case int() | np.int64() | np.int32():
-            assignment= mpgcpp.arc_consistency_cxx(system_cxx)
+            assignment= mpgcpp.arc_consistency_cxx(system_cxx,heuristic)
         case float() | np.float64():
-            assignment= mpgcpp.arc_consistency_double_cxx(system_cxx)
+            assignment= mpgcpp.arc_consistency_double_cxx(system_cxx,heuristic)
         case np.float32():
-            assignment= mpgcpp.arc_consistency_float_cxx(system_cxx)
+            assignment= mpgcpp.arc_consistency_float_cxx(system_cxx,heuristic)
         case _:
             raise RuntimeError("Unsupported weight type")
     return {x:_convert_assignment(assignment[i]) for i,x in enumerate(system.variables)}

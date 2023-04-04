@@ -84,7 +84,7 @@ def _generate_dense_instances(n, p, seeder, cardinality: int, target: bool, weig
     dtype = weight_distribution.dtype
     A = tf.numpy_function(_adj_matrix_generator, inp=[n, p], Tout=tf.uint8,stateful=True)
     if flatten:
-        A = tf.reshape(A, shape=(-1,))
+        A = tf.reshape(A, shape=(n*n,))
     A = tf.cast(A, dtype=dtype)
     W = tf.multiply(A, W)
     vertex = tf.random.uniform((1,), 0, n, dtype=tf.int32, seed=seeder())
@@ -98,12 +98,12 @@ def _generate_dense_instances(n, p, seeder, cardinality: int, target: bool, weig
             if weight_type == tf.int32 or weight_type == tf.int64:
                 target_value = tf.py_function(
                     lambda output: mpgwrapper.mpgcpp.winners_tensorflow_int_matrix_flattened_cxx(
-                        output.numpy().astype(np.int32).tolist()),
+                        output.numpy().astype(np.int32).tolist(),"dense"),
                     inp=[output], Tout=tf.int32)
             else:
                 target_value = tf.py_function(
                     lambda output: mpgwrapper.mpgcpp.winners_tensorflow_float_matrix_flattened_cxx(
-                        output.numpy().astype(np.float32).tolist()),
+                        output.numpy().astype(np.float32).tolist(),"dense"),
                     inp=[output], Tout=tf.float32)
             target_value = tf.reshape(tf.ensure_shape(target_value, ()), shape=(1,))
             return (tf.cast(output, dtype=tf.float32), tf.cast(target_value, dtype=tf.float32))

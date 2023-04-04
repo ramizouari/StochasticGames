@@ -55,6 +55,7 @@ public:
             auto c=std::get<3>(C);
             max_c=std::max(std::abs(max_c),c);
         }
+        auto radius=system.radius;
         return alpha*max_c+beta;
     }
 };
