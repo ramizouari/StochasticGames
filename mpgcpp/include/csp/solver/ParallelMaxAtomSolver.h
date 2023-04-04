@@ -123,7 +123,9 @@ namespace Parallel
     {
         size_t n_threads;
         std::vector<std::unique_ptr<WorkerThread<SharedMap,R>>> workers;
+        using MaxAtomSolver<Map,R>::bound_estimator;
     public:
+        using MaxAtomSolver<Map,R>::set_bound_estimator;
 
         explicit ParallelMaxAtomArcConsistencySolver(size_t n_threads=std::thread::hardware_concurrency()):n_threads(n_threads)
         {
@@ -135,8 +137,9 @@ namespace Parallel
             std::unordered_map<Variable,std::vector<ReducedConstraint>> rhs_constraints;
             auto variables=system.get_variables();
             SharedMap sharedAssignment;
+            auto K=bound_estimator->estimate(system);
             for(auto v:variables)
-                sharedAssignment[v.get_id()]=system.radius;
+                sharedAssignment[v.get_id()]=K;
 
             for(auto C:system.get_constraints())
             {
@@ -177,7 +180,9 @@ namespace Parallel
         size_t n_threads;
         using Map=std::vector<order_closure<R>>;
         using SharedMap=std::vector<SharedType<order_closure<R>>>;
+        using MaxAtomSolver<Map,R>::bound_estimator;
     public:
+        using MaxAtomSolver<Map,R>::set_bound_estimator;
 
         explicit ParallelMaxAtomArcConsistencySolver(size_t n_threads=std::thread::hardware_concurrency()):n_threads(n_threads)
         {
@@ -190,8 +195,9 @@ namespace Parallel
             std::unordered_map<Variable,std::vector<ReducedConstraint>> rhs_constraints;
             auto variables=system.get_variables();
             SharedMap sharedAssignment(system.count_variables());
+            auto K=bound_estimator->estimate(system);
             for(auto v:variables)
-                sharedAssignment[v.get_id()]=system.radius;
+                sharedAssignment[v.get_id()]=K;
 
             for(auto C:system.get_constraints())
             {
@@ -229,17 +235,19 @@ namespace Parallel
     template<typename Map,typename R>
     class ParallelMaxAtomFixedPointSolver: public MaxAtomSolver<Map,R>
     {
-
+        using MaxAtomSolver<Map,R>::bound_estimator;
     public:
         using MaxAtomSolver<Map,R>::solve;
+        using MaxAtomSolver<Map,R>::set_bound_estimator;
         Map solve(const MaxAtomSystem<R> &system) override
         {
             using ReducedConstraint=std::tuple<Variable,Variable,R>;
             std::unordered_map<Variable,std::vector<ReducedConstraint>> rhs_constraints;
             auto variables=system.get_variables();
+            auto K=bound_estimator->estimate(system);
             Map assignment;
             for(auto v:variables)
-                assignment[v.get_id()]=system.radius;
+                assignment[v.get_id()]=K;
             bool convergence=false;
             while(!convergence)
             {
@@ -267,17 +275,20 @@ namespace Parallel
     template<typename R>
     class ParallelMaxAtomFixedPointSolver<std::vector<order_closure<R>>,R>: public MaxAtomSolver<std::vector<order_closure<R>>,R>
     {
+        using MaxAtomSolver<std::vector<order_closure<R>>,R>::bound_estimator;
     public:
         using Map=std::vector<order_closure<R>>;
         using MaxAtomSolver<Map,R>::solve;
+        using MaxAtomSolver<Map,R>::set_bound_estimator;
         Map solve(const MaxAtomSystem<R> &system) override
         {
             using ReducedConstraint=std::tuple<Variable,Variable,R>;
             std::unordered_map<Variable,std::vector<ReducedConstraint>> rhs_constraints;
             auto variables=system.get_variables();
             Map assignment(system.count_variables());
+            auto K=bound_estimator->estimate(system);
             for(auto v:variables)
-                assignment[v.get_id()]=system.radius;
+                assignment[v.get_id()]=K;
             std::atomic<bool> convergence=false;
             while(!convergence)
             {

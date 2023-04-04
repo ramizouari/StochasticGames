@@ -4,7 +4,7 @@ import tensorflow as tf
 import mpg.graph.random_graph
 import networkx as nx
 import itertools
-import tensorflow_probability as tfb
+import tensorflow_probability as tfp
 import mpg.wrapper as mpgwrapper
 
 
@@ -62,30 +62,42 @@ def _generate_instances(n, p, seed, cardinality: int, target: bool, as_graph: bo
     else:
         return (output, 1)
 
+def cast_all(dtype,*args):
+    return tuple(tf.cast(arg, dtype) for arg in args)
 
-def _generate_dense_instances(n, p, seed, cardinality: int, target: bool, weight_matrix: bool, flatten: bool):
-    bernoulli: tfb.distributions.Distribution = tfb.distributions.Bernoulli(probs=p)
-    # discrete=tfb.distributions.DiscreteUniform(low=0,high=10)
+def _generate_dense_instances(n, p, seeder, cardinality: int, target: bool, weight_matrix: bool, flatten: bool,
+                              weight_distribution: tfp.distributions.Distribution, weight_type):
+    adjacency_distribution: tfp.distributions.Distribution = tfp.distributions.Bernoulli(probs=p)
+    turn_distribution: tfp.distributions.Distribution = tfp.distributions.Bernoulli(probs=0.5)
+    # discrete=tfp.distributions.DiscreteUniform(low=0,high=10)
     shape = (n, n) if not flatten else (n * n,)
-    W = tf.random.uniform(shape,-10, 11, dtype=tf.int32)
-    adjacency_list=[]
+    W = weight_distribution.sample(shape, seed=seeder())
+    dtype=weight_distribution.dtype
+    adjacency_list = []
     for k in range(n):
-        adjacency_list.append(bernoulli.sample((n,)))
-        while tf.math.reduce_all(adjacency_list[k]==0):
-            adjacency_list[k] = bernoulli.sample((n,))
-    A= tf.concat(adjacency_list,0)
+        adjacency_list.append(adjacency_distribution.sample((n,), seed=seeder()))
+        while tf.math.reduce_all(adjacency_list[k] == 0):
+            adjacency_list[k] = adjacency_distribution.sample((n,), seed=seeder())
+    A = tf.cast(tf.concat(adjacency_list, 0),dtype=dtype)
     W = tf.multiply(A, W)
-    vertex = tf.random.uniform((1,),0, n, dtype=np.int32)
-    player = bernoulli.sample((1,))
+    vertex = tf.random.uniform((1,), 0, n, dtype=tf.int32, seed=seeder())
+    player = turn_distribution.sample((1,), seed=seeder())
     if flatten:
         if weight_matrix:
-            output = tf.cast(tf.concat([A, W, vertex, player], axis=0), dtype=tf.float32)
+            output = tf.concat(cast_all(dtype,A, W, vertex, player), axis=0)
         else:
-            output = tf.cast(tf.concat([A, W, vertex, player], axis=0), dtype=tf.float32)
+            output = tf.concat(cast_all(dtype,A, vertex, player), axis=0)
         if target:
-            target_value=tf.py_function(lambda output:mpgwrapper.mpgcpp.winners_tensorflow_float_matrix_flattened_cxx(output.numpy().tolist()),inp=[output],Tout=tf.int32)
-            target_value=tf.reshape(tf.ensure_shape(target_value,()),shape=(1,))
-            return (output, tf.cast(target_value,dtype=tf.float32))
+            if weight_type == tf.int32 or weight_type == tf.int64:
+                target_value = tf.py_function(
+                    lambda output: mpgwrapper.mpgcpp.winners_tensorflow_int_matrix_flattened_cxx(output.numpy().astype(np.int32).tolist()),
+                    inp=[output], Tout=tf.int32)
+            else:
+                target_value = tf.py_function(
+                    lambda output: mpgwrapper.mpgcpp.winners_tensorflow_float_matrix_flattened_cxx(output.numpy().astype(np.float32).tolist()),
+                    inp=[output], Tout=tf.float32)
+            target_value = tf.reshape(tf.ensure_shape(target_value, ()), shape=(1,))
+            return (tf.cast(output,dtype=tf.float32), tf.cast(target_value, dtype=tf.float32))
         return output
     else:
         if weight_matrix:
@@ -100,9 +112,24 @@ def _generate_dense_instances(n, p, seed, cardinality: int, target: bool, weight
 class MPGGeneratedDenseDataset(tf.data.Dataset):
 
     def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
-                target: bool = False, weight_matrix: bool = True, flatten=False,seed=None):
+                target: bool = False, weight_matrix: bool = True, flatten=False, seed=None,
+                weights_distribution: tfp.distributions.Distribution = None,
+                weight_type : str = "int"):
+        if weight_type == "int":
+            weight_type= tf.int32
+        elif weight_type == "float":
+            weight_type = tf.float32
+        elif weight_type == "double":
+            weight_type = tf.float64
+        elif not isinstance(weight_type, tf.DType):
+            raise ValueError("weight_type must be a string or a tf.DType")
+        if weights_distribution is None:
+            weights_distribution = tfp.distributions.Uniform(low=-1, high=1)
         if seed is None:
-            seed = np.random.randint(0, 1<<32)
+            seed = np.random.randint(0, 1 << 32)
+
+        seeder = tfp.util.SeedStream(seed, "seeding_generator")
+
         shape = None
         if flatten:
             if weight_matrix:
@@ -123,18 +150,37 @@ class MPGGeneratedDenseDataset(tf.data.Dataset):
         if cardinality == tf.data.INFINITE_CARDINALITY:
             generated = tf.data.Dataset.counter(start=seed, step=1)
         else:
-            generated = tf.data.Dataset.range(seed,seed+cardinality)
+            generated = tf.data.Dataset.range(seed, seed + cardinality)
         return generated.map(
-            lambda seed: _generate_dense_instances(n, p, seed, cardinality, target, weight_matrix, flatten),
-            num_parallel_calls=tf.data.experimental.AUTOTUNE
+            lambda seed: _generate_dense_instances(n, p, seeder, cardinality, target, weight_matrix, flatten,
+                                                   weights_distribution, weight_type),
+            num_parallel_calls=12
         )
         #    range,
         #    args=(n,p,cardinality, target, weight_matrix,flatten),
         #    output_signature=signature
         # )
 
-    def __init__(self, n, p):
-        pass
+    def __init__(self, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
+                 target: bool = False, weight_matrix: bool = True, flatten=False, seed=None,
+                 weights_distribution: tfp.distributions.Distribution = None,
+                 weight_type : str = "int"):
+        self.n = n
+        self.p = p
+        self.cardinality = cardinality
+        self.target = target
+        self.weight_matrix = weight_matrix
+        self.flatten = flatten
+        self.seed = seed
+        self.weights_distribution = weights_distribution
+
+    def _permutation(self, x, P):
+        if self.flatten:
+            S = tf.concat(tf.reshape(tf.tensordot(P, P, axes=None), shape=(-1,)))
+            return tf.concat([tf.gather(x, S, axis=0), P[x[-2]], x[-1]])
+
+    def permutation(self, P):
+        return self.map(lambda x: self._permutation(x, P))
 
 
 class MPGGeneratedDataset(tf.data.Dataset):

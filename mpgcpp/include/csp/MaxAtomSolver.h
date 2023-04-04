@@ -9,10 +9,79 @@
 #include "MaxAtomSystem.h"
 #include "MinMaxSystem.h"
 
+template<typename R>
+class MaxAtomBoundEstimator
+{
+public:
+    virtual R estimate(const MaxAtomSystem<R> &system)=0;
+    virtual R estimate(const NaryMaxAtomSystem<R> &system)
+    {
+        return estimate(system.to_max_atom_system());
+    }
+    virtual R estimate(const MinMaxSystem<R> &system)
+    {
+        return estimate(system.to_nary_max_system());
+    }
+    virtual ~MaxAtomBoundEstimator()= default;
+};
+
+template<typename R>
+class DefaultMaxAtomBoundEstimator: public MaxAtomBoundEstimator<R>
+{
+public:
+    R estimate(const MaxAtomSystem<R> &system) override
+    {
+        return system.radius;
+    }
+};
+
+template<typename R>
+class LinearMaxAtomBoundEstimator: public MaxAtomBoundEstimator<R>
+{
+    R alpha,beta;
+public:
+    LinearMaxAtomBoundEstimator():LinearMaxAtomBoundEstimator(1,0)
+    {
+    }
+    explicit LinearMaxAtomBoundEstimator(R alpha,R beta=0):alpha(alpha),beta(beta)
+    {
+
+    }
+    R estimate(const MaxAtomSystem<R> &system) override
+    {
+        R max_c{};
+        for(auto C:system.get_constraints())
+        {
+            auto c=std::get<3>(C);
+            max_c=std::max(std::abs(max_c),c);
+        }
+        return alpha*max_c+beta;
+    }
+};
+
 template<typename Map,typename R>
 class MaxAtomSolver
 {
+protected:
+    std::unique_ptr<MaxAtomBoundEstimator<R>> bound_estimator= std::make_unique<DefaultMaxAtomBoundEstimator<R>>();
 public:
+    MaxAtomSolver() = default;
+
+    MaxAtomSolver( MaxAtomSolver && O):bound_estimator(std::move(O.bound_estimator))
+    {
+
+    }
+    MaxAtomSolver & operator=(MaxAtomSolver && O) noexcept
+    {
+        bound_estimator=std::move(O.bound_estimator);
+        return *this;
+    }
+
+    void set_bound_estimator(MaxAtomBoundEstimator<R> *_bound_estimator)
+    {
+        bound_estimator.reset(_bound_estimator);
+    }
+
     virtual Map solve(const MaxAtomSystem<R> &system)=0;
     virtual Map solve(const NaryMaxAtomSystem<R> &system)
     {
@@ -36,7 +105,27 @@ public:
 template<typename R>
 class MaxAtomSolver<std::vector<order_closure<R>>,R>
 {
+    protected:
+    std::unique_ptr<MaxAtomBoundEstimator<R>> bound_estimator= std::make_unique<DefaultMaxAtomBoundEstimator<R>>();
+
 public:
+
+    MaxAtomSolver() = default;
+
+    MaxAtomSolver( MaxAtomSolver && O):bound_estimator(std::move(O.bound_estimator))
+    {
+
+    }
+    MaxAtomSolver & operator=(MaxAtomSolver && O)
+    {
+        bound_estimator=std::move(O.bound_estimator);
+        return *this;
+    }
+
+    void set_bound_estimator(MaxAtomBoundEstimator<R> *_bound_estimator)
+    {
+        bound_estimator.reset(_bound_estimator);
+    }
     virtual std::vector<order_closure<R>> solve(const MaxAtomSystem<R> &system)=0;
     virtual std::vector<order_closure<R>> solve(const NaryMaxAtomSystem<R> &system)
     {
@@ -56,17 +145,19 @@ public:
 template<typename Map,typename R>
 class MaxAtomArcConsistencySolver: public MaxAtomSolver<Map,R>
 {
-
+    using MaxAtomSolver<Map,R>::bound_estimator;
 public:
+    using MaxAtomSolver<Map,R>::set_bound_estimator;
     using MaxAtomSolver<Map,R>::solve;
     Map solve(const MaxAtomSystem<R> &system) override
     {
         using ReducedConstraint=std::tuple<Variable,Variable,R>;
         std::unordered_map<Variable,std::vector<ReducedConstraint>> rhs_constraints;
         auto variables=system.get_variables();
+        auto K=bound_estimator->estimate(system);
         Map assignment;
         for(auto v:variables)
-            assignment[v.get_id()]=system.radius;
+            assignment[v.get_id()]=K;
         for(auto C:system.get_constraints())
         {
             auto x=std::get<0>(C);
@@ -109,17 +200,20 @@ public:
 template<typename R>
 class MaxAtomArcConsistencySolver<std::vector<order_closure<R>>,R>: public MaxAtomSolver<std::vector<order_closure<R>>,R>
 {
-
+    using MaxAtomSolver<std::vector<order_closure<R>>,R>::bound_estimator;
 public:
     using Map=std::vector<order_closure<R>>;
+    using MaxAtomSolver<Map,R>::set_bound_estimator;
     Map solve(const MaxAtomSystem<R> &system) override
     {
         using ReducedConstraint=std::tuple<Variable,Variable,R>;
         std::unordered_map<Variable,std::vector<ReducedConstraint>> rhs_constraints;
         auto variables=system.get_variables();
         Map assignment(system.count_variables());
+        auto K=bound_estimator->estimate(system);
+
         for(auto v:variables)
-            assignment[v.get_id()]=system.radius;
+            assignment[v.get_id()]=K;
         for(auto C:system.get_constraints())
         {
             auto x=std::get<0>(C);
@@ -160,16 +254,20 @@ template<typename Map,typename R>
 class MaxAtomFixedPointSolver: public MaxAtomSolver<Map,R>
 {
 
+    using MaxAtomSolver<Map,R>::bound_estimator;
 public:
+    using MaxAtomSolver<Map,R>::set_bound_estimator;
     using MaxAtomSolver<Map,R>::solve;
     Map solve(const MaxAtomSystem<R> &system) override
     {
         using ReducedConstraint=std::tuple<Variable,Variable,R>;
         std::unordered_map<Variable,std::vector<ReducedConstraint>> rhs_constraints;
         auto variables=system.get_variables();
+        auto K=bound_estimator->estimate(system);
+
         Map assignment;
         for(auto v:variables)
-            assignment[v.get_id()]=system.radius;
+            assignment[v.get_id()]=K;
         bool convergence=false;
         while(!convergence)
         {
@@ -196,8 +294,10 @@ public:
 template<typename R>
 class MaxAtomFixedPointSolver<std::vector<order_closure<R>>,R>: public MaxAtomSolver<std::vector<order_closure<R>>,R>
 {
+    using MaxAtomSolver<std::vector<order_closure<R>>,R>::bound_estimator;
 public:
     using Map=std::vector<order_closure<R>>;
+    using MaxAtomSolver<Map,R>::set_bound_estimator;
     using MaxAtomSolver<Map,R>::solve;
     Map solve(const MaxAtomSystem<R> &system) override
     {
@@ -205,8 +305,9 @@ public:
         std::unordered_map<Variable,std::vector<ReducedConstraint>> rhs_constraints;
         auto variables=system.get_variables();
         Map assignment(system.count_variables());
+        auto K=bound_estimator->estimate(system);
         for(auto v:variables)
-        assignment[v.get_id()]=system.radius;
+        assignment[v.get_id()]=K;
         bool convergence=false;
         while(!convergence)
         {

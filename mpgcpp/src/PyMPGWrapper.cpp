@@ -7,74 +7,28 @@
 #include <boost/mpl/list.hpp>
 #include <boost/type_index.hpp>
 #include <boost/python/numpy.hpp>
+#include <fstream>
+#include "csp/solver/ParallelMaxAtomSolver.h"
 
 namespace py = boost::python;
-//TO list
-//template<typename T>
-//py::list to_list(const std::vector<T> &v)
-//{
-//    py::list l;
-//    for (auto &e : v)
-//        l.append(e);
-//    return l;
-//}
-//
-////FROM list
-//
-//template<typename T>
-//concept ListType = requires(T t,int k)
-//{
-//    typename T::value_type;
-//    typename T::iterator;
-//    {t[k]} -> std::convertible_to<typename T::value_type>;
-//    {t.size()} -> std::convertible_to<int>;
-//    {t.begin()} -> std::convertible_to<typename T::iterator>;
-//    {t.end()} -> std::convertible_to<typename T::iterator>;
-//};
-//
-//template<typename T,size_t k>
-//struct TupleK_t : std::conditional<k==0 || ( TupleK_t<T,k-1>::value) &&
-//        std::is_convertible<
-//            decltype(std::get<k>(std::declval<T>())),
-//            typename std::tuple_element<k,T>::type>::value,
-//        std::true_type ,
-//        std::false_type>
-//{};
-//
-//template<typename T>
-//concept Tuple = TupleK_t<T,std::tuple_size<T>::value>::value;
-//
-//template<typename A...>
-//std::tuple<A...> from_tuple(const py::tuple &t)
-//{
-//    return std::make_tuple(py::extract<A>(t[i])...);
-//}
-//
-//template<typename T>
-//std::vector<T> from_list(const py::list &l)
-//{
-//    std::vector<T> v;
-//    for (int i=0; i<py::len(l); i++)
-//        v.push_back(py::extract<T>(l[i]));
-//    return v;
-//}
-//template <ListType L>
-//std::vector<L> from_list(const py::list &l)
-//{
-//    std::vector<L> v;
-//    for (int i=0; i<py::len(l); i++)
-//        v.push_back(from_list<L>(py::extract<py::list>(l[i])));
-//    return v;
-//}
-//
-//template <Tuple T>
-//std::vector<T> from_list(const py::list &l)
-//{
-//    std::vector<T> v;
-//    for (int i=0; i<py::len(l); i++)
-//        v.push_back(from_list<T>(py::extract<py::list>(l[i])));
-//    return v;
-//}
+
+template<typename R>
+using MPGInstance_t=Implementation::Vector::MeanPayoffGame<R>;
+
+template<typename R>
+using MPGSolver_t = Implementation::Parallel::Vector::MaxAtomSystemSolver<R>;
+
+template<typename R>
+MPGInstance_t<R> MPGInstance(int n)
+{
+    return MPGInstance_t<R>(n);
+}
+
+template<typename R>
+MPGSolver_t<R> MPGSolver()
+{
+    return MPGSolver_t<R>();
+};
 
 template<typename R>
 std::vector<std::tuple<int,int,R>> from_python_edges(const py::list &l)
@@ -151,10 +105,10 @@ py::tuple optimal_strategy_pair_edges(const py::list &_edges)
         n = std::max(n, u+1);
         n = std::max(n, v+1);
     }
-    Implementation::HashMap::MeanPayoffGame<R> mpg(n);
+    auto mpg = MPGInstance<R>(n);
     for (auto [u,v,w] : edges)
         mpg.add_edge(u,v,w);
-    Implementation::Vector::MaxAtomSystemSolver<R> solver;
+    auto solver = MPGSolver<R>();
     auto [strategy0, strategy1] = optimal_strategy_pair(mpg, solver);
     return to_python_pair_strategies(strategy0, strategy1);
 }
@@ -162,8 +116,8 @@ py::tuple optimal_strategy_pair_edges(const py::list &_edges)
 template<typename R>
 py::tuple optimal_strategy_pair_file(const std::string &filename)
 {
-    MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<R>>(filename);
-    Implementation::Vector::MaxAtomSystemSolver<R> solver;
+    MPG auto mpg=mpg_from_file<MPGInstance_t<R>>(filename);
+    auto solver = MPGSolver<R>();
     auto [strategy0, strategy1] = optimal_strategy_pair(mpg, solver);
     return to_python_pair_strategies(strategy0, strategy1);
 }
@@ -177,10 +131,10 @@ py::tuple winners_edges(const py::list &_edges)
         n = std::max(n, u+1);
         n = std::max(n, v+1);
     }
-    Implementation::HashMap::MeanPayoffGame<R> mpg(n);
+    auto mpg = MPGInstance<R>(n);
     for (auto [u,v,w] : edges)
         mpg.add_edge(u,v,w);
-    Implementation::Vector::MaxAtomSystemSolver<R> solver;
+    auto solver = MPGSolver<R>();
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto [winners0, winners1] = winners(mpg, strategyPair);
     std::vector<bool> winners0_bool(winners0.begin(), winners0.end());
@@ -198,13 +152,20 @@ py::tuple winners_edges(const py::list &_edges)
 template<typename R>
 int winners_tensorflow_matrix_flattened(const py::list &_data)
 {
-    int n=(py::len(_data)-2)/2;
+    constexpr size_t VERTEX_POS=-2;
+    constexpr size_t TURN_POS=-1;
+    auto L=py::len(_data);
+    if (L<3)
+        throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)));
+    int n=(L-2)/2;
     n=std::round(std::sqrt(n));
-    if(2*n*n+2 != py::len(_data))
+    if(2*n*n+2 != L)
         throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)) + " for n=" + std::to_string(n));
-    auto turn = static_cast<Bipartite::Player>(py::extract<R>(_data[n*n+1])==1);
-    int vertex = py::extract<R>(_data[n*n]);
-    Implementation::HashMap::MeanPayoffGame<R> mpg(n);
+    auto turn = static_cast<Bipartite::Player>(py::extract<R>(_data[L+TURN_POS])==1);
+    int vertex = py::extract<R>(_data[L+VERTEX_POS]);
+    if(vertex<0 || vertex>=n)
+        throw std::runtime_error("Invalid vertex " + std::to_string(vertex) + " for n=" + std::to_string(n));
+    auto mpg = MPGInstance<R>(n);
     std::vector<bool> empty(n,true);
     for(int i=0;i<n;i++) for(int j=0;j<n;j++) if(py::extract<R>(_data[i*n+j])!=0)
     {
@@ -214,7 +175,8 @@ int winners_tensorflow_matrix_flattened(const py::list &_data)
     std::string empty_str;
     for(int i=0;i<n;i++) if(empty[i]) empty_str+=std::to_string(i)+" ";
     if(!empty_str.empty()) throw std::runtime_error("Empty vertices: "+empty_str);
-    Implementation::Vector::MaxAtomSystemSolver<R> solver;
+    auto solver = MPGSolver<R>();
+    solver.set_bound_estimator(new LinearMaxAtomBoundEstimator<R>(1,100));
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto W = winners(mpg, strategyPair);
     return static_cast<int>(W[turn][vertex]);
@@ -224,7 +186,7 @@ template<typename R>
 py::tuple winners_file(const std::string &filename)
 {
     MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<R>>(filename);
-    Implementation::Vector::MaxAtomSystemSolver<R> solver;
+    auto solver = MPGSolver<R>();
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto [winners0, winners1] = winners(mpg, strategyPair);
     std::vector<bool> winners0_bool(winners0.begin(), winners0.end());
@@ -241,10 +203,10 @@ py::tuple mean_payoffs_edges(const py::list &_edges)
         n = std::max(n, u+1);
         n = std::max(n, v+1);
     }
-    Implementation::HashMap::MeanPayoffGame<R> mpg(n);
+    auto mpg = MPGInstance<R>(n);
     for (auto [u,v,w] : edges)
         mpg.add_edge(u,v,w);
-    Implementation::Vector::MaxAtomSystemSolver<R> solver;
+    auto solver= MPGSolver<R>();
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto [meanPayoff0, meanPayoff1] = mean_payoffs(mpg, strategyPair);
     return to_python_mean_payoffs(meanPayoff0, meanPayoff1);
@@ -254,7 +216,7 @@ template<typename R>
 py::tuple mean_payoffs_file(const std::string &filename)
 {
     MPG auto mpg=mpg_from_file<Implementation::HashMap::MeanPayoffGame<R>>(filename);
-    Implementation::Vector::MaxAtomSystemSolver<R> solver;
+    auto solver = MPGSolver<R>();
     auto strategyPair = optimal_strategy_pair(mpg, solver);
     auto [meanPayoff0, meanPayoff1] = mean_payoffs(mpg, strategyPair);
     return to_python_mean_payoffs(meanPayoff0, meanPayoff1);
@@ -264,7 +226,7 @@ template<typename R>
 py::list arc_consistency(const py::list &_system)
 {
     auto system=from_max_atom_constraint<R>(_system);
-    Implementation::Vector::MaxAtomSystemSolver<R> solver;
+    auto solver = MPGSolver<R>();
     auto solution = solver.solve(system);
     py::list solution_python;
     for(auto value:solution)
