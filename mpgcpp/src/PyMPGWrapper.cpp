@@ -56,7 +56,7 @@ std::unique_ptr<MPGSolverBase<R>> MPGSolverInstance(const std::string &heuristic
     else if(h=="parallel")
         return std::make_unique<Implementation::Parallel::Vector::MaxAtomSystemSolver<R>>();
     else
-        throw std::runtime_error("Unknown heuristic");
+        throw std::runtime_error("Unknown heuristic \"" + heuristic + "\"");
 }
 
 template<typename R>
@@ -210,34 +210,138 @@ int winners_tensorflow_matrix_flattened(const py::list &_data, const std::string
     return static_cast<int>(W[turn][vertex]);
 }
 
-template<typename R>
-int winners_tensorflow_matrix_flattened_patched(const py::list &_data, const std::string& heuristic)
+template<typename T>
+class ListView3D
 {
-    constexpr size_t VERTEX_POS=-2;
-    constexpr size_t TURN_POS=-1;
-    auto L=py::len(_data);
-    if (L<3)
-        throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)));
-    int n=(L-2)/2;
-    n=std::round(std::sqrt(n));
-    if(2*n*n+2 != L)
-        throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)) + " for n=" + std::to_string(n));
-    auto turn = static_cast<Bipartite::Player>(py::extract<R>(_data[L+TURN_POS])==1);
-    int vertex = py::extract<R>(_data[L+VERTEX_POS]);
-    if(vertex<0 || vertex>=n)
-        throw std::runtime_error("Invalid vertex " + std::to_string(vertex) + " for n=" + std::to_string(n));
+protected:
+    const py::list &l;
+public:
+    ListView3D(const py::list &_l) : l(_l) {}
+    virtual T operator()(ssize_t i,ssize_t j, ssize_t k) const
+    {
+        py::list z=py::extract<py::list>(l[i]);
+        py::list y=py::extract<py::list>(z[j]);
+        return py::extract<T>(y[k]);
+    }
+    [[nodiscard]] virtual std::array<ssize_t,3> shape() const
+    {
+        py::list z=py::extract<py::list>(l[0]);
+        return {
+                py::len(l),
+                py::len(z),
+                py::len(py::extract<py::list>(z[0]))
+            };
+    }
+};
+
+template<typename T>
+class ListView3DFlat : public ListView3D<T>
+{
+    ssize_t n,m,r;
+public:
+    ListView3DFlat(const py::list &_l, ssize_t _n, ssize_t _m, ssize_t _r) : ListView3D<T>(_l), n(_n),m(_m),r(_r) {}
+    T operator()(ssize_t i,ssize_t j, ssize_t k) const override
+    {
+        return py::extract<T>(this->l[i*n*m+j*m+k]);
+    }
+    [[nodiscard]] std::array<ssize_t,3> shape() const override
+    {
+        return {n, m,r};
+    }
+};
+
+template<typename R>
+py::list targets_tensorflow_matrix_base(const ListView3D<R> &_data, const std::string& heuristic, const std::string &target)
+{
+//    auto L=py::len(_data);
+//    if(2*n*n != L)
+//        throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)) + " for n=" + std::to_string(n));
+
+    auto [r,n,_] = _data.shape();
+
     auto mpg = MPGInstance<R>(n);
     std::vector<bool> empty(n,true);
-    for(int i=0;i<n;i++) for(int j=0;j<n;j++) if(py::extract<R>(_data[i*n+j])!=0)
-            {
-                mpg.add_edge(i, j, py::extract<R>(_data[i * n + j + n * n]));
-                empty[i]=false;
-            }
+    for(int i=0;i<n;i++) for(int j=0;j<n;j++) if(_data(0,i,j)!=0)
+    {
+        mpg.add_edge(i, j,_data(1,i,j));
+        empty[i]=false;
+    }
+
     std::string empty_str;
     for(int i=0;i<n;i++) if(empty[i]) empty_str+=std::to_string(i)+" ";
     if(!empty_str.empty()) throw std::runtime_error("Empty vertices: "+empty_str);
     auto solver = MPGSolverInstance<R>(heuristic);
-    return 1;
+    auto strategyPair = optimal_strategy_pair(mpg, *solver);
+    py::list C;
+    if(target=="strategy")
+    {
+        auto [strategy0, strategy1] = optimal_strategy_pair(mpg, *solver);
+        auto X=to_list(strategy0);
+        auto Y=to_list(strategy1);
+        C.append(X);
+        C.append(Y);
+    }
+    else if(target=="winners")
+    {
+        auto W = winners(mpg, strategyPair);
+        std::vector<bool> W0(W[Bipartite::PLAYER_0].begin(), W[Bipartite::PLAYER_0].end());
+        std::vector<bool> W1(W[Bipartite::PLAYER_1].begin(), W[Bipartite::PLAYER_1].end());
+        auto X=to_list(W0);
+        auto Y=to_list(W1);
+        C.append(X);
+        C.append(Y);
+    }
+    else if(target=="all")
+    {
+        auto [strategy0, strategy1] = optimal_strategy_pair(mpg, *solver);
+        auto W = winners(mpg, strategyPair);
+        std::vector<bool> W0(W[Bipartite::PLAYER_0].begin(), W[Bipartite::PLAYER_0].end());
+        std::vector<bool> W1(W[Bipartite::PLAYER_1].begin(), W[Bipartite::PLAYER_1].end());
+        py::list A,B;
+        auto S0=to_list(strategy0);
+        auto S1=to_list(strategy1);
+        auto Z0=to_list(W0);
+        auto Z1=to_list(W1);
+        A.append(S0);
+        A.append(S1);
+        B.append(Z0);
+        B.append(Z1);
+        C.append(A);
+        C.append(B);
+    }
+    else
+        throw std::runtime_error("Invalid target " + target);
+    return C;
+}
+
+template<typename R>
+py::list targets_tensorflow_flattened(const py::list &_data, const std::string& heuristic, const std::string &target)
+{
+    auto L=py::len(_data);
+    int n=std::sqrt(L/2);
+    if(2*n*n != L)
+        throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)) + " for n=" + std::to_string(n));
+    ListView3DFlat<R> data(_data,2,n,n);
+    return targets_tensorflow_matrix_base(data, heuristic, target);
+}
+
+template<typename R>
+py::list targets_tensorflow_tensor(const py::list &_data, const std::string& heuristic, const std::string &target)
+{
+    auto L=py::len(_data);
+    if(L!=2)
+        throw std::runtime_error("Invalid data length " + std::to_string(py::len(_data)));
+    ListView3D<R> data(_data);
+    return targets_tensorflow_matrix_base(data, heuristic, target);
+}
+
+template<typename R>
+py::list targets_tensorflow(const py::list &_data, const std::string& heuristic, const std::string &target, bool flatten)
+{
+    if(flatten)
+        return targets_tensorflow_flattened<R>(_data, heuristic, target);
+    else
+        return targets_tensorflow_tensor<R>(_data, heuristic, target);
 }
 
 template<typename R>
@@ -347,9 +451,11 @@ BOOST_PYTHON_MODULE(mpgcpp)
         auto mpe="mean_payoffs_"+name+"_edges_cxx";
         auto mpf="mean_payoffs_"+name+"_file_cxx";
         auto ac="arc_consistency_"+name+"_cxx";
-        auto wtfl="winners_tensorflow_"+name+"_matrix_flattened_cxx";
-        auto wtf="winners_tensorflow_"+name+"_matrix_flattened_patched_cxx";
+        auto wtfl="winners_tensorflow_"+name+"_flattened_cxx";
         auto ach="arc_consistency_heuristic_"+name+"_cxx";
+        auto ttf = "targets_tensorflow_"+name+"_cxx";
+        auto ttft = "targets_tensorflow_"+name+"_tensor_cxx";
+        auto ttff = "targets_tensorflow_"+name+"_flattened_cxx";
         def(ospe.c_str(), optimal_strategy_pair_edges<R>);
         def(ospf.c_str(), optimal_strategy_pair_file<R>);
         def(we.c_str(), winners_edges<R>);
@@ -357,8 +463,10 @@ BOOST_PYTHON_MODULE(mpgcpp)
         def(mpe.c_str(), mean_payoffs_edges<R>);
         def(mpf.c_str(), mean_payoffs_file<R>);
         def(ac.c_str(), arc_consistency<R>);
-        def(wtfl.c_str(), winners_tensorflow_matrix_flattened<R>);
-        def(wtf.c_str(), winners_tensorflow_matrix_flattened_patched<R>);
+        def(wtfl.c_str(), targets_tensorflow_flattened<R>);
+        def(ttf.c_str(), targets_tensorflow<R>);
+        def(ttft.c_str(), targets_tensorflow_tensor<R>);
+        def(ttff.c_str(), targets_tensorflow_flattened<R>);
     });
     def("optimal_strategy_pair_edges_cxx", optimal_strategy_pair_edges<integer>);
     def("optimal_strategy_pair_file_cxx", optimal_strategy_pair_file<integer>);
@@ -367,6 +475,7 @@ BOOST_PYTHON_MODULE(mpgcpp)
     def("mean_payoffs_edges_cxx", mean_payoffs_edges<integer>);
     def("mean_payoffs_file_cxx", mean_payoffs_file<integer>);
     def("arc_consistency_cxx", arc_consistency<integer>);
-    def("winners_tensorflow_matrix_flattened_cxx", winners_tensorflow_matrix_flattened<integer>);
-    def("winners_tensorflow_matrix_flattened_patched_cxx", winners_tensorflow_matrix_flattened_patched<integer>);
+    def("targets_tensorflow_cxx", targets_tensorflow<integer>);
+    def("targets_tensorflow_tensor_cxx", targets_tensorflow_tensor<integer>);
+    def("targets_tensorflow_flattened_cxx", targets_tensorflow_flattened<integer>);
 }
