@@ -8,16 +8,34 @@ import tensorflow_probability as tfp
 
 
 def cast_all(dtype, *args):
+    """
+    Casts all arguments to the given dtype
+    :param dtype: The dtype to cast to
+    :param args: The arguments to cast
+    :return: A tuple of the cast arguments
+    """
     return tuple(tf.cast(arg, dtype) for arg in args)
 
 
 def convert_sparse_matrix_to_sparse_tensor(X, shape_hint):
+    """
+    Converts a sparse matrix to a sparse tensor
+    :param X: The sparse matrix
+    :param shape_hint: The shape of the sparse tensor
+    :return: The sparse tensor
+    """
     coo = X.tocoo()
     indices = np.mat([coo.row, coo.col]).transpose()
     return tf.SparseTensor(indices, coo.data, shape_hint)
 
 
 def stack_sparse_tensors(shape_hint, *A):
+    """
+    Stacks sparse tensors
+    :param shape_hint: The shape of the stacked sparse tensor
+    :param A: The sparse tensors to stack
+    :return: The stacked sparse tensor
+    """
     indices = []
     values = []
     for i, Z in enumerate(A):
@@ -33,8 +51,17 @@ def _as_tensor(A, as_dense: bool, shape_hint=None):
     else:
         return convert_sparse_matrix_to_sparse_tensor(A, shape_hint)
 
+
 def string_tensor_to_string(string_tensor):
+    """
+    Converts a string tensor to a string
+    :param string_tensor: The string tensor
+    :return: The string
+    :detail: This is a workaround for getting the raw string from a string tensor, as str(string_tensor) returns the
+    string representation of the tensor, which is not what we want.
+    """
     return tf.strings.reduce_join(string_tensor, separator="").numpy().decode("utf-8")
+
 
 def generate_instances(n, p, seed, cardinality: int, target: bool, as_graph: bool,
                        adj_matrix: bool, weight_matrix: bool, as_dense: bool):
@@ -86,33 +113,88 @@ def gnp_adjacency_matrix(n, p) -> np.ndarray:
             A[k, :] = np.random.binomial(1, p, n)
     return A
 
-def _generate_target_impl_int(X,heuristic, target,flatten:bool):
-    return np.array(mpgwrapper.mpgcpp.targets_tensorflow_int_cxx (
-                X.numpy().astype(np.int32).tolist(),string_tensor_to_string(heuristic),string_tensor_to_string(target),bool(flatten)
-            ))
+
+def _generate_target_impl_int(X, heuristic: str, target: str, flatten: bool):
+    """
+Generates a target for the given heuristic and target, using int32
+
+The target is generated using the C++ implementation of the arc consistency algorithm, using int32
+:param X: The input
+:param heuristic: The used heuristic
+:param target: The target to generate. One of "winners", "strategy", "all"
+:param flatten: Whether the input is flattened
+"""
+    return np.array(mpgwrapper.mpgcpp.targets_tensorflow_int_cxx(
+        X.numpy().astype(np.int32).tolist(), string_tensor_to_string(heuristic), string_tensor_to_string(target),
+        bool(flatten)
+    ))
+
 
 def _generate_target_impl_float(X, heuristic, target, flatten: bool):
-        return np.array(mpgwrapper.mpgcpp.targets_tensorflow_float_cxx (
-            X.numpy().astype(np.float32).tolist(), string_tensor_to_string(heuristic), string_tensor_to_string(target), bool(flatten)
-        ))
-def generate_target(X, target, weight_type,flatten:bool):
-    args=[X,"dense", target,flatten]
-    _generate_target_impl=_generate_target_impl_int if weight_type==tf.int32 or weight_type==tf.int64 else _generate_target_impl_float
+    """
+Generates a target for the given heuristic and target, using float32.
+
+The target is generated using the C++ implementation of the arc consistency algorithm, using float32
+:param X: The input
+:param heuristic: The used heuristic
+:param target: The target to generate. One of "winners", "strategy", "all"
+:param flatten: Whether the input is flattened
+    """
+    return np.array(mpgwrapper.mpgcpp.targets_tensorflow_float_cxx(
+        X.numpy().astype(np.float32).tolist(), string_tensor_to_string(heuristic), string_tensor_to_string(target),
+        bool(flatten)
+    ))
+
+
+def generate_target(X, target, weight_type, flatten: bool):
+    """
+Generates a target for the given heuristic and target.
+
+The target is generated using the C++ implementation of the arc consistency algorithm
+:param X: The input
+:param heuristic: The used heuristic
+:param target: The target to generate. One of "winners", "strategy", "all"
+:param flatten: Whether the input is flattened
+    """
+    args = [X, "dense", target, flatten]
+    _generate_target_impl = _generate_target_impl_int if weight_type == tf.int32 or weight_type == tf.int64 else _generate_target_impl_float
     return tf.py_function(_generate_target_impl,
                           inp=args,
-                          Tout=tf.int32 if weight_type==tf.int32 or weight_type==tf.int64 else tf.float32)
+                          Tout=tf.int32 if weight_type == tf.int32 or weight_type == tf.int64 else tf.float32)
 
-def _target_ensure_shape(output,target_name,target_value,n):
+
+def _target_ensure_shape(output, target_name, target_value, n):
+    """
+Ensures that the shape of the target is correct
+:param output: The output of the model
+:param target_name: The name of the target
+:param target_value: The value of the target
+:param n: The number of nodes
+"""
     if target_name == "strategy":
-        return  tf.ensure_shape(target_value, (2, n))
+        return tf.ensure_shape(target_value, (2, n))
     elif target_name == "winners":
         return tf.ensure_shape(target_value, (2, n))
     elif target_name == "all":
         return tf.ensure_shape(target_value, (2, 2, n))
     else:
         raise ValueError("Invalid target name")
+
+
 def generate_dense_gnp_instance(n, p, seeder, cardinality: int, target: str, weight_matrix: bool, flatten: bool,
                                 weight_distribution: tfp.distributions.Distribution, weight_type):
+    """
+Generates a dense G(n,p) instance with tensorflow
+:param n: The number of nodes
+:param p: The probability of an edge
+:param seeder: The seeder to generate PRNG seeds
+:param cardinality: The cardinality of the instance
+:param target: The target to generate. One of "winners", "strategy", "all", "none"
+:param weight_matrix: Whether to generate a weight matrix
+:param flatten: Whether to flatten the output
+:param weight_distribution: The distribution to use for the weights
+:param weight_type: The type of the weights
+"""
     shape = (n, n) if not flatten else (n * n,)
     W = weight_distribution.sample(shape, seed=seeder())
     dtype = weight_distribution.dtype
@@ -129,7 +211,7 @@ def generate_dense_gnp_instance(n, p, seeder, cardinality: int, target: str, wei
             output = tf.concat(cast_all(dtype, A), axis=0)
         if target != "none":
             target_value = generate_target(output, target, weight_type, flatten)
-            target_value = _target_ensure_shape(output,target,target_value,n)
+            target_value = _target_ensure_shape(output, target, target_value, n)
             return (tf.cast(output, dtype=tf.float32), tf.cast(target_value, dtype=tf.float32))
         return output
     else:

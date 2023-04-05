@@ -2,6 +2,11 @@ import tensorflow as tf
 from tensorflow import keras
 
 class EdgeNormalisationLayer(keras.layers.Layer):
+    """
+    Edge normalisation layer
+
+    This layer normalises the edge weights of a graph. The normalisation is done by subtracting the mean and dividing by the standard deviation.
+    """
     def __init__(self, edges_interval : tuple, **kwargs):
         super(EdgeNormalisationLayer, self).__init__(**kwargs)
         self.edges_interval=edges_interval

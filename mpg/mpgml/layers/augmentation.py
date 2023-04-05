@@ -3,6 +3,11 @@ import tensorflow as tf
 
 
 class GraphIsomorphismLayer(keras.layers.Layer):
+    """
+    Graph isomorphism layer
+
+    This layer permutes the vertices of a graph.
+    """
     def __init__(self, **kwargs):
         super(GraphIsomorphismLayer, self).__init__(**kwargs)
 
@@ -20,6 +25,11 @@ class GraphIsomorphismLayer(keras.layers.Layer):
 
 
 class UniformNoise(keras.layers.Layer):
+    """
+    Uniform noise layer
+
+    This layer adds uniform noise to the input.
+    """
     def __init__(self, noise_level=None, low = None, hight=None,**kwargs):
         super(UniformNoise, self).__init__(**kwargs)
         if noise_level is None and (low is None or hight is None):
@@ -43,6 +53,11 @@ class UniformNoise(keras.layers.Layer):
         return input_shape
 
 class EdgeWeightsNoiseLayer(keras.layers.Layer):
+    """
+    Edge weights noise layer
+
+    This layer adds noise to the edge weights of a graph.
+    """
     def __init__(self, noise_layer,edges_interval, **kwargs):
         super(EdgeWeightsNoiseLayer, self).__init__(**kwargs)
         self.noise_layer=noise_layer

@@ -9,20 +9,33 @@ import mpg.wrapper as mpgwrapper
 from . import utils
 
 
-
-
 class MPGGeneratedDenseDataset(tf.data.Dataset):
+    """
+    A dataset that generates dense MPG graphs following a G(n,p) distribution.
+    """
 
     def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
                 target: str = None, weight_matrix: bool = True, flatten=False, seed=None,
                 weights_distribution: tfp.distributions.Distribution = None,
-                weight_type : str = "int"):
+                weight_type: str = "int"):
+        """
+Generates a dense G(n,p) dataset.
+:param n: The number of nodes
+:param p: The probability of an edge
+:param cardinality: The cardinality of the dataset. If it is equal to tf.data.INFINITE_CARDINALITY, the dataset will be infinite
+:param target: The target to generate. One of "winners", "strategy", "all", "none"
+:param weight_matrix: Whether to generate a weight matrix
+:param flatten: Whether to flatten the input
+:param seed: The seed to use for the PRNG
+:param weights_distribution: The distribution to use for the weights
+:param weight_type: The type of the weights
+        """
         if target is None or target == False:
             target = "none"
-        elif target ==True:
-            target="all"
+        elif target == True:
+            target = "all"
         if weight_type == "int":
-            weight_type= tf.int32
+            weight_type = tf.int32
         elif weight_type == "float":
             weight_type = tf.float32
         elif weight_type == "double":
@@ -70,7 +83,7 @@ class MPGGeneratedDenseDataset(tf.data.Dataset):
     def __init__(self, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
                  target: bool = False, weight_matrix: bool = True, flatten=False, seed=None,
                  weights_distribution: tfp.distributions.Distribution = None,
-                 weight_type : str = "int"):
+                 weight_type: str = "int"):
         self.n = n
         self.p = p
         self.cardinality = cardinality
@@ -96,12 +109,13 @@ class MPGGeneratedDataset(tf.data.Dataset):
             seed = 0
             while True:
                 yield utils.generate_instances(n, p, seed, cardinality, target, as_graph, adj_matrix, weight_matrix,
-                                          as_dense)
+                                               as_dense)
                 seed += 1
         else:
             for sample_idx in range(cardinality):
-                yield utils.generate_instances(n, p, sample_idx, cardinality, target, as_graph, adj_matrix, weight_matrix,
-                                          as_dense)
+                yield utils.generate_instances(n, p, sample_idx, cardinality, target, as_graph, adj_matrix,
+                                               weight_matrix,
+                                               as_dense)
 
     def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY, target: bool = False, as_graph: bool = False,
                 adj_matrix: bool = True, weight_matrix: bool = True, as_dense: bool = True):

@@ -2,6 +2,12 @@ from tensorflow import keras
 import tensorflow as tf
 
 class GraphPaddingLayer(keras.layers.Layer):
+    """
+    Graph padding layer
+
+    This layer pads a graph with zeros to a given size. The padding is done on the right and bottom.
+    This layer is used to make all graphs in a batch the same size.
+    """
     def __init__(self,vertices:int, **kwargs):
         super(GraphPaddingLayer, self).__init__(**kwargs)
         self.vertices=vertices

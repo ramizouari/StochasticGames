@@ -5,7 +5,29 @@ from tensorflow_probability.python.internal import assert_util, parameter_proper
 
 
 class DiscreteUniform(tfp.distributions.Distribution):
+    """
+    Discrete Uniform distribution.
+    The DiscreteUniform distribution is parameterized by `low` and `high` representing the lower and upper bounds of the
+    distribution. The support is given by the integers between `low` and `high` (inclusive).
+    """
     def __init__(self, low, high, validate_args=False, allow_nan_stats=True, name='DiscreteUniform',dtype=tf.int32):
+        """
+        Construct Discrete Uniform distributions.
+        The parameters `low` and `high` must be shaped in a way that supports broadcasting (e.g. `low` and `high` can be
+        scalars or of the same shape).
+        Args:
+            low: Floating point tensor, lower bound on the range of the distribution.
+            high: Floating point tensor, upper bound on the range of the distribution.
+            validate_args: Python `bool`, default `False`. When `True` distribution parameters are checked for
+                validity despite possibly degrading runtime performance. When `False` invalid inputs may silently
+                render incorrect outputs.
+            allow_nan_stats: Python `bool`, default `True`. When `True`, statistics (e.g., mean, mode, variance) use
+                the value "`NaN`" to indicate the result is undefined. When `False`, an exception is raised if one or
+                more of the statistic's batch members are undefined.
+            name: Python `str` name prefixed to Ops created by this class.
+        Raises:
+            TypeError: if `low` and `high` have different `dtype`.
+        """
         parameters = dict(locals())
         with tf.name_scope(name) as name:
             self._low = tf.convert_to_tensor(low, name='low')
@@ -26,58 +48,103 @@ class DiscreteUniform(tfp.distributions.Distribution):
                 name=name)
 
     def _batch_shape_tensor(self):
+        """
+        Return the `Tensor` shape of samples from this distribution.
+        """
         return tf.broadcast_dynamic_shape(tf.shape(self.low), tf.shape(self.high))
 
     def _batch_shape(self):
+        """
+        Return the `Tensor` shape of samples from this distribution.
+        """
         return tf.broadcast_static_shape(self.low.shape, self.high.shape)
 
     def _event_shape_tensor(self):
+        """
+        Return the `Tensor` shape of events from this distribution.
+        """
         return tf.constant([], dtype=tf.int32)
 
     def _event_shape(self):
+        """
+        Return the `Tensor` shape of events from this distribution.
+        """
         return tf.TensorShape([])
 
 
     def _log_prob(self, x):
+        """
+        Return the log of the probability mass function evaluated at `x`.
+        """
         return tf.where(
             tf.logical_and(tf.greater_equal(x, self.low), tf.less_equal(x, self.high)),
             tf.zeros_like(x),
             tf.fill(tf.shape(x), float('-inf')))
 
     def _prob(self, x):
+        """
+        Return the probability mass function evaluated at `x`.
+        """
         return tf.where(
             tf.logical_and(tf.greater_equal(x, self.low), tf.less_equal(x, self.high)),
             tf.ones_like(x),
             tf.zeros_like(x))
 
     def _cdf(self, x):
+        """
+        Return the cumulative mass function evaluated at `x`.
+        """
         return tf.where(
             tf.logical_and(tf.greater_equal(x, self.low), tf.less_equal(x, self.high)),
             tf.ones_like(x),
             tf.zeros_like(x))
 
     def _entropy(self):
+        """
+        Return the entropy of the distribution.
+        """
         return tf.log(self.high - self.low + 1)
 
     def _mean(self):
+        """
+        Return the mean of the distribution.
+        """
         return (self.high + self.low) / 2
 
     def _variance(self):
+        """
+        Return the variance of the distribution.
+        """
         return (self.high - self.low + 1) / 12
 
     def _mode(self):
+        """
+        Return the mode of the distribution.
+        """
         return tf.floor((self.high + self.low) / 2)
 
     def _stddev(self):
+        """
+        Return the standard deviation of the distribution.
+        """
         return tf.sqrt(self.variance())
 
     def _quantile(self, p):
+        """
+        Return the quantile of the distribution.
+        """
         return tf.floor(p * (self.high - self.low + 1) + self.low)
 
     def _default_event_space_bijector(self):
+        """
+        Return the bijector associated with the default event space of this distribution.
+        """
         return tfp.bijectors.AffineScalar(shift=self.low)
 
     def _parameter_control_dependencies(self, is_init):
+        """
+        Return list of assertions to check validity of parameters.
+        """
         if not self.validate_args:
             return []
         assertions = []
@@ -100,11 +167,17 @@ class DiscreteUniform(tfp.distributions.Distribution):
         return self._high
 
     def _parameter_properties(self, dtype, num_classes=None):
+        """
+        Return a dictionary of parameter properties.
+        """
         return dict(
             low=parameter_properties.ParameterProperties(),
             high=parameter_properties.ParameterProperties())
 
     def _sample_control_dependencies(self, x):
+        """
+        Return list of assertions to check validity of samples.
+        """
         if not self.validate_args:
             return []
         assertions = []
@@ -115,6 +188,9 @@ class DiscreteUniform(tfp.distributions.Distribution):
         return assertions
 
     def _log_prob_control_dependencies(self, x):
+        """
+        Return list of assertions to check validity of log-probability arguments.
+        """
         if not self.validate_args:
             return []
         assertions = []
@@ -125,6 +201,9 @@ class DiscreteUniform(tfp.distributions.Distribution):
         return assertions
 
     def _prob_control_dependencies(self, x):
+        """
+        Return list of assertions to check validity of probability arguments.
+        """
         if not self.validate_args:
             return []
         assertions = []
@@ -135,6 +214,9 @@ class DiscreteUniform(tfp.distributions.Distribution):
         return assertions
 
     def _cdf_control_dependencies(self, x):
+        """
+        Return list of assertions to check validity of cumulative mass function arguments.
+        """
         if not self.validate_args:
             return []
         assertions = []
@@ -144,6 +226,7 @@ class DiscreteUniform(tfp.distributions.Distribution):
             x, self.low, message='Sample must be greater than or equal to low.'))
         return assertions
 
+    #TODO: Add support for higher rank Low and High values
     def sample(self, sample_shape=(), seed=None, name='sample'):
         """Sample `sample_shape` values from this distribution.
         Args:
