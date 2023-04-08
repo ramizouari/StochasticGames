@@ -4,6 +4,8 @@ matplotlib
 seaborn
 scikit-learn
 tensorflow
+tensorflow_probability
+tensorflow_gnn
 jupyterlab
 yfiles_jupyter_graphs
 networkx

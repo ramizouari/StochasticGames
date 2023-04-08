@@ -4,7 +4,6 @@ import networkx as nx
 import numpy as np
 
 from ..games import mpg
-from numba import jit
 
 graph_generator = np.random.Generator(np.random.MT19937())
 

@@ -1,3 +1,6 @@
+from functools import reduce
+from typing import Union, Tuple
+
 import networkx as nx
 import numpy as np
 
@@ -113,6 +116,27 @@ def gnp_adjacency_matrix(n, p) -> np.ndarray:
             A[k, :] = np.random.binomial(1, p, n)
     return A
 
+def gnp_adjacency_list(n, p) -> Tuple[np.ndarray, int]:
+    """
+    Generate a random sparse adjacency matrix using the G(n,p) model.
+    Parameters
+    ----------
+    n : int
+        Number of nodes.
+    p : float
+        Probability of an edge.
+    Returns: np.ndarray of shape (n, n)
+    """
+    I=[]
+    for k in range(n):
+        deg=np.random.binomial(n, p)
+        while deg==0:
+            deg=np.random.binomial(n, p)
+        J=np.random.choice(n, deg, replace=False)
+        I.extend([[k,r] for r in J])
+
+    return np.array(I, dtype=np.int64), len(I)
+
 
 def _generate_target_impl_int(X, heuristic: str, target: str, flatten: bool):
     """
@@ -181,7 +205,7 @@ Ensures that the shape of the target is correct
         raise ValueError("Invalid target name")
 
 
-def generate_dense_gnp_instance(n, p, seeder, cardinality: int, target: str, weight_matrix: bool, flatten: bool,
+def generate_dense_gnp_instance(n, p, seeder, cardinality: int, target: str, generated_input: str, flatten: bool,
                                 weight_distribution: tfp.distributions.Distribution, weight_type):
     """
 Generates a dense G(n,p) instance with tensorflow
@@ -190,7 +214,7 @@ Generates a dense G(n,p) instance with tensorflow
 :param seeder: The seeder to generate PRNG seeds
 :param cardinality: The cardinality of the instance
 :param target: The target to generate. One of "winners", "strategy", "all", "none"
-:param weight_matrix: Whether to generate a weight matrix
+:param generated_input: The input to generate. One of "adjacency", "weight", "both"
 :param flatten: Whether to flatten the output
 :param weight_distribution: The distribution to use for the weights
 :param weight_type: The type of the weights
@@ -199,28 +223,153 @@ Generates a dense G(n,p) instance with tensorflow
     W = weight_distribution.sample(shape, seed=seeder())
     dtype = weight_distribution.dtype
     A = tf.numpy_function(gnp_adjacency_matrix, inp=[n, p], Tout=tf.uint8, stateful=True)
+    A = tf.ensure_shape(A, shape=(n, n))
     if flatten:
         A = tf.reshape(A, shape=(n * n,))
     A = tf.cast(A, dtype=dtype)
     W = tf.multiply(A, W)
 
     if flatten:
-        if weight_matrix:
+        if generated_input == "both":
             output = tf.concat(cast_all(dtype, A, W), axis=0)
+        elif generated_input == "adjacency":
+            output = cast_all(dtype, A)
         else:
-            output = tf.concat(cast_all(dtype, A), axis=0)
+            output = cast_all(dtype, W)
         if target != "none":
             target_value = generate_target(output, target, weight_type, flatten)
             target_value = _target_ensure_shape(output, target, target_value, n)
             return (tf.cast(output, dtype=tf.float32), tf.cast(target_value, dtype=tf.float32))
         return output
     else:
-        if weight_matrix:
+        if generated_input == "both":
             output = tf.cast(tf.stack([A, W], axis=0), dtype=tf.float32)
-        else:
+        elif generated_input == "adjacency":
             output = tf.cast(A, dtype=tf.float32)
+        else:
+            output = tf.cast(W, dtype=tf.float32)
         if target != "none":
             target_value = generate_target(output, target, weight_type, flatten)
             target_value = _target_ensure_shape(output, target, target_value, n)
             return (output, tf.cast(target_value, dtype=tf.float32))
         return output
+
+def generate_sparse_gnp_instance(n, p, seeder, cardinality: int, target: str, generated_input: str, flatten: bool,
+                                weight_distribution: tfp.distributions.Distribution, weight_type):
+    """
+Generates a dense G(n,p) instance with tensorflow
+:param n: The number of nodes
+:param p: The probability of an edge
+:param seeder: The seeder to generate PRNG seeds
+:param cardinality: The cardinality of the instance
+:param target: The target to generate. One of "winners", "strategy", "all", "none"
+:param generated_input: The input to generate. One of "adjacency", "weight", "both"
+:param flatten: Whether to flatten the output
+:param weight_distribution: The distribution to use for the weights
+:param weight_type: The type of the weights
+"""
+    shape = (n, n) if not flatten else (n * n,)
+    dtype = weight_distribution.dtype
+    I,entries_count = tf.numpy_function(gnp_adjacency_list, inp=[n, p], Tout=[tf.int64,tf.int64], stateful=True)
+    A = tf.sparse.SparseTensor(indices=I, values=tf.ones(entries_count, dtype=tf.float32), dense_shape=(n, n))
+    W=tf.sparse.SparseTensor(indices=I, values=weight_distribution.sample(entries_count), dense_shape=(n, n))
+    if flatten:
+        A = tf.reshape(A, shape=(n * n,))
+    A = tf.cast(A, dtype=dtype)
+    W=tf.cast(W, dtype=dtype)
+
+    if flatten:
+        if generated_input == "both":
+            output = tf.sparse.concat(0,cast_all(dtype, A, W))
+        elif generated_input == "adjacency":
+            output = cast_all(dtype, A)
+        else:
+            output = cast_all(dtype, W)
+        if target != "none":
+            target_value = generate_target(output, target, weight_type, flatten)
+            target_value = _target_ensure_shape(output, target, target_value, n)
+            return (tf.cast(output, dtype=tf.float32), tf.cast(target_value, dtype=tf.float32))
+        return output
+    else:
+        if generated_input == "both":
+            output = tf.cast(tf.sparse.concat(0,[A, W]), dtype=tf.float32)
+        elif generated_input == "adjacency":
+            output = tf.cast(A, dtype=tf.float32)
+        else:
+            output = tf.cast(W, dtype=tf.float32)
+        if target != "none":
+            target_value = generate_target(output, target, weight_type, flatten)
+            target_value = _target_ensure_shape(output, target, target_value, n)
+            return (output, tf.cast(target_value, dtype=tf.float32))
+        return output
+
+
+def vector_permutation(vector, permutation):
+    return tf.gather(vector, permutation, axis=-1)
+
+
+def matrix_permutation(matrix, permutation):
+    return tf.gather(tf.gather(matrix, permutation, axis=-2), permutation, axis=-1)
+
+
+def dim_mul(*b):
+    if any([x is None for x in b]):
+        return None
+    return reduce(lambda x, y: x * y, b, 1)
+
+
+def get_signature(generated_input: str, n: int, target: str, flatten: bool):
+    shape = None
+    if flatten:
+        if generated_input == "both":
+            shape = (dim_mul(2, n, n),)
+        else:
+            shape = (dim_mul(n, n),)
+        signature = (tf.TensorSpec(shape=shape, dtype=tf.float32),)
+    else:
+        if generated_input == "both":
+            shape = (2, n, n)
+        else:
+            shape = (n, n)
+        signature = (tf.TensorSpec(shape=shape, dtype=tf.float32), tf.TensorSpec(shape=(2,), dtype=tf.int32))
+    if target != "none":
+        if target == "both":
+            shape = (2, 2, n)
+        else:
+            shape = (2, n)
+        signature = (*signature, tf.TensorSpec(shape=shape))
+    return signature
+
+def get_sparse_signature(generated_input: str, n: int, target: str, flatten: bool):
+    shape = None
+    if flatten:
+        if generated_input == "both":
+            shape = (dim_mul(2, n, n),)
+        else:
+            shape = (dim_mul(n, n),)
+        signature = (tf.SparseTensorSpec(shape=shape, dtype=tf.float32),)
+    else:
+        if generated_input == "both":
+            shape = (2, n, n)
+        else:
+            shape = (n, n)
+        signature = (tf.SparseTensorSpec(shape=shape, dtype=tf.float32), tf.SparseTensorSpec(shape=(2,), dtype=tf.int32))
+    if target != "none":
+        if target == "both":
+            shape = (2, 2, n)
+        else:
+            shape = (2, n)
+        signature = (*signature, tf.SparseTensorSpec(shape=shape))
+    return signature
+
+
+def get_weight_type(weight_type: Union[str, tf.DType]):
+    if weight_type == "int":
+        weight_type = tf.int32
+    elif weight_type == "float":
+        weight_type = tf.float32
+    elif weight_type == "double":
+        weight_type = tf.float64
+    elif not isinstance(weight_type, tf.DType):
+        raise ValueError("weight_type must be a string or a tf.DType")
+    return weight_type

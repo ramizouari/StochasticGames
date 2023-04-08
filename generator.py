@@ -1,6 +1,6 @@
 import abc
 import timeit
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import  ProcessPoolExecutor
 from datetime import time,datetime
 from typing import List, Callable, TypedDict, Dict
 
@@ -124,7 +124,7 @@ def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,loo
     if callbacks is None:
         callbacks=[]
     use_threads = threads is not None and threads > 1
-    with ThreadPoolExecutor(max_workers=threads) as executor:
+    with ProcessPoolExecutor(max_workers=threads) as executor:
         for n in N:
             if P is not None:
                 C = np.round(P * n).astype(int)

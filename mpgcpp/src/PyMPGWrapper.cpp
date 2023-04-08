@@ -242,7 +242,7 @@ public:
     ListView3DFlat(const py::list &_l, ssize_t _n, ssize_t _m, ssize_t _r) : ListView3D<T>(_l), n(_n),m(_m),r(_r) {}
     T operator()(ssize_t i,ssize_t j, ssize_t k) const override
     {
-        return py::extract<T>(this->l[i*n*m+j*m+k]);
+        return py::extract<T>(this->l[i*m*r+j*r+k]);
     }
     [[nodiscard]] std::array<ssize_t,3> shape() const override
     {

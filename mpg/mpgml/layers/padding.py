@@ -19,9 +19,9 @@ class GraphPaddingLayer(keras.layers.Layer):
 
     def right_bottom_pad(self,inputs):
         shape = tf.shape(inputs)
-        right_padshape = tf.stack([*shape[:-2], self.vertices - shape[1], shape[2]])
+        right_padshape = tf.concat([shape[:-2],[self.vertices - shape[-2], shape[-1]]],axis=0)
         output = tf.concat([inputs, tf.zeros(right_padshape)], axis=-2)
-        bottom_padshape = tf.stack([*shape[:-2], self.vertices, self.vertices - shape[2]])
+        bottom_padshape = tf.concat([shape[:-2], [self.vertices, self.vertices - shape[-1]]],axis=0)
         output = tf.concat([output, tf.zeros(bottom_padshape)], axis=-1)
         return output
     def compute_output_shape(self, input_shape):

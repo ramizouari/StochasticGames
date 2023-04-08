@@ -15,7 +15,7 @@ class MPGGeneratedDenseDataset(tf.data.Dataset):
     """
 
     def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
-                target: str = None, weight_matrix: bool = True, flatten=False, seed=None,
+                target: str = None, generated_input: str = "both", flatten=False, seed=None,
                 weights_distribution: tfp.distributions.Distribution = None,
                 weight_type: str = "int"):
         """
@@ -30,18 +30,14 @@ Generates a dense G(n,p) dataset.
 :param weights_distribution: The distribution to use for the weights
 :param weight_type: The type of the weights
         """
+        if generated_input not in ("adjacency", "weight", "both"):
+            raise ValueError("generated_input must be one of 'adjacency', 'weight', 'both'")
         if target is None or target == False:
             target = "none"
         elif target == True:
             target = "all"
-        if weight_type == "int":
-            weight_type = tf.int32
-        elif weight_type == "float":
-            weight_type = tf.float32
-        elif weight_type == "double":
-            weight_type = tf.float64
-        elif not isinstance(weight_type, tf.DType):
-            raise ValueError("weight_type must be a string or a tf.DType")
+        weight_type= utils.get_weight_type(weight_type)
+
         if weights_distribution is None:
             weights_distribution = tfp.distributions.Uniform(low=-1, high=1)
         if seed is None:
@@ -49,46 +45,35 @@ Generates a dense G(n,p) dataset.
 
         seeder = tfp.util.SeedStream(seed, "seeding_generator")
 
-        shape = None
-        if flatten:
-            if weight_matrix:
-                shape = (2 * n * n + 2,)
-            else:
-                shape = (n * n + 2,)
-            signature = (tf.TensorSpec(shape=shape, dtype=tf.float32),)
-        else:
-            if weight_matrix:
-                shape = (2, n, n)
-            else:
-                shape = (n, n)
-            signature = (tf.TensorSpec(shape=shape, dtype=tf.float32), tf.TensorSpec(shape=(2,), dtype=tf.int32))
-        if target:
-            signature = (*signature, tf.TensorSpec(shape=()))
+        signature=utils.get_signature(generated_input=generated_input, flatten=flatten, target=target, n=n)
 
         generated: tf.data.Dataset
+        options = tf.data.Options()
+        options.experimental_deterministic = False
         if cardinality == tf.data.INFINITE_CARDINALITY:
-            generated = tf.data.Dataset.counter(start=seed, step=1)
+            generated = tf.data.Dataset.counter(start=seed, step=1).with_options(options)
         else:
-            generated = tf.data.Dataset.range(seed, seed + cardinality)
+            generated = tf.data.Dataset.range(seed, seed + cardinality).with_options(options)
         return generated.map(
-            lambda seed: utils.generate_dense_gnp_instance(n, p, seeder, cardinality, target, weight_matrix, flatten,
+            lambda seed: utils.generate_dense_gnp_instance(n, p, seeder, cardinality, target, generated_input, flatten,
                                                            weights_distribution, weight_type),
             num_parallel_calls=12
-        )
+        ).with_options(options)
         #    range,
         #    args=(n,p,cardinality, target, weight_matrix,flatten),
         #    output_signature=signature
         # )
 
     def __init__(self, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
-                 target: bool = False, weight_matrix: bool = True, flatten=False, seed=None,
+                 target: bool = False, generated_input: str = "both", flatten=False, seed=None,
                  weights_distribution: tfp.distributions.Distribution = None,
                  weight_type: str = "int"):
+
         self.n = n
         self.p = p
         self.cardinality = cardinality
         self.target = target
-        self.weight_matrix = weight_matrix
+        self.generated_input = generated_input
         self.flatten = flatten
         self.seed = seed
         self.weights_distribution = weights_distribution
@@ -101,46 +86,93 @@ Generates a dense G(n,p) dataset.
     def permutation(self, P):
         return self.map(lambda x: self._permutation(x, P))
 
+    def with_starting_position(self, starting_position=None):
+        if starting_position == "all":
+            self.flat_map(lambda x: tf.data.Dataset.from_tensor_slices(x))
+        if starting_position == "random" or not starting_position:
+            starting_position = tf.random.uniform(shape=(self.n,), minval=0, maxval=2, dtype=tf.int32)
+        return self.map(lambda x: tf.concat([x, starting_position]))
 
-class MPGGeneratedDataset(tf.data.Dataset):
-    def _generator(n, p, cardinality: int, target: bool, as_graph: bool,
-                   adj_matrix: bool, weight_matrix: bool, as_dense: bool):
+
+
+
+class MPGSparseGeneratedDataset(tf.data.Dataset):
+    def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
+                target: str = None, generated_input: str = "both", flatten=False, seed=None,
+                weights_distribution: tfp.distributions.Distribution = None,
+                weight_type: str = "int"):
+        """
+Generates a potentially sparse G(n,p) dataset.
+:param n: The number of nodes
+:param p: The probability of an edge
+:param cardinality: The cardinality of the dataset. If it is equal to tf.data.INFINITE_CARDINALITY, the dataset will be infinite
+:param target: The target to generate. One of "winners", "strategy", "all", "none"
+:param weight_matrix: Whether to generate a weight matrix
+:param flatten: Whether to flatten the input
+:param seed: The seed to use for the PRNG
+:param weights_distribution: The distribution to use for the weights
+:param weight_type: The type of the weights
+        """
+        if generated_input not in ("adjacency", "weight", "both"):
+            raise ValueError("generated_input must be one of 'adjacency', 'weight', 'both'")
+        if target is None or target == False:
+            target = "none"
+        elif target == True:
+            target = "all"
+        weight_type = utils.get_weight_type(weight_type)
+
+        if weights_distribution is None:
+            weights_distribution = tfp.distributions.Uniform(low=-1, high=1)
+        if seed is None:
+            seed = np.random.randint(0, 1 << 32)
+
+        seeder = tfp.util.SeedStream(seed, "seeding_generator")
+
+        signature = utils.get_sparse_signature(generated_input=generated_input, flatten=flatten, target=target, n=n)
+
+        generated: tf.data.Dataset
+        options = tf.data.Options()
+        options.experimental_deterministic = False
         if cardinality == tf.data.INFINITE_CARDINALITY:
-            seed = 0
-            while True:
-                yield utils.generate_instances(n, p, seed, cardinality, target, as_graph, adj_matrix, weight_matrix,
-                                               as_dense)
-                seed += 1
+            generated = tf.data.Dataset.counter(start=seed, step=1).with_options(options)
         else:
-            for sample_idx in range(cardinality):
-                yield utils.generate_instances(n, p, sample_idx, cardinality, target, as_graph, adj_matrix,
-                                               weight_matrix,
-                                               as_dense)
+            generated = tf.data.Dataset.range(seed, seed + cardinality).with_options(options)
+        return generated.map(
+            lambda seed: utils.generate_sparse_gnp_instance(n, p, seeder, cardinality, target, generated_input, flatten,
+                                                           weights_distribution, weight_type),
+            num_parallel_calls=12
+        ).with_options(options)
+        #    range,
+        #    args=(n,p,cardinality, target, weight_matrix,flatten),
+        #    output_signature=signature
+        # )
 
-    def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY, target: bool = False, as_graph: bool = False,
-                adj_matrix: bool = True, weight_matrix: bool = True, as_dense: bool = True):
-        shape = None
-        if as_graph:
-            signature = tf.TensorSpec(shape=(), dtype=mpg.MeanPayoffGraph)
-        else:
-            if adj_matrix and weight_matrix:
-                shape = (2, n, n)
-            elif adj_matrix or weight_matrix:
-                shape = (n, n)
-            else:
-                raise ValueError("Must specify at least one of adj_matrix or weight_matrix")
-        if as_dense:
-            TensorSpec = tf.TensorSpec
-        else:
-            TensorSpec = tf.SparseTensorSpec
-        signature = (TensorSpec(shape=shape), tf.TensorSpec(shape=(2,), dtype=tf.int32))
-        if target:
-            signature = (*signature, tf.TensorSpec(shape=()))
-        return tf.data.Dataset.from_generator(
-            cls._generator,
-            args=(n, p, cardinality, target, as_graph, adj_matrix, weight_matrix, as_dense),
-            output_signature=signature
-        )
+    def __init__(self, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
+                 target: bool = False, generated_input: str = "both", flatten=False, seed=None,
+                 weights_distribution: tfp.distributions.Distribution = None,
+                 weight_type: str = "int"):
 
-    def __init__(self, n, p):
-        pass
+        self.n = n
+        self.p = p
+        self.cardinality = cardinality
+        self.target = target
+        self.generated_input = generated_input
+        self.flatten = flatten
+        self.seed = seed
+        self.weights_distribution = weights_distribution
+
+    def _permutation(self, x, P):
+        if self.flatten:
+            S = tf.concat(tf.reshape(tf.tensordot(P, P, axes=None), shape=(-1,)))
+            return tf.concat([tf.gather(x, S, axis=0), P[x[-2]], x[-1]])
+
+    def permutation(self, P):
+        return self.map(lambda x: self._permutation(x, P))
+
+    def with_starting_position(self, starting_position=None):
+        if starting_position == "all":
+            self.flat_map(lambda x: tf.data.Dataset.from_tensor_slices(x))
+        if starting_position == "random" or not starting_position:
+            starting_position = tf.random.uniform(shape=(self.n,), minval=0, maxval=2, dtype=tf.int32)
+        return self.map(lambda x: tf.concat([x, starting_position]))
+
