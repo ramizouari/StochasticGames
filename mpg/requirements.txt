@@ -3,10 +3,10 @@ pandas
 matplotlib
 seaborn
 scikit-learn
-tensorflow
+tensorflow > 2.8
 tensorflow_probability
 tensorflow_gnn
 jupyterlab
 yfiles_jupyter_graphs
-networkx
+networkx >= 3.0
 pytest

@@ -1,0 +1,24 @@
+name: stochastic_games
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - pip
+  - cudatoolkit
+  - cudatoolkit-dev
+  - cudnn
+  - numpy
+  - pandas
+  - matplotlib
+  - seaborn
+  - scikit-learn
+  - numba
+  - jupyterlab
+  - pip:
+      - tensorflow>=2.11.0
+      - tensorrt>=8.0.0
+env:
+  - CUDA_HOME=/usr/local/cuda
+  - LD_LIBRARY_PATH=/usr/local/cuda/lib64
+  - PATH=/usr/local/cuda/bin:$PATH
