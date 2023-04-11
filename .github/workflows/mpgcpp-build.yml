@@ -55,7 +55,7 @@ jobs:
         # Link to the static runtime
         static-runtime: 0 # optional, default is 0
         # Destination directory
-        directory: /usr/local
+#        directory: /usr/local
     - name: Create Build directory
       run: mkdir build
     - name: CMake Action
@@ -82,7 +82,7 @@ jobs:
         # Additional flags passed when compiling C++ language files
 #        cxx-flags: # optional
         # Additional arguments passed during the CMake configuration
-        args: ""
+        args: -D "BOOST_ROOT=${{ steps.boost.outputs.root }}"  -D "BOOST_LIBRARYDIR=${{ steps.boost.outputs.librarydir }}"
         # Additional arguments passed during the CTest run
 #        test-args: # optional
     
