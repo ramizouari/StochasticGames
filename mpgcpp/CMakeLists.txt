@@ -39,8 +39,10 @@ if (NOT ${PYTHON_INCLUDE_RESULT} EQUAL 0)
         message(WARNING "PYTHON_INCLUDE is not set. The python wrapper will not be built.")
     endif()
 else()
-    find_package(Boost COMPONENTS python REQUIRED)
-    # Remove -I from the output of python3-config --includes
+    find_package(Python COMPONENTS Interpreter Development REQUIRED)
+    set(boost_python "python${Python_VERSION_MAJOR}${Python_VERSION_MINOR}")
+    message(STATUS "Boost python library: ${boost_python}")
+    find_package(Boost COMPONENTS ${boost_python} REQUIRED)    # Remove -I from the output of python3-config --includes
     string(REPLACE "-I" "" PYTHON_INCLUDE ${PYTHON_INCLUDE})
     message(STATUS "Python include: ${PYTHON_INCLUDE}")
     # Split the string into a list
@@ -55,7 +57,7 @@ else()
     add_library(MPGPyWrapper SHARED src/PyMPGWrapper.cpp ${HEADER_FILES} ${SOURCE_FILES} include/csp/MaxAtomSolver.h)
 
     set_target_properties(MPGPyWrapper PROPERTIES OUTPUT_NAME ${WRAPPER_NAME})
-    target_link_libraries(MPGPyWrapper Boost::iostreams Boost::program_options Boost::log pthread Boost::python)
+    target_link_libraries(MPGPyWrapper Boost::iostreams Boost::program_options Boost::log pthread Boost::${boost_python})
 
     # Set the default install location for the python wrapper
     if (NOT MPG_PYTHON)
