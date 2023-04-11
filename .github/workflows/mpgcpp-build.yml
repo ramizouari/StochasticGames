@@ -125,6 +125,27 @@ jobs:
         run: pip install -r mpg/requirements.txt      
       - name: Installing pytest
         run: pip install pytest
+      - name: Build Boost
+        # You may pin to the exact commit or the version.
+        # uses: egor-tensin/build-boost@6e787373b50fd7c2ddb99f85d4e472061ff54ba8
+        uses: egor-tensin/build-boost@v1
+        with:
+          # Version to build
+          version: "1.81.0" 
+          # Space-separated list of libraries
+          libraries: filesystem program_options iostreams date_time mpi python log
+          # Toolset to use
+          toolset: auto # optional, default is auto
+          # Target platform
+          platform: x64
+          # Configuration to build
+          configuration: Release
+          # Build static libraries
+          static: 0 # optional, default is 0
+          # Link to the static runtime
+          static-runtime: 0 # optional, default is 0
+          # Destination directory
+          #        directory: /usr/local
       - name: Testing MPG project
         run: pytest
         working-directory: ./mpg
