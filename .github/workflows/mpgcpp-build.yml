@@ -93,6 +93,8 @@ jobs:
           args: -D "BOOST_ROOT=${{ steps.boost.outputs.root }}"  -D "BOOST_LIBRARYDIR=${{ steps.boost.outputs.librarydir }}"
           # Additional arguments passed during the CTest run
           #        test-args: # optional
+        - name: Installing Boost libraries
+          run: cp -r ${{ steps.boost.outputs.librarydir }} mpg/wrapper
       - uses: actions/upload-artifact@v3
         with:
           name: python-project
