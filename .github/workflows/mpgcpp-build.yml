@@ -43,7 +43,7 @@ jobs:
         # Version to build
         version: "1.81.0" 
         # Space-separated list of libraries
-        libraries: filesystem program_options iostreams
+        libraries: filesystem program_options iostreams date_time mpi python
         # Toolset to use
         toolset: auto # optional, default is auto
         # Target platform
@@ -72,7 +72,7 @@ jobs:
         # If enabled, run testing using CTest (true/false)
         run-test: true
         # Build system generator of the CMake project
-        generator: make
+#        generator: make
         # Preferred executable for compiling C language files
         c-compiler: gcc
         # Preferred executable for compiling C++ language files
