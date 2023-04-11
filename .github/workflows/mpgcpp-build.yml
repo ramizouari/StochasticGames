@@ -32,7 +32,7 @@ jobs:
       uses: egor-tensin/setup-gcc@v1
       with:
         # GCC version to install
-        version: "11.3"
+        version: latest
         # Target platform
         platform: x64
     - name: Download and install Boost
