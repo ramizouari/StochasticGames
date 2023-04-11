@@ -13,6 +13,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+        name: Clone Project
         with:
           submodules: recursive
       - name: Setup Python
@@ -97,17 +98,21 @@ jobs:
         run: cp -r ${{ steps.boost.outputs.librarydir }} mpg/wrapper
       - uses: actions/upload-artifact@v3
         with:
-          name: python-project
-          path: mpg
+          name: cpp-wrapper
+          path: mpg/wrapper
   python_build:
     runs-on: ubuntu-latest
     needs: [cpp_build] 
     steps:
+      - uses: actions/checkout@v3
+        name: Clone Project
+          with:
+            submodules: recursive
       - uses: actions/download-artifact@v3
-        name: Downloading Python project + Generated Wrapper
+        name: Installing Generated Wrapper
         with:
-          name: python-project
-          path: mpg
+          name: cpp-wrapper
+          path: mpg/wrapper
       - name: Setup Python
         uses: actions/setup-python@v4.5.0
         with:
@@ -149,3 +154,5 @@ jobs:
       - name: Testing MPG project
         run: pytest
         working-directory: ./mpg
+        env: 
+          LD_LIBRARY_PATH: ${{ steps.boost.outputs.librarydir }}
