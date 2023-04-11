@@ -55,7 +55,7 @@ jobs:
         # Link to the static runtime
         static-runtime: 0 # optional, default is 0
         # Destination directory
-#        directory: # optional
+        directory: /usr/local
     - name: Create Build directory
       run: mkdir build
     - name: CMake Action
