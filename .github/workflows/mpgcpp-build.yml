@@ -1,10 +1,14 @@
 name: C/C++ CI
 
 on:
-#  push:
-#    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+      tag: 
+        - workflow
   pull_request:
     branches: [ "main" ]
+      tags-ignore:
+        - skip-workflow
 
 jobs:
   cpp_build:
