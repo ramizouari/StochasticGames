@@ -89,7 +89,7 @@ jobs:
           # Preferred executable for compiling C language files
           c-compiler: ${{vars.CC}}
           # Preferred executable for compiling C++ language files
-          cxx-compiler: $${{vars.CXX}}
+          cxx-compiler: ${{vars.CXX}}
           # Additional flags passed when compiling C language files
           #        c-flags: # optional
           # Additional flags passed when compiling C++ language files
