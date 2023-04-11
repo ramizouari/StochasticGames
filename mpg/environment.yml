@@ -19,3 +19,5 @@ dependencies:
   - pip:
       - tensorflow>=2.11.0
       - tensorrt>=8.0.0
+      - tensorflow_probability
+      - tensorflow_gnn
