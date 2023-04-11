@@ -24,11 +24,11 @@ jobs:
         uses: actions/setup-python@v4.5.0
         with:
           # Version range or exact version of a Python version to use, using SemVer's version range syntax.
-          python-version: "3.10"
+          python-version: "${{env.PYTHON_VERSION}}"
           # Used to specify a package manager for caching in the default directory. Supported values: pip, pipenv, poetry.
           cache: pip
           # The target architecture (x86, x64) of the Python interpreter.
-          architecture: x64
+          architecture: ${{env.ARCH}}
           # Used to pull python distributions from actions/python-versions. Since there's a default, this is typically not supplied by the user.
           #        token: # optional, default is ${{ github.token }}
           # Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies.
@@ -41,7 +41,7 @@ jobs:
           # GCC version to install
           version: latest
           # Target platform
-          platform: x64
+          platform: ${{env.ARCH}}
       - name: Cache Boost
         uses: actions/cache@v2
         with:
@@ -54,13 +54,13 @@ jobs:
         uses: egor-tensin/build-boost@v1
         with:
           # Version to build
-          version: "1.81.0" 
+          version: "${{env.BOOST_VERSION}}"
           # Space-separated list of libraries
           libraries: filesystem program_options iostreams date_time mpi python log
           # Toolset to use
           toolset: auto # optional, default is auto
           # Target platform
-          platform: x64
+          platform: ${{env.ARCH}}
           # Configuration to build
           configuration: Release
           # Build static libraries
@@ -87,9 +87,9 @@ jobs:
           # Build system generator of the CMake project
           #        generator: make
           # Preferred executable for compiling C language files
-          c-compiler: gcc
+          c-compiler: ${{env.CC}}
           # Preferred executable for compiling C++ language files
-          cxx-compiler: g++
+          cxx-compiler: $${{env.CXX}}
           # Additional flags passed when compiling C language files
           #        c-flags: # optional
           # Additional flags passed when compiling C++ language files
@@ -121,11 +121,11 @@ jobs:
         uses: actions/setup-python@v4.5.0
         with:
           # Version range or exact version of a Python version to use, using SemVer's version range syntax.
-          python-version: "3.10"
+          python-version: "${{env.PYTHON_VERSION}}"
           # Used to specify a package manager for caching in the default directory. Supported values: pip, pipenv, poetry.
           cache: pip
           # The target architecture (x86, x64) of the Python interpreter.
-          architecture: x64
+          architecture: ${{env.ARCH}}
           # Used to pull python distributions from actions/python-versions. Since there's a default, this is typically not supplied by the user.
           #        token: # optional, default is ${{ github.token }}
           # Used to specify the path to dependency files. Supports wildcards or a list of file names for caching multiple dependencies.
