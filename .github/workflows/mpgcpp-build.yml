@@ -41,6 +41,7 @@ jobs:
         path: '${{ runner.workspace }}/boost_*.tar.gz'
         key: 'boost-src'
     - name: Build Boost
+      id: boost
       # You may pin to the exact commit or the version.
       # uses: egor-tensin/build-boost@6e787373b50fd7c2ddb99f85d4e472061ff54ba8
       uses: egor-tensin/build-boost@v1
