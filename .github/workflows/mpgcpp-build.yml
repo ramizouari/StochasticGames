@@ -106,8 +106,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         name: Clone Project
-          with:
-            submodules: recursive
+        with:
+          submodules: recursive
       - uses: actions/download-artifact@v3
         name: Installing Generated Wrapper
         with:
