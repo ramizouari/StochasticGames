@@ -47,7 +47,7 @@ if __name__ == "__main__":
         metrics=["accuracy"],
     )
     model.fit(x=transformed,
-              epochs=25,
+              epochs=250,
               verbose='auto',
               steps_per_epoch=64,
               shuffle=False,
