@@ -39,7 +39,7 @@ if (NOT ${PYTHON_INCLUDE_RESULT} EQUAL 0)
         message(WARNING "PYTHON_INCLUDE is not set. The python wrapper will not be built.")
     endif()
 else()
-    find_package(Boost COMPONENTS python REQUIRED)
+    find_package(Boost COMPONENTS python3 REQUIRED)
     # Remove -I from the output of python3-config --includes
     string(REPLACE "-I" "" PYTHON_INCLUDE ${PYTHON_INCLUDE})
     message(STATUS "Python include: ${PYTHON_INCLUDE}")
