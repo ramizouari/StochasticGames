@@ -16,7 +16,7 @@ jobs:
         with:
           submodules: recursive
       - name: Setup Python
-        uses: actions/setup-python@v4.5
+        uses: actions/setup-python@v4.5.0
         with:
           # Version range or exact version of a Python version to use, using SemVer's version range syntax.
           python-version: "3.10"
@@ -107,7 +107,7 @@ jobs:
           name: python-project
           path: mpg
       - name: Setup Python
-        uses: actions/setup-python@v4.5
+        uses: actions/setup-python@v4.5.0
         with:
           # Version range or exact version of a Python version to use, using SemVer's version range syntax.
           python-version: "3.10"
