@@ -57,7 +57,7 @@ else()
     add_library(MPGPyWrapper SHARED src/PyMPGWrapper.cpp ${HEADER_FILES} ${SOURCE_FILES} include/csp/MaxAtomSolver.h)
 
     set_target_properties(MPGPyWrapper PROPERTIES OUTPUT_NAME ${WRAPPER_NAME})
-    target_link_libraries(MPGPyWrapper Boost::iostreams Boost::program_options Boost::log pthread Boost::python)
+    target_link_libraries(MPGPyWrapper Boost::iostreams Boost::program_options Boost::log pthread Boost::{boost_python})
 
     # Set the default install location for the python wrapper
     if (NOT MPG_PYTHON)
