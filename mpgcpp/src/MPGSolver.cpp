@@ -164,6 +164,7 @@ int main(int argc, char *argv[]) {
     desc.add_options()
             ("help,h", "produce help message")
             ("graphs-folder,f", po::value<std::filesystem::path>(), "Read the folder that contains graphs")
+            ("from-stdin",po::bool_switch(),"Read files from stdin")
             ("mode,m",
              "Mode of the program, either discard or resume. discard will redo all the calculations, resume will resume the calculations from the last point.")
             ("output,o", po::value<std::filesystem::path>(), "Output file for the results")
@@ -176,7 +177,7 @@ int main(int argc, char *argv[]) {
              "Calculate the running time for each graph")
              ("adjacency-matrix", po::bool_switch(), "Save also the adjacency matrix of the graph")
              ("weights-matrix",po::bool_switch(), "Save also the weights matrix of the graph")
-            ("output-format", po::value<OutputFormat>()->default_value(OutputFormat::CSV), "Format of the output file")
+            ("output-format", po::value<OutputFormat>()->default_value(OutputFormat::JSON), "Format of the output file")
             ("dataset", po::value<std::string>()->default_value("dataset"), "Name of the dataset")
             ("graph-implementation",
              po::value<GraphImplementation>()->default_value(GraphImplementation::ADJACENCY_LIST_HASH),
@@ -195,10 +196,8 @@ int main(int argc, char *argv[]) {
         std::cout << desc << std::endl;
         return 0;
     }
-    if (!vm.count("graphs-folder")) {
-        std::cout << "You must specify a folder containing graphs" << std::endl;
-        return 1;
-    }
+    if (!vm.count("graphs-folder"))
+        vm.at("from-stdin").as<bool>()=true;
     if (!vm.count("output"))
     {
         std::cout << "You must specify an output file" << std::endl;
@@ -239,6 +238,13 @@ int main(int argc, char *argv[]) {
     moodycamel::ConcurrentQueue<std::filesystem::path> queue;
     for (const auto &path: std::filesystem::recursive_directory_iterator(graphs_folder)) if (std::filesystem::is_regular_file(path))
             queue.enqueue(path);
+
+    if (vm.at("from-stdin").as<bool>())
+    {
+        std::string line;
+        while (std::getline(std::cin, line)) if(std::filesystem::exists(line) && std::filesystem::is_regular_file(line))
+            queue.enqueue(line);
+    }
 
     cpus = vm["threads"].as<unsigned int>();
     if(cpus ==0)
