@@ -23,7 +23,7 @@ namespace Options
 
     enum class Verbosity
     {
-        NONE,ERRORS,INFO,DEBUG
+        NONE=0,ERRORS,INFO,EXECUTION,DEBUG
     };
 
     enum class GraphImplementation

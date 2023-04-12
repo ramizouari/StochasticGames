@@ -40,13 +40,15 @@ namespace Options
         std::string s;
         H >> s;
         std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c) { return std::tolower(c); });
-        if (s == "none")
+        if (s == "none" || s == "silent" || s=="0")
             verbosity = Verbosity::NONE;
-        else if (s == "errors")
+        else if (s == "errors" || s=="1")
             verbosity = Verbosity::ERRORS;
-        else if (s == "info")
+        else if (s == "info" || s=="2")
             verbosity = Verbosity::INFO;
-        else if (s == "debug")
+        else if (s == "execution" || s=="3")
+            verbosity = Verbosity::EXECUTION;
+        else if (s == "debug" || s=="4")
             verbosity = Verbosity::DEBUG;
         else
             throw std::invalid_argument("Invalid verbosity");
@@ -94,6 +96,8 @@ namespace Options
             case Verbosity::DEBUG:
                 H << "DEBUG";
                 break;
+            case Verbosity::EXECUTION:
+                H << "EXECUTION";
         }
         return H;
     }

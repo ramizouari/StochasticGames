@@ -12,10 +12,54 @@
 #include "csp/MaxAtomSolver.h"
 #include "csp/solver/DenseSolver.h"
 
+template <class cT, class traits = std::char_traits<cT> >
+class basic_nullbuf: public std::basic_streambuf<cT, traits> {
+    typename traits::int_type overflow(typename traits::int_type c)
+    {
+        return traits::not_eof(c); // indicate success
+    }
+};
+
+template <class cT, class traits = std::char_traits<cT> >
+class basic_onullstream: public std::basic_ostream<cT, traits> {
+public:
+    basic_onullstream():
+            std::basic_ios<cT, traits>(&m_sbuf),
+            std::basic_ostream<cT, traits>(&m_sbuf)
+    {
+        this->init(&m_sbuf);
+    }
+
+private:
+    basic_nullbuf<cT, traits> m_sbuf;
+};
+
+typedef basic_onullstream<char> onullstream;
+typedef basic_onullstream<wchar_t> wonullstream;
+onullstream cnull;
+
+std::ostream* get_output_stream(Options::Verbosity v)
+{
+    using Options::operator<=>;
+    if (v < Options::Verbosity::INFO)
+        return &cnull;
+    else
+        return &std::cout;
+}
+
+std::ostream* get_error_stream(Options::Verbosity v)
+{
+    using Options::operator<=>;
+    if (v < Options::Verbosity::ERRORS)
+        return &cnull;
+    else
+        return &std::cerr;
+}
+
 void process_game(const std::filesystem::path& path,Result::ParallelWriter& outputWriter, const boost::program_options::variables_map& vm)
 {
-    std::osyncstream synced_output(std::cout);
-    std::osyncstream synced_error(std::cerr);
+    std::osyncstream synced_output(*get_output_stream(vm["verbose"].as<Options::Verbosity>()));
+    std::osyncstream synced_error(*get_error_stream(vm["verbose"].as<Options::Verbosity>()));
     synced_output << "Processing " << path << std::endl;
     std::map<std::string,std::string> data;
     data["dataset"]=vm["dataset"].as<std::string>();
@@ -204,7 +248,9 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    std::filesystem::path graphs_folder = vm.at("graphs-folder").as<std::filesystem::path>();
+    std::optional<std::filesystem::path> graphs_folder;
+    if (vm.count("graphs-folder"))
+        graphs_folder = vm.at("graphs-folder").as<std::filesystem::path>();
     std::filesystem::path output_file = vm.at("output").as<std::filesystem::path>();
     Result::MultipleWriterUnique outputWriter;
     Result::ParallelWriter parallelWriter(outputWriter);
@@ -221,7 +267,9 @@ int main(int argc, char *argv[]) {
             break;
         }
     }
-    outputWriter.addWriter(new Result::HumanWriter(&std::cout));
+    using Options::operator<=>;
+    if(vm.at("verbose").as<Verbosity>()>=Verbosity::EXECUTION)
+        outputWriter.addWriter(new Result::HumanWriter(&std::cout));
     outputWriter.writeHeader();
     outputWriter.addType("dataset", Result::JSONWriter::STRING);
     outputWriter.addType("graph", Result::JSONWriter::Type::STRING);
@@ -236,7 +284,7 @@ int main(int argc, char *argv[]) {
     outputWriter.addType("adjacency_matrix", Result::JSONWriter::Type::ARRAY);
     outputWriter.addType("weights_matrix", Result::JSONWriter::Type::ARRAY);
     moodycamel::ConcurrentQueue<std::filesystem::path> queue;
-    for (const auto &path: std::filesystem::recursive_directory_iterator(graphs_folder)) if (std::filesystem::is_regular_file(path))
+    if(graphs_folder.has_value()) for (const auto &path: std::filesystem::recursive_directory_iterator(*graphs_folder)) if (std::filesystem::is_regular_file(path))
             queue.enqueue(path);
 
     if (vm.at("from-stdin").as<bool>())
