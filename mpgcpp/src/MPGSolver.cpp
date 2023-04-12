@@ -10,6 +10,7 @@
 #include <syncstream>
 #include "concurrentqueue/concurrentqueue.h"
 #include "csp/MaxAtomSolver.h"
+#include "csp/solver/DenseSolver.h"
 
 void process_game(const std::filesystem::path& path,Result::ParallelWriter& outputWriter, const boost::program_options::variables_map& vm)
 {
@@ -54,12 +55,17 @@ void process_game(const std::filesystem::path& path,Result::ParallelWriter& outp
     {
         using namespace Implementation;
         case Options::SolverImplementation::ARC_CONSISTENCY:
-            solver = std::make_unique<Vector::MaxAtomSystemSolver<integer>>();
+            if (vm["dense"].as<bool>())
+                solver = std::make_unique<Vector::DenseSolver<integer>>();
+            else
+                solver = std::make_unique<Vector::MaxAtomSystemSolver<integer>>();
             break;
         case Options::SolverImplementation::FIXED_POINT:
             solver = std::make_unique<Vector::MaxAtomSystemSolverFixedPoint<integer>>();
             break;
     }
+    if(vm["small-domain"].as<bool>())
+        solver->set_bound_estimator(new LinearMaxAtomBoundEstimator<integer>(vm["domain-coefficient"].as<int>()));
     synced_output << "Calculating optimal strategy for graph " << path << std::endl;
     std::optional<StrategyPair> strategy;
     try{
@@ -179,7 +185,10 @@ int main(int argc, char *argv[]) {
              "Implementation of the max atom solver")
             ("dataset-description", po::value<std::string>()->default_value("dataset"), "Description of the dataset")
             ("threads,t", po::value<unsigned int>()->default_value(1), "Number of threads to use, Each thread will process a different graph")
-            ("separator", po::value<char>()->default_value(','), "Separator for the csv file");
+            ("separator", po::value<char>()->default_value(','), "Separator for the csv file")
+            ("dense", po::bool_switch(),"Use the dense graph heuristic")
+            ("small-domain", po::bool_switch(),"Use the small domain heuristic")
+            ("domain-coefficient",po::value<int>()->default_value(2),"Growth ratio of the domain. Ignored if the small domain heuristic is not used");
     po::variables_map vm;
     po::store(parse_command_line(argc, argv, desc), vm);
     if (vm.count("help") || argc == 1) {

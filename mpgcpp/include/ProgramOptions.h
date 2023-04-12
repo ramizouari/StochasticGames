@@ -31,6 +31,11 @@ namespace Options
         ADJACENCY_LIST_VECTOR,ADJACENCY_LIST_TREE,ADJACENCY_LIST_HASH,ADJACENCY_MATRIX
     };
 
+    enum class SolverHeuristic
+    {
+        NONE=0,DENSE,SMALL_DOMAIN,BOTH
+    };
+
     enum class GraphFormat
     {
         WEIGHTED_EDGE_LIST
@@ -59,6 +64,9 @@ namespace Options
     std::ostream &operator<<(std::ostream &H,GraphImplementation impl);
     std::istream& operator>>(std::istream& H,SolverImplementation& impl);
     std::ostream &operator<<(std::ostream &H,SolverImplementation impl);
+
+    std::ostream& operator<<(std::ostream& H,SolverHeuristic impl);
+    std::istream& operator>>(std::istream& H,SolverHeuristic& impl);
 
     template<typename T>
     std::ostream &operator<<(std::ostream &H,const std::vector<T>& v)

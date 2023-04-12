@@ -170,4 +170,41 @@ namespace Options
         return static_cast<int>(a) <=> static_cast<int>(b);
     }
 
+    std::ostream& operator<<(std::ostream& H,SolverHeuristic impl)
+    {
+        switch(impl)
+        {
+            case SolverHeuristic::NONE:
+                H<<"none";
+                break;
+            case SolverHeuristic::DENSE:
+                H<<"dense";
+                break;
+            case SolverHeuristic::SMALL_DOMAIN:
+                H<<"small_domain";
+                break;
+            case SolverHeuristic::BOTH:
+                H<<"both";
+                break;
+        }
+        return H;
+    }
+    std::istream& operator>>(std::istream& H,SolverHeuristic& impl)
+    {
+        std::string s;
+        H>>s;
+        s=std::regex_replace(s,std::regex("-"),"_");
+        std::transform(s.begin(),s.end(),s.begin(),[](unsigned char c){return std::tolower(c);});
+        if(s=="none")
+            impl=SolverHeuristic::NONE;
+        else if(s=="dense")
+            impl=SolverHeuristic::DENSE;
+        else if(s=="small_domain" || s=="small" || s=="domain" || s=="smalldomain" || s=="small domain")
+            impl=SolverHeuristic::SMALL_DOMAIN;
+        else if(s=="both")
+            impl=SolverHeuristic::BOTH;
+        else
+            throw std::invalid_argument("Invalid solver heuristic");
+        return H;
+    }
 }
