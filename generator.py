@@ -124,11 +124,12 @@ def generate_gnp_uniform_mpg(N,P=None,C=None,a=-1,b=1,iterations=10,seed=932,loo
     if callbacks is None:
         callbacks=[]
     use_threads = threads is not None and threads > 1
+    use_probabilities = P is not None
     with ProcessPoolExecutor(max_workers=threads) as executor:
         for n in N:
-            if P is not None:
+            if use_probabilities:
                 C = np.round(P * n).astype(int)
-            elif C is not None:
+            else:
                 P = C / n
             for c,p in zip(C,P):
                 for i in range(iterations):
