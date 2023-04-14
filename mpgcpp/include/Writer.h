@@ -11,6 +11,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include <atomic>
 
 namespace Result {
 
@@ -112,6 +113,21 @@ namespace Result {
         Writer & writer;
     public:
         explicit ParallelWriter(Writer &writer);
+        void writeData(const std::map<std::string, std::string> &data) override;
+        void writeHeader() override;
+        void writeFooter() override;
+        void addType(const std::string &name, Type type) override;
+    };
+
+    class BatchedParallelWriter : public Writer {
+        std::mutex mutex;
+        Writer & writer;
+        int batch_size;
+        std::vector<std::map<std::string, std::string>> buffer;
+        std::atomic<int> counter;
+    public:
+        explicit BatchedParallelWriter(Writer &writer, int batch=256);
+        ~BatchedParallelWriter() override;
         void writeData(const std::map<std::string, std::string> &data) override;
         void writeHeader() override;
         void writeFooter() override;

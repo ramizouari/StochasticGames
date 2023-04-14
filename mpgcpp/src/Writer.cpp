@@ -195,4 +195,46 @@ namespace Result {
     void ParallelWriter::addType(const std::string &name, Writer::Type type) {
         writer.addType(name,type);
     }
+
+    BatchedParallelWriter::BatchedParallelWriter(Writer &writer, int batch_size) : writer(writer), batch_size(batch_size),
+        counter(0),buffer(batch_size)
+    {
+    }
+
+    void BatchedParallelWriter::writeData(const std::map<std::string, std::string> &data)
+    {
+        if(counter==batch_size)
+        {
+            for(int i=0;i<batch_size;i++)
+                writer.writeData(buffer[i]);
+            counter=0;
+        }
+        buffer[counter]=data;
+        counter++;
+    }
+
+    void BatchedParallelWriter::writeHeader()
+    {
+        writer.writeHeader();
+    }
+
+    void BatchedParallelWriter::writeFooter()
+    {
+        for(int i=0;i<counter;i++)
+            writer.writeData(buffer[i]);
+        counter=0;
+        writer.writeFooter();
+    }
+
+    void BatchedParallelWriter::addType(const std::string &name, Writer::Type type) {
+        writer.addType(name,type);
+    }
+
+    BatchedParallelWriter::~BatchedParallelWriter() {
+        for(int i=0;i<counter;i++)
+            writer.writeData(buffer[i]);
+        counter=0;
+    }
+
+
 } // Result
