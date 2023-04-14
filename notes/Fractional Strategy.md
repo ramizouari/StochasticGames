@@ -79,4 +79,3 @@ B=DJ^{\star}D^{-1}=D\begin{pmatrix}D_{s,+} & 0 & \dots &0  \\
 0 &0 & \dots& 0
 \end{pmatrix} D^{-1}
 $$
-

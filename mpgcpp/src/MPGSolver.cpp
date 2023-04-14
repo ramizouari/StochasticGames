@@ -201,6 +201,7 @@ void process_game(const std::filesystem::path& path,Result::ParallelWriter& outp
 }
 
 int main(int argc, char *argv[]) {
+    std::ios::sync_with_stdio(false);
     namespace po = boost::program_options;
     po::options_description desc("Command Line options");
     unsigned int cpus=1;
