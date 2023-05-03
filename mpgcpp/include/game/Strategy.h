@@ -58,11 +58,11 @@ template<typename R>
 class FractionalMemorylessStrategy : public MemorylessStrategy<R>
 {
     using probabilistic_action=std::vector<std::pair<int,R>>;
-    const std::vector<probabilistic_action> actions;
+    std::vector<probabilistic_action> actions;
     std::mt19937_64 generator;
     std::vector<std::discrete_distribution<int>> distributions;
 public:
-    FractionalMemorylessStrategy(const std::vector<std::vector<R>> &actions,size_t seed=0): actions(actions),generator(seed)
+    FractionalMemorylessStrategy(const std::vector<probabilistic_action> &actions,size_t seed=0): actions(actions),generator(seed)
     {
         for(auto &action:actions)
         {
@@ -72,7 +72,7 @@ public:
             distributions.emplace_back(probabilities.begin(),probabilities.end());
         }
     }
-    FractionalMemorylessStrategy(std::vector<std::vector<R>> &&actions,size_t seed=0): actions(std::move(actions)),generator(seed)
+    FractionalMemorylessStrategy(std::vector<probabilistic_action> &&actions,size_t seed=0): actions(std::move(actions)),generator(seed)
     {
         for(auto &action:this->actions)
         {
@@ -85,6 +85,11 @@ public:
     int get_action(int state) override
     {
         return actions[state][distributions[state](generator)];
+    }
+
+    const std::vector<probabilistic_action> &get_actions() const
+    {
+        return actions;
     }
 };
 

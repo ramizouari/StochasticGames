@@ -1,3 +1,6 @@
+$$
+\DeclareMathOperator{\Adj}{Adj}
+$$
 ## 1. Definition
 - Let $\mathcal{G}=(\mathcal{V},\mathcal{E})$ be a mean-payoff game
 - For $u\in\mathcal{V},$ Let $\mathscr{P}(u)$ be the set of probability distributions over the set $\text{Adj}(u)$
@@ -13,69 +16,110 @@ $$
 
 
 ## 3. Mean Payoff of a pair of fractional strategies
+### 3.1 Notations
 - Let $A,B$ be a pair of fractional strategies
-- Let $P,Q$ two random variables defining the mean-payoffs for the respective players
+- Let $P_m,Q_m$ two random variables defining the mean-payoffs for the respective players after turn $m$
+
+
+### 3.2 Expected Cost of a pli
+Let $\Pi \in \{A,B\}$
 
 We have:
 $$
 \begin{align*}
-\mathbb{E}[P^{k}_i]&=\sum_{j}A_{i,j}\mathbb{E}[P_j^{k+1}]+\sum_{j}A_{i,j}W_{i,j}\\
-\mathbb{E}[P^k]&=A\cdot\mathbb{E}[P^{k+1}]+A\odot W\\
-\mathbb{E}[P^0]&= \sum_{r=0}^k
+\mathbb{E}\left[w(u,\Pi(u))\right]&=\sum_{v\in \Adj u} w(u,v)\cdot \mathcal{P}(\Pi(u)=v) \\
 \end{align*}
 $$
+
+### 3.3 Expected cost of a turn
+Let $h$ be the cost of a turn
+
+We have:
 $$
 \begin{align*}
-\mathbb{E}[P^{k+1}_j]&=\sum_{i}A_{i,j}\mathbb{E}[P_i^{k}]+\sum_{i}A_{i,j}W_{i,j}\\
-\mathbb{E}[P^k]&=A^T\cdot\mathbb{E}[P^{k+1}]+A\odot W\\
-\mathbb{E}[P^k]&= \sum_{r=0}^{k-1}\left(A^T\right)^r \cdot (A\odot W)+\left(A^T\right)^k \mathbb{E}[P^0] \\
-\frac{1}{k}\mathbb{E}[P^k]&=\frac{1}{k}\sum_{r=0}^{k-1}\left(A^T\right)^r \cdot (A\odot W)+ \frac{1}{k}\left(A^T\right)^k \mathbb{E}[P^0]
+\mathbb{E}\left[h(u,A(u),B \circ A(u))\right]&= \mathbb{E}[w(u,A(u))]+\sum_{v\in \Adj u} \mathbb{E}[w(v,B(v))]\cdot \mathcal{P}(A(u)=v) \\
 \end{align*}
 $$
 
-As $A$ is a markov transistion matrix, then it has a simple eigenvalue of $1$, and all other complex eigenvalues are strictly less than $1$ in norm.
-
-Also, let $DJD^{-1}$ be the Jordan normal form of $A$ with:
-$$
-J=\begin{pmatrix}D_s & 0 & \dots &0  \\
-0& J_2 & \dots  &0\\
-0 & 0 & \ddots &0 \\
-0 &0 & \dots& J_{n}
-\end{pmatrix}
-$$
-
-With $D_s$ a diagonal matrix of size $s$, with elements $\pm 1,$ $J_2,\dots,J_n$ are jordan blocks with associated eigenvalues $\lambda_2,\dots,\lambda_n$ such that:
-$$
-\max_{i\in\{2,\dots,n\}}\lvert \lambda_i \rvert <1
-$$
-With that:
-$$
-\forall i\in\{2,\dots,n\},\quad \lim_{r\rightarrow +\infty}\frac{1}{r}J_i^r=0
-$$
-With that, it can be proven that:
-$$
-\lim_{r\rightarrow \infty} \frac{1}{r}\left(A^T\right)^r=0
-$$
-
-Also:
+### 3.4 Expected Total Payoff
+- Let $\Pi=B\circ A$
+- Let $(X_m)_{m\in\mathbb{N}}$ defined as follow:
+	$$
+	\begin{cases}
+	X_0&=s\\
+	\forall m\in\mathbb{N}^*,\quad X_m&= \Pi(X_{m-1})
+	\end{cases}
+	$$
+- Let $(R_m)_{m\in\mathbb{N}}$ defined as follow:
+	$$
+	\begin{cases}
+	R_0&=0\\
+	\forall m\in\mathbb{N}^*,\quad  R_m&= R_{m-1}+\displaystyle\sum_{u\in V}h(u,A(u),\Pi(u)) \cdot \mathcal{P}(X_{m-1}=u)
+	\end{cases}
+	$$
+We have:
 $$
 \begin{align*}
-\sum_{k=0}^{r-1}(D_s)^k&=\sum_{k=0}^{r-1}D_{s,+}^k+D_{s,-}^k \\
-&=\sum_{k=0}^{r-1}D_{s,+}+(-1)^kD_{s,-} \\
-&=rD_{s,+}+\frac{1}{2}\cdot(1-(-1)^r)D_{s,-} \\
-\lim_{r\rightarrow +\infty}\sum_{k=0}^{r-1}(D_s)^k&=\lim_{r\rightarrow +\infty} D_{s,+}+\frac{1}{2r}\cdot(1-(-1)^r)D_{s,-} \\
-&=D_{s,+}
+\mathbb{E}[R_m]&= \mathbb{E}[R_{m-1}]+\sum_{u\in V}\mathbb{E}[h(u,A(u),\Pi(u))] \cdot \mathcal{P}(X_{m-1}=u) \\
+&=\mathbb{E}[R_{m-1}]+\sum_{u\in V}P^{m-1}(s,u)\times q(u)\\ 
+&=\mathbb{E}[R_{m-1}]+(P^{m-1}\cdot q)(s)\quad \text{(Matrix Multiplication)} \\
+&=\sum_{k=1}^m(P^{k-1}\cdot q)(s)+ \mathbb{E}[R_0]  \\
+&=\left(\sum_{k=0}^{m-1}P^{k}\cdot q\right)(s)+ \mathbb{E}[R_0] \\
+&=\left(\sum_{k=0}^{m-1}P^{k}\cdot q\right)(s)
 \end{align*}
 $$
-With that:
+Now, we may see that the formula is easy generalisable to any starting vertex:
 $$
-\lim_{r\rightarrow +\infty}\frac{1}{r}\mathbb{E}[P^r]= B\cdot(A\odot W)
+\mathbb{E}[R_m]=\sum_{k=0}^{m-1}P^{k}\cdot q
 $$
-With:
+
+### 3.5 Expected Mean Payoff
+The mean-payoff is defined as:
 $$
-B=DJ^{\star}D^{-1}=D\begin{pmatrix}D_{s,+} & 0 & \dots &0  \\
-0& 0 & \dots  &0\\
-0 & 0 & \ddots &0 \\
-0 &0 & \dots& 0
-\end{pmatrix} D^{-1}
+K_m=\frac{R_m}{m}
+$$
+We define $K_\infty$ as:
+$$
+K_\infty=K_{+\infty}=\lim_{m \rightarrow +\infty} \frac{R_m}{m}
+$$
+
+Let $m\in\mathbb{N}\cup\{+\infty\}$
+Now, the expected mean-payoff can act as a the judge for who is winning:
+- Player $0$ wins if $\mathbb{E}[K_m]>0$
+- Player $1$ wins if $\mathbb{E}[K_m]<0$
+- Else, it is a tie
+
+Now, if $m$ is finite, we can calculate $\mathbb{E}[K_m]$ directly.
+Otherwise, we have:
+$$
+\mathbb{E}[K_{\infty}]=\lim_{m\rightarrow +\infty}\frac{1}{m} \sum_{k=0}^m P^k \cdot q
+$$
+Now, $P$ can be seen as a stochastic matrix.
+Thus it has a simple eigenvalue of value $1$, and all its other eigenvalue $\lambda$ satisfies:
+$$
+\lambda \neq 1 \wedge \lvert\lambda \rvert \le 1
+$$
+Also, we have (Proof?):
+$$
+\lvert \lambda \rvert =1\implies \lambda \space\text{is a simple eigenvalue}
+$$
+
+With that, it can be proven that the $\lim_{m\rightarrow +\infty}\frac{1}{m} \sum_{k=0}^m P^k$ converges so some matrix $T$
+
+This matrix can be constructed as follow.
+Let $P=VJV^{-1}$ the jordan normal form of $P$
+
+Without a loss of generality, we will suppose that the first eigenvalue of this decomposition is $1$
+We have then:
+$$
+T=V\begin{pmatrix}1 & 0\\
+0&\boldsymbol{0}_{n-1}\end{pmatrix}V^{-1}
+$$
+
+
+## 4. Discounted Payoffs
+Using the same approach as the mean payoffs. Let $R_m$ be the discounted payoff.
+It can be shown that:
+$$
+\mathbb{E}[R_m]=\sum_{n\in\mathbb{N}} \gamma^nP^n \cdot q=(\text{Id}-\gamma P)^{-1}q
 $$

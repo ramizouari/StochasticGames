@@ -2,7 +2,7 @@ import tensorflow as tf
 import tensorflow_probability as tfp
 
 import mpg.mpgio
-from mpg.mpgml.dataset import utils
+from mpg.ml.dataset import utils
 
 
 def read_mpg(file:str,target:str,generated_input: str, flatten:bool,n,weight_type,dense:bool=False):
