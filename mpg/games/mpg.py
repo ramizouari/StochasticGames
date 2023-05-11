@@ -146,6 +146,10 @@ The second player is called the Min player, his goal is to minimize the mean-pay
     def adjacency_matrix(self):
         return nx.to_numpy_array(self, weight=None)
 
+    @property
+    def tensor_representation(self):
+        return np.stack([self.adjacency_matrix,self.weights_matrix])
+
 
 # This function is used to check if a graph is winning everywhere
 def winning_everywhere(G: MeanPayoffGraph) -> bool:
