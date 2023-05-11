@@ -1,3 +1,4 @@
+import abc
 from typing import TypedDict
 
 import numpy as np
@@ -127,6 +128,16 @@ class MPGEnvironment(tfa.environments.py_environment.PyEnvironment):
     def get_info(self) -> types.NestedArray:
         return self._info
 
+    @property
+    def game(self):
+        return self.graph
+
+    def get_game(self):
+        return self.game
+
+    def get_graph(self):
+        return self.graph
+
 
 class FixedStrategyMPGEnvironment(tfa.environments.py_environment.PyEnvironment):
     """
@@ -188,3 +199,104 @@ class FixedStrategyMPGEnvironment(tfa.environments.py_environment.PyEnvironment)
     @property
     def graph(self):
         return self.env.graph
+
+    @property
+    def game(self):
+        return self.env.graph
+
+    def get_game(self):
+        return self.game
+
+    def get_graph(self):
+        return self.graph
+
+
+
+
+
+class MPGEnvironmentExtractor(abc.ABC):
+    def __init__(self):
+        pass
+
+    @abc.abstractmethod
+    def call(self, env):
+        pass
+
+    def __call__(self, env:MPGEnvironment):
+        return self.call(env)
+
+    @property
+    def env_specs(self) -> tfa.specs.ArraySpec:
+        return self.get_env_specs(env=None)
+
+    @abc.abstractmethod
+    def get_env_specs(self,env:MPGEnvironment=None) -> tfa.specs.ArraySpec:
+        pass
+
+class MPGGraphExtractor(MPGEnvironmentExtractor):
+    def __init__(self):
+        super().__init__()
+
+    def call(self, env:MPGEnvironment):
+        return env.game
+
+class MPGMatrixExtractor(MPGEnvironmentExtractor):
+    def __init__(self,matrix="adjacency",graph_size=None):
+        super().__init__()
+        self.matrix = matrix
+        self.graph_size=graph_size
+
+    def call(self, env:MPGEnvironment):
+        match self.matrix:
+            case "adjacency":
+                return env.get_game().adjacency_matrix
+            case "payoff" | "payoffs" | "reward" | "rewards":
+                return env.get_game().adjacency_matrix
+            case "both":
+                return np.stack([env.get_game().adjacency_matrix,env.get_game().weights_matrix])
+
+    def get_env_shape(self,env=None):
+        if env is None:
+            if self.graph_size is None:
+                vertex_count= None
+            else:
+                vertex_count=self.graph_size
+        else:
+            vertex_count=len(env.get_game())
+        shape=(vertex_count,vertex_count)
+        if self.matrix=="both":
+            shape=(2,vertex_count,vertex_count)
+        return shape
+
+    def get_env_specs(self,env=None) -> tfa.specs.ArraySpec:
+        return tfa.specs.ArraySpec(shape=self.get_env_shape(env),dtype=np.float32)
+
+
+
+
+
+class MPGTrajectoryConverter:
+    def __init__(self,env:MPGEnvironment,extractor:MPGEnvironmentExtractor,add_batch_dim=False):
+        self.env=env
+        self.extractor=extractor
+        self.add_batch_dim=add_batch_dim
+
+    def __call__(self,trajectory:tfa.trajectories.Trajectory):
+        return self.convert(trajectory)
+
+    def convert(self,trajectory:tfa.trajectories.Trajectory):
+        trajectory= tfa.trajectories.Trajectory(
+            step_type=trajectory.step_type,
+            observation={"environment":self.extractor(self.env),"state":trajectory.observation},
+            action=trajectory.action,
+            policy_info=trajectory.policy_info,
+            next_step_type=trajectory.next_step_type,
+            reward=trajectory.reward,
+            discount=trajectory.discount
+        )
+#        return trajectory if not self.add_batch_dim else tfa.utils.nest_utils.batch_nested_tensors(trajectory)
+        return trajectory.observation if not self.add_batch_dim else tfa.utils.nest_utils.batch_nested_tensors(trajectory.observation)
+
+    @property
+    def data_spec(self):
+        return {"environment":self.extractor.env_specs,"state":self.env.observation_spec()}

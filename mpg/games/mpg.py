@@ -138,6 +138,14 @@ The second player is called the Min player, his goal is to minimize the mean-pay
                 Z2[s[0]] = solution[u] == -np.inf
         return Z1, Z2
 
+    @property
+    def weights_matrix(self):
+        return nx.to_numpy_array(self, weight="weight")
+
+    @property
+    def adjacency_matrix(self):
+        return nx.to_numpy_array(self, weight=None)
+
 
 # This function is used to check if a graph is winning everywhere
 def winning_everywhere(G: MeanPayoffGraph) -> bool:
