@@ -13,8 +13,9 @@ class MPGNetworkExample(tfa.networks.Network):
     def call(self,observations:tfa.trajectories.Trajectory,step_type=None, network_state=(),training=False):
         G=observations["environment"]
         A=observations["state"]
+        G=tf.reshape(G,[1]+G.shape)
         G=self.flatten(G)
-        A=tf.cast(tf.reshape(A,[-1,1]),dtype=tf.float32)
+        A=tf.cast(tf.reshape(A,[1,1]),dtype=tf.float32)
         Z=self.concat([G,A])
         Z=self.dense(Z)
         return self.predictions(Z),network_state
