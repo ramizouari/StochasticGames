@@ -140,11 +140,11 @@ The second player is called the Min player, his goal is to minimize the mean-pay
 
     @property
     def weights_matrix(self):
-        return nx.to_numpy_array(self, weight="weight",dtype=np.float32)
+        return nx.to_numpy_array(self, weight="weight",dtype=np.float32,nodelist=sorted(self.nodes))
 
     @property
     def adjacency_matrix(self):
-        return nx.to_numpy_array(self, weight=None,dtype=np.float32)
+        return nx.to_numpy_array(self, weight=None,dtype=np.float32,nodelist=sorted(self.nodes))
 
     @property
     def tensor_representation(self):

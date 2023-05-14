@@ -1,6 +1,8 @@
 import tf_agents as tfa
 import types
 
+import tensorflow as tf
+
 from . import utils, environment
 
 
@@ -18,3 +20,5 @@ class FullyObservableMPGAgentWrapper:
                                            reward=experience.reward,
                                            next_step_type=experience.next_step_type,
                                            discount=experience.discount)
+
+

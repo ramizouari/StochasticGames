@@ -1,9 +1,12 @@
+import abc
+
 import cachetools
 import tf_agents as tfa
+import tensorflow as tf
 from . import environment
 
 
-def environment_representation(env: environment.MPGEnvironment, representation="both"):
+def environment_representation(env: "environment.MPGEnvironment", representation="both"):
     """
     Extracts a representation of the environment
 
@@ -23,11 +26,11 @@ def environment_representation(env: environment.MPGEnvironment, representation="
             return env.graph
 
 
-def encode_fully_observable_state(env: environment.MPGEnvironment, state, representation="both"):
-    return dict(state=state, environment=environment_representation(env,representation=representation))
+def encode_fully_observable_state(env: "environment.MPGEnvironment", state, representation="both"):
+    return dict(state=state, environment=environment_representation(env, representation=representation))
 
 
-def encode_fully_observable_state_specs(env: environment.MPGEnvironment, env_specs):
+def encode_fully_observable_state_specs(env: "environment.MPGEnvironment", env_specs):
     return dict(state=tfa.specs.ArraySpec(shape=()), environment=tfa.specs.ArraySpec(env_specs))
 
 
@@ -66,3 +69,53 @@ class ObjectWrapper(object):
                     if name.startswith("__"):
                         if name not in ignore and name not in dct:
                             setattr(cls, name, property(make_proxy(name)))
+
+
+def normal_splitter(observation):
+    if isinstance(observation["state"], tfa.specs.TensorSpec):
+        return observation, tf.TensorSpec(shape=(tf.cast(observation["state"].maximum, dtype=tf.int32) + 1,))
+    C = tf.gather_nd(observation["environment"],
+                     tf.concat([tf.constant([0, 0]), tf.cast(observation["state"], dtype=tf.int32)], 0))
+    return observation, tf.reshape(C, shape=(1, -1))
+
+
+class AbstractMPGActionConstraintSplitter(tf.Module):
+
+    def __init__(self, env: environment.MPGEnvironment = None, name="MPGActionConstraintSplitter"):
+        self.env = env
+        super().__init__(name=name)
+        if self.env is not None:
+            self.count_vertices = tf.Variable(env.count_vertices, dtype=tf.int32, trainable=False)
+        else:
+            self.count_vertices = tf.Variable(0, dtype=tf.int32, trainable=False)
+        self.built = False
+
+    def build(self, observation_shape):
+        if self.env is None:
+            self.count_vertices.assign(observation_shape["state"].maximum)
+        self.built = True
+        return observation_shape, tf.TensorSpec(
+            shape=(tf.cast(observation_shape["state"].maximum, dtype=tf.int32) + 1,))
+
+    @abc.abstractmethod
+    def call(self, observation):
+        pass
+
+    def __call__(self,observation):
+        if not self.built:
+            return self.build(observation)
+        return self.call(observation)
+
+class MPGActionConstraintSplitter(AbstractMPGActionConstraintSplitter):
+    def call(self, observation):
+
+        C = tf.gather_nd(observation["environment"],
+                         tf.concat([tf.constant([0, 0]), tf.cast(observation["state"], dtype=tf.int32)], 0))
+        return observation, tf.reshape(C, shape=(1, -1))
+
+
+class PartiallyObservableMPGActionConstraintSplitter(AbstractMPGActionConstraintSplitter):
+    def call(self, observation):
+        C = tf.gather_nd(observation["environment"],
+                         tf.concat([tf.constant([0, 0]), tf.cast(observation["state"], dtype=tf.int32)], 0))
+        return observation["state"], tf.reshape(C, shape=(1, -1))

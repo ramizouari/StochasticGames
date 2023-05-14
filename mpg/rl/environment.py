@@ -87,6 +87,7 @@ class MPGEnvironment(tfa.environments.py_environment.PyEnvironment):
                 raise ValueError(
                     f"Action {action} should be an adjacent vertex to the current one. current vertex is {self._vertex}")
         if self.max_turns is not None and self._time_step >= self.max_turns:
+            self._time_step += 1
             self._episode_ended = True
             self._info = TransitionInfo(observation=self._vertex, reward=self._reward, discount=self.discount_factor,
                                         action_status=True, step_type=ts.StepType.LAST)
@@ -148,6 +149,12 @@ class MPGEnvironment(tfa.environments.py_environment.PyEnvironment):
     def adjacency_matrix(self):
         return self.graph.adjacency_matrix
 
+    def increment_time(self):
+        self._time_step += 1
+
+    def decrement_time(self):
+        self._time_step -= 1
+
 
 class FixedStrategyMPGEnvironment(tfa.environments.py_environment.PyEnvironment):
     """
@@ -170,11 +177,15 @@ class FixedStrategyMPGEnvironment(tfa.environments.py_environment.PyEnvironment)
             step_type = ts.StepType.LAST
         else:
             step_type = intermediate_state.step_type
-        next_action = self.strategy(int(intermediate_state.observation))
-        next_state = self.env.step(next_action)
-        if not self.env.get_info()["action_status"]:
-            raise ValueError(
-                f"Fixed strategy returned an invalid action {next_action} from state {intermediate_state.observation}")
+        if self.env.get_info()["action_status"]:
+            next_action = self.strategy(int(intermediate_state.observation))
+            next_state = self.env.step(next_action)
+            if not self.env.get_info()["action_status"]:
+                raise ValueError(
+                    f"Fixed strategy returned an invalid action {next_action} from state {intermediate_state.observation}")
+        else:
+            next_state = intermediate_state
+            self.env.increment_time()
         return tfa.trajectories.time_step.TimeStep(observation=next_state.observation,
                                                    reward=intermediate_state.reward + next_state.reward,
                                                    discount=intermediate_state.discount,
