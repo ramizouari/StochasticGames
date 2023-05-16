@@ -155,6 +155,7 @@ class MPGEnvironment(tfa.environments.py_environment.PyEnvironment):
     def decrement_time(self):
         self._time_step -= 1
 
+PartiallyObservableMPGEnvironment = MPGEnvironment
 
 class FixedStrategyMPGEnvironment(tfa.environments.py_environment.PyEnvironment):
     """

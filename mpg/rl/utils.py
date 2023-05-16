@@ -24,6 +24,8 @@ def environment_representation(env: "environment.MPGEnvironment", representation
             return env
         case "graph":
             return env.graph
+        case "gnn":
+            raise NotImplementedError("GNN representation not implemented yet")
 
 
 def encode_fully_observable_state(env: "environment.MPGEnvironment", state, representation="both"):
@@ -74,28 +76,30 @@ class ObjectWrapper(object):
 def normal_splitter(observation):
     if isinstance(observation["state"], tfa.specs.TensorSpec):
         return observation, tf.TensorSpec(shape=(tf.cast(observation["state"].maximum, dtype=tf.int32) + 1,))
-    C = tf.gather_nd(observation["environment"],
-                     tf.concat([tf.constant([0, 0]), tf.cast(observation["state"], dtype=tf.int32)], 0))
-    return observation, tf.reshape(C, shape=(1, -1))
+    batch_rank = tf.rank(observation["state"])
+    I=tf.stack([tf.zeros_like(observation["state"]), tf.cast(observation["state"], dtype=tf.int32)],axis=-1)
+    C = tf.gather_nd(observation["environment"],indices=I,batch_dims=batch_rank)
+    return observation, C
 
 
 class AbstractMPGActionConstraintSplitter(tf.Module):
 
-    def __init__(self, env: environment.MPGEnvironment = None, name="MPGActionConstraintSplitter"):
+    def __init__(self, env: "environment.MPGEnvironment" = None, name="MPGActionConstraintSplitter"):
         self.env = env
         super().__init__(name=name)
         if self.env is not None:
-            self.count_vertices = tf.Variable(env.count_vertices, dtype=tf.int32, trainable=False)
+            self.count_vertices = tf.constant(env.count_vertices, dtype=tf.int32)
         else:
-            self.count_vertices = tf.Variable(0, dtype=tf.int32, trainable=False)
+            self.count_vertices = tf.constant(0, dtype=tf.int32)
         self.built = False
 
     def build(self, observation_shape):
         if self.env is None:
-            self.count_vertices.assign(observation_shape["state"].maximum)
+            self.count_vertices.assign = tf.cast(observation_shape["state"].maximum,dtype=tf.int32) + 1
         self.built = True
+        constraint_shape=observation_shape["state"].shape[:-1]+ [self.count_vertices]
         return observation_shape, tf.TensorSpec(
-            shape=(tf.cast(observation_shape["state"].maximum, dtype=tf.int32) + 1,))
+            shape=constraint_shape)
 
     @abc.abstractmethod
     def call(self, observation):
@@ -108,14 +112,18 @@ class AbstractMPGActionConstraintSplitter(tf.Module):
 
 class MPGActionConstraintSplitter(AbstractMPGActionConstraintSplitter):
     def call(self, observation):
+        batch_rank=tf.rank(observation["state"])
+        I = tf.stack([tf.zeros_like(observation["state"]), tf.cast(observation["state"], dtype=tf.int32)], axis=-1)
+        C = tf.gather_nd(observation["environment"], indices=I, batch_dims=batch_rank)
+        return observation, C
 
-        C = tf.gather_nd(observation["environment"],
-                         tf.concat([tf.constant([0, 0]), tf.cast(observation["state"], dtype=tf.int32)], 0))
-        return observation, tf.reshape(C, shape=(1, -1))
 
+FullyObservableMPGActionConstraintSplitter = MPGActionConstraintSplitter
 
+# TODO: Implement this class
 class PartiallyObservableMPGActionConstraintSplitter(AbstractMPGActionConstraintSplitter):
     def call(self, observation):
-        C = tf.gather_nd(observation["environment"],
-                         tf.concat([tf.constant([0, 0]), tf.cast(observation["state"], dtype=tf.int32)], 0))
+        batch_rank=tf.rank(observation["state"])
+        I = tf.stack([tf.zeros_like(observation["state"]), tf.cast(observation["state"], dtype=tf.int32)], axis=-1)
+        C = tf.gather_nd(observation["environment"], indices=I, batch_dims=batch_rank)
         return observation["state"], tf.reshape(C, shape=(1, -1))
