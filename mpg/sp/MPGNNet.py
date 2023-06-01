@@ -1,7 +1,3 @@
-import sys
-from azg.utils import *
-
-import argparse
 from tensorflow import keras
 
 
@@ -14,7 +10,7 @@ Date: Jan 5, 2018.
 
 Based on the OthelloNNet by SourKream and Surag Nair.
 """
-class MPGNNet():
+class MPGNNet:
     def __init__(self, game, args):
         # game params
         self.action_size = game.getActionSize()
@@ -23,10 +19,11 @@ class MPGNNet():
         env_shape=(2,game.getBoardSize(),game.getBoardSize())
 
         # Neural Net
-        self.input_environment = keras.layers.Input(shape=env_shape)    # s: batch_size x board_x x board_y
-        self.input_state=keras.layers.Input(shape=())
-        flattened=keras.layers.Flatten()(self.input_environment,name="flatten")
-        stack=keras.layers.Concatenate(axis=1)([flattened,self.input_state])
+        self.input_environment = keras.layers.Input(shape=env_shape,name="environment")    # s: batch_size x board_x x board_y
+        self.input_state=keras.layers.Input(shape=(),name="state")
+        state_reshape=keras.layers.Reshape((1,))(self.input_state)
+        flattened=keras.layers.Flatten(name="flatten")(self.input_environment)
+        stack=keras.layers.Concatenate()([flattened,state_reshape])
         y=keras.layers.BatchNormalization()(stack)
         y=keras.layers.Dense(128,activation="relu")(y)
         z=keras.layers.BatchNormalization()(y)

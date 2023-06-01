@@ -56,7 +56,8 @@ class MPGState:
 
     def __neg__(self):
         dual_state=MPGState(np.copy(self.environment),self.state,self.turn,self.max_turns)
-        dual_state.environment[1]=-dual_state.environment
+        dual_state.environment[1]=-dual_state.environment[1]
+        dual_state.mean_payoffs=-self.mean_payoffs
         return dual_state
 
     def __invert__(self):

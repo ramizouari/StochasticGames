@@ -6,8 +6,9 @@ import random
 import numpy as np
 import math
 import sys
-from azg.utils import *
-from azg.NeuralNet import NeuralNet
+from .azg.utils import *
+from .azg.NeuralNet import NeuralNet
+import tf_agents as tfa
 
 import argparse
 from .MPGNNet import MPGNNet as onnet
@@ -33,7 +34,6 @@ args = dotdict({
 class NNetWrapper(NeuralNet):
     def __init__(self, game):
         self.nnet = onnet(game, args)
-        self.board_x, self.board_y = game.getBoardSize()
         self.action_size = game.getActionSize()
 
     def train(self, examples):
@@ -44,7 +44,10 @@ class NNetWrapper(NeuralNet):
         input_boards = np.asarray(input_boards)
         target_pis = np.asarray(target_pis)
         target_vs = np.asarray(target_vs)
-        self.nnet.model.fit(x = input_boards, y = [target_pis, target_vs], batch_size = args.batch_size, epochs = args.epochs)
+        input_environments=[x.environment for x in input_boards]
+        input_states=[x.state for x in input_boards]
+        input={"environment":np.array(input_environments),"state":np.array(input_states)}
+        self.nnet.model.fit(x = input, y = [target_pis, target_vs], batch_size = args.batch_size, epochs = args.epochs)
 
     def predict(self, board):
         """
@@ -54,7 +57,8 @@ class NNetWrapper(NeuralNet):
         start = time.time()
 
         # preparing input
-        board = board[np.newaxis, :, :]
+        board={"environment":board.environment,"state":board.state}
+        board=tfa.utils.nest_utils.batch_nested_tensors(board)
 
         # run
         pi, v = self.nnet.model.predict(board, verbose=False)

@@ -1,7 +1,6 @@
 from __future__ import print_function
 import sys
-sys.path.append('..')
-from azg.Game import Game
+from .azg.Game import Game
 from .MPGLogic import MPGState
 import numpy as np
 import mpg.graph.random_graph as rg
@@ -35,19 +34,22 @@ class MPGGame(Game,abc.ABC):
     def getActionSize(self):
         # return number of actions
         # Add 1 for the pass action?
-        return self.n+1
+        return self.n
 
-    def getNextState(self, board, player, action):
+    def getNextState(self, board:MPGState, player, action):
         current_state=board.state
         board.state=action
         K=board.turn/(board.turn+1)
-        board.mean_payoffs=K*board.mean_payoffs+board.env[1,current_state,action]
+        board.turn+=1
+        if board.environment[0,current_state,action] == 0:
+            raise ValueError(f"Weight should not be zero, current_state={current_state}, action={action}, environment={board.environment}")
+        board.mean_payoffs=K*board.mean_payoffs+player*board.environment[1,current_state,action]/board.turn
         return board,-player
 
-    def getValidMoves(self, board, player):
+    def getValidMoves(self, board:MPGState, player):
         return self.game_tensor[0,board.state]
 
-    def getGameEnded(self, board, player):
+    def getGameEnded(self, board:MPGState, player):
         # return 0 if not ended, 1 if player 1 won, -1 if player 1 lost
         # player = 1
 
@@ -55,22 +57,27 @@ class MPGGame(Game,abc.ABC):
             return 1
         if board.is_win(-player):
             return -1
-        if board.has_legal_moves():
-            return 0
+#        if board.turn>=board.max_turns:
+#            raise ValueError(f"Game ended but no winner?, {(board.environment,board.mean_payoffs,board.turn,board.max_turns)}")
         # draw has a very little value
-        return 1e-4
+        return 0
 
     def getCanonicalForm(self, board, player):
         if player==-1:
             board=~board
-        return {"environment": board.environment, "state": board.state}
+        return board
 
     def getSymmetries(self, board, pi):
         return [(board,pi)]
 
     def stringRepresentation(self, board):
-        # 8x8 numpy array (canonical board)
-        return str(self.game_tensor)
+        return f"""
+Environment: {board.environment}
+State: {board.state}
+Turn: {board.turn}
+Max turns: {board.max_turns}
+Mean payoffs: {board.mean_payoffs}
+"""
 
 class UniformGnpMPGGame(MPGGame):
     def __init__(self,n,p,a,b,max_turns,seeder=None):

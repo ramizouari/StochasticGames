@@ -11,3 +11,4 @@ jupyterlab
 yfiles_jupyter_graphs
 networkx >= 3.0
 pytest
+tqdm
