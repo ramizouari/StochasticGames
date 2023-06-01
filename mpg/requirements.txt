@@ -6,6 +6,7 @@ scikit-learn
 tensorflow > 2.8
 tensorflow_probability
 tensorflow_gnn
+tf_agents
 jupyterlab
 yfiles_jupyter_graphs
 networkx >= 3.0

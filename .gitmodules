@@ -8,3 +8,6 @@
 	path = mpgcpp/external/pybind11
 	url = https://github.com/pybind/pybind11
 	branch = stable
+[submodule "mpg/sp/alpha-zero-general"]
+	path = mpg/sp/azg
+	url = https://github.com/suragnair/alpha-zero-general

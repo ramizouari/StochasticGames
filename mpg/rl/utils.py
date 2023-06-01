@@ -122,8 +122,13 @@ FullyObservableMPGActionConstraintSplitter = MPGActionConstraintSplitter
 
 # TODO: Implement this class
 class PartiallyObservableMPGActionConstraintSplitter(AbstractMPGActionConstraintSplitter):
+    def __init__(self,observation_shape,env: "environment.MPGEnvironment" = None, name="MPGActionConstraintSplitter"):
+        if env is None:
+            raise ValueError("env must be specified in a partially observable environment")
+        super().__init__(env=env,name=name)
+        self.environment_tensor=tf.constant(env.graph.tensor_representation,dtype=tf.float32)
     def call(self, observation):
-        batch_rank=tf.rank(observation["state"])
-        I = tf.stack([tf.zeros_like(observation["state"]), tf.cast(observation["state"], dtype=tf.int32)], axis=-1)
-        C = tf.gather_nd(observation["environment"], indices=I, batch_dims=batch_rank)
+        batch_rank=tf.rank(observation)
+        I = tf.stack([tf.zeros_like(observation), tf.cast(observation, dtype=tf.int32)], axis=-1)
+        C = tf.gather_nd(self.environment_tensor, indices=I, batch_dims=batch_rank)
         return observation["state"], tf.reshape(C, shape=(1, -1))
