@@ -1,11 +1,6 @@
-import numba
 import numpy as np
 import tensorflow as tf
-import mpg.graph.random_graph
-import networkx as nx
-import itertools
 import tensorflow_probability as tfp
-import mpg.wrapper as mpgwrapper
 from . import utils
 
 
@@ -44,8 +39,10 @@ Generates a dense G(n,p) dataset.
             seed = np.random.randint(0, 1 << 32)
 
         seeder = tfp.util.SeedStream(seed, "seeding_generator")
-
-        signature=utils.get_signature(generated_input=generated_input, flatten=flatten, target=target, n=n)
+        def gen_function(seed):
+            return utils.generate_dense_gnp_instance(n, p, seeder, cardinality, target, generated_input, flatten,
+                                                        weights_distribution, weight_type)
+        signature=utils.get_generator_signature(generated_input=generated_input, flatten=flatten, target=target, n=n)
 
         generated: tf.data.Dataset
         options = tf.data.Options()
@@ -55,8 +52,7 @@ Generates a dense G(n,p) dataset.
         else:
             generated = tf.data.Dataset.range(seed, seed + cardinality).with_options(options)
         return generated.map(
-            lambda seed: utils.generate_dense_gnp_instance(n, p, seeder, cardinality, target, generated_input, flatten,
-                                                           weights_distribution, weight_type),
+            gen_function,
             num_parallel_calls=num_parallel_calls
         ).with_options(options)
         #    range,
@@ -84,14 +80,18 @@ Generates a dense G(n,p) dataset.
             return tf.concat([tf.gather(x, S, axis=0), P[x[-2]], x[-1]])
 
     def permutation(self, P):
-        return self.map(lambda x: self._permutation(x, P))
+        def _permutation(x):
+            return self._permutation(x, P)
+        return self.map(_permutation)
 
     def with_starting_position(self, starting_position=None):
-        if starting_position == "all":
-            self.flat_map(lambda x: tf.data.Dataset.from_tensor_slices(x))
-        if starting_position == "random" or not starting_position:
-            starting_position = tf.random.uniform(shape=(self.n,), minval=0, maxval=2, dtype=tf.int32)
-        return self.map(lambda x: tf.concat([x, starting_position]))
+        def _with_starting_position(x):
+            if starting_position == "all":
+                return tf.concat([x, tf.range(self.n)])
+            if starting_position == "random" or not starting_position:
+                return tf.concat([x, tf.random.uniform(shape=(self.n,), minval=0, maxval=2, dtype=tf.int32)])
+            return tf.concat([x, starting_position])
+        return self.map(_with_starting_position)
 
 
 

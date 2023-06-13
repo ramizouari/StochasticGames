@@ -318,7 +318,7 @@ def dim_mul(*b):
     return reduce(lambda x, y: x * y, b, 1)
 
 
-def get_signature(generated_input: str, n: int, target: str, flatten: bool):
+def get_generator_signature(generated_input: str, n: int, target: str, flatten: bool):
     shape = None
     if flatten:
         if generated_input == "both":
@@ -338,6 +338,31 @@ def get_signature(generated_input: str, n: int, target: str, flatten: bool):
         else:
             shape = (2, n)
         signature = (*signature, tf.TensorSpec(shape=shape))
+
+    return signature
+
+def get_reader_signature(generated_input: str, n: int, target: str, flatten: bool):
+    shape = None
+    if flatten:
+        if generated_input == "both":
+            shape = (dim_mul(2, n, n),)
+        else:
+            shape = (dim_mul(n, n),)
+        signature = (tf.TensorSpec(shape=shape, dtype=tf.float32),)
+    else:
+        if generated_input == "both":
+            shape = (2, n, n)
+        else:
+            shape = (n, n)
+        signature = (tf.TensorSpec(shape=shape, dtype=tf.float32),)
+    if target != "none":
+        if target == "both":
+            shape = (2, 2, n)
+        else:
+            shape = (2, n)
+        signature = (*signature, tf.TensorSpec(shape=shape))
+    if len(signature) == 1:
+        return signature[0]
     return signature
 
 def get_sparse_signature(generated_input: str, n: int, target: str, flatten: bool):
