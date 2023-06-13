@@ -187,6 +187,25 @@ The target is generated using the C++ implementation of the arc consistency algo
                           Tout=tf.int32 if weight_type == tf.int32 or weight_type == tf.int64 else tf.float32)
 
 
+def get_target(target_dataset,filename, target, flatten: bool):
+    """
+    Gets the target from the dataset
+    """
+    match target:
+        case "strategy":
+            R= np.array(target_dataset.loc[filename,["max_strategy","min_strategy"]].to_list()).T
+        case "winners":
+            return np.array(target_dataset.loc[filename,["winners_max","winners_min"]].to_list()).T
+        case "both":
+            A=np.array(target_dataset.loc[filename,["winners_max","winners_min"]].to_list()).T
+            B=np.array(target_dataset.loc[filename,["max_strategy","min_strategy"]].to_list()).T
+            R= np.array([A,B])
+        case _:
+            raise ValueError("Invalid target")
+    if flatten:
+        R=R.flatten()
+    return R
+
 def _target_ensure_shape(output, target_name, target_value, n):
     """
 Ensures that the shape of the target is correct
