@@ -17,7 +17,7 @@ class MPGGeneratedDenseDataset(tf.data.Dataset):
     def __new__(cls, n, p, cardinality=tf.data.INFINITE_CARDINALITY,
                 target: str = None, generated_input: str = "both", flatten=False, seed=None,
                 weights_distribution: tfp.distributions.Distribution = None,
-                weight_type: str = "int"):
+                weight_type: str = "int", num_parallel_calls=tf.data.experimental.AUTOTUNE):
         """
 Generates a dense G(n,p) dataset.
 :param n: The number of nodes
@@ -57,7 +57,7 @@ Generates a dense G(n,p) dataset.
         return generated.map(
             lambda seed: utils.generate_dense_gnp_instance(n, p, seeder, cardinality, target, generated_input, flatten,
                                                            weights_distribution, weight_type),
-            num_parallel_calls=12
+            num_parallel_calls=num_parallel_calls
         ).with_options(options)
         #    range,
         #    args=(n,p,cardinality, target, weight_matrix,flatten),

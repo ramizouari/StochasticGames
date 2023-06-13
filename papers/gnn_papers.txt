@@ -1,0 +1,4 @@
+GCN
+GAT
+GraphSage
+Chebychev Neural Networks
