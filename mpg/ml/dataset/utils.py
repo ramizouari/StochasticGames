@@ -196,7 +196,7 @@ def get_target(target_dataset,filename, target, flatten: bool):
             R= np.array(target_dataset.loc[filename,["max_strategy","min_strategy"]].to_list()).T
         case "winners":
             return np.array(target_dataset.loc[filename,["winners_max","winners_min"]].to_list()).T
-        case "both":
+        case "all":
             A=np.array(target_dataset.loc[filename,["winners_max","winners_min"]].to_list()).T
             B=np.array(target_dataset.loc[filename,["max_strategy","min_strategy"]].to_list()).T
             R= np.array([A,B])
@@ -352,7 +352,7 @@ def get_generator_signature(generated_input: str, n: int, target: str, flatten: 
             shape = (n, n)
         signature = (tf.TensorSpec(shape=shape, dtype=tf.float32), tf.TensorSpec(shape=(2,), dtype=tf.int32))
     if target != "none":
-        if target == "both":
+        if target == "all":
             shape = (2, 2, n)
         else:
             shape = (2, n)
@@ -375,7 +375,7 @@ def get_reader_signature(generated_input: str, n: int, target: str, flatten: boo
             shape = (n, n)
         signature = (tf.TensorSpec(shape=shape, dtype=tf.float32),)
     if target != "none":
-        if target == "both":
+        if target == "all":
             shape = (2, 2, n)
         else:
             shape = (2, n)

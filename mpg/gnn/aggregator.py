@@ -26,21 +26,24 @@ class SumAggregation(Aggregation):
         if self.with_weights:
             adjacency_matrices,weights_matrices,data=inputs
             matrices=weights_matrices
+            size=tf.shape(weights_matrices)[-1]
+            batches=tf.shape(weights_matrices)[:-2]
             if self.loops:
-                matrices = matrices + tf.eye(num_rows=matrices.shape[-1], batch_shape=matrices.shape[:-2])
+                matrices = matrices + tf.eye(num_rows=size, batch_shape=batches)
             degrees=tf.norm(weights_matrices,axis=-1,keepdims=True)
         else:
             adjacency_matrices,data=inputs
             matrices=adjacency_matrices
+            size = tf.shape(adjacency_matrices)[-1]
+            batches = tf.shape(adjacency_matrices)[:-2]
             if self.loops:
-                matrices = matrices + tf.eye(num_rows=matrices.shape[-1], batch_shape=matrices.shape[:-2])
+                matrices = matrices + tf.eye(num_rows=size, batch_shape=batches)
             degrees=tf.reduce_sum(matrices,axis=-1,keepdims=True)
-        match self.normalization:
-            case "sqrt" | "unit":
-                return tf.linalg.matmul(matrices, data / tf.math.sqrt(degrees))/tf.math.sqrt(degrees)
-            case "mean":
-                return tf.linalg.matmul(matrices, data) / degrees
-            case None:
-                return tf.linalg.matmul(matrices, data)
-            case _:
-                raise RuntimeError("Not Supported yet")
+        if self.normalization in ["mean","unit"]:
+            return tf.linalg.matmul(matrices, data / tf.math.sqrt(degrees))/tf.math.sqrt(degrees)
+        elif self.normalization == "mean":
+            return tf.linalg.matmul(matrices, data) / degrees
+        elif self.normalization is None:
+            return tf.linalg.matmul(matrices, data)
+        else:
+            raise RuntimeError("Not Supported yet")

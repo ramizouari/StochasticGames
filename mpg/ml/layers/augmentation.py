@@ -73,12 +73,12 @@ class EdgeWeightsNoiseLayer(keras.layers.Layer):
 
     This layer adds noise to the edge weights of a graph.
     """
-    def __init__(self, noise_layer,edges_interval=None,edges_matrix=None, mask_zeros=False,
-                 mask_tensor: int = None,masked_assume_zero:bool=True, **kwargs):
+    def __init__(self, noise_layer, edges_interval=None, weights_matrix=None, mask_zeros=False,
+                 mask_tensor: int = None, masked_assume_zero:bool=True, **kwargs):
         """
         :param noise_layer: The noise layer to use. Can be a string or a keras layer.
         :param edges_interval: The interval of the edge weights to add noise to.
-        :param edges_matrix: The index of the edge weights to add noise to.
+        :param weights_matrix: The index of the edge weights to add noise to.
         :param mask_zeros: If true, the noise is only added to non-zero edge weights.
         :param mask_tensor: The index of the tensor to use as a mask. If set, the noise is only added to the edge weights
         where the mask tensor is not zero.
@@ -96,8 +96,8 @@ class EdgeWeightsNoiseLayer(keras.layers.Layer):
         if not isinstance(noise_layer,tf.keras.layers.Layer):
             raise TypeError("noise_layer must be a keras layer")
         self.edges_interval=edges_interval
-        self.edges_matrix=edges_matrix
-        if edges_interval is not None and edges_matrix is not None:
+        self.edges_matrix=weights_matrix
+        if edges_interval is not None and weights_matrix is not None:
             raise ValueError("edges_interval and edges_matrix can not be set at the same time")
         self.mask_zeros=mask_zeros
         self.mask_tensor=mask_tensor

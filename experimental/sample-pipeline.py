@@ -28,8 +28,8 @@ if __name__ == "__main__":
     model = keras.Sequential([
         mpgml_pad.GraphPaddingLayer(n),
         #mpgml_augm.GraphIsomorphismLayer(n),
-        mpgml_norm.MPGNormalisationLayer(edges_matrix=1),
-        mpgml_augm.EdgeWeightsNoiseLayer(noise_layer=keras.layers.GaussianNoise(stddev=0.01), edges_matrix=1),
+        mpgml_norm.MPGNormalisationLayer(weights_matrix=1),
+        mpgml_augm.EdgeWeightsNoiseLayer(noise_layer=keras.layers.GaussianNoise(stddev=0.01), weights_matrix=1),
         keras.layers.Flatten(),
         keras.layers.Dense(100, activation="relu"),
         keras.layers.Dense(50, activation="relu"),
