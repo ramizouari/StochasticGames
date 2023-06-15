@@ -4,7 +4,7 @@ import tensorflow as tf
 
 
 class Aggregation(tf.Module,abc.ABC):
-    def __init__(self,name="Aggregation"):
+    def __init__(self,name=None):
         super().__init__(name=name)
 
     @abc.abstractmethod
@@ -17,7 +17,7 @@ class Aggregation(tf.Module,abc.ABC):
 
 
 class SumAggregation(Aggregation):
-    def __init__(self,loops=True,with_weights=False,normalization="mean",name="MeanAggregation"):
+    def __init__(self,loops=True,with_weights=False,normalization="mean",name=None):
         super().__init__(name=name)
         self.with_weights=with_weights
         self.loops=loops

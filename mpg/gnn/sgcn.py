@@ -3,7 +3,7 @@ import tensorflow as tf
 from . import aggregator
 
 class TAGConv(tf.keras.layers.Layer):
-    def __init__(self,filters,K,activation=None,kernel_initializer="he_normal",loops=True,name="TAGConv",normalization="unit"):
+    def __init__(self,filters,K,activation=None,kernel_initializer="he_normal",loops=True,normalization="unit",name=None):
         super().__init__(name=name)
         if type(kernel_initializer)==str or type(kernel_initializer)==dict:
             self.kernel_initializer=tf.initializers.get(kernel_initializer)
@@ -36,7 +36,7 @@ class TAGConv(tf.keras.layers.Layer):
 
 
 class SGCN(tf.keras.layers.Layer):
-    def __init__(self,filters,K,loops=False,activation=None,normalization=None,kernel_initializer="he_normal",name="SGCN"):
+    def __init__(self,filters,K,loops=False,activation=None,normalization=None,kernel_initializer="he_normal",name=None):
         super().__init__(name=name)
         if type(kernel_initializer)==str or type(kernel_initializer)==dict:
             self.kernel_initializer=tf.initializers.get(kernel_initializer)
@@ -75,7 +75,7 @@ class SGCN(tf.keras.layers.Layer):
 
 
 class SSGCN(tf.keras.layers.Layer):
-    def __init__(self,filters,K,alpha,loops=False,activation=None,normalization=None,kernel_initializer="he_normal",name="SSGCN"):
+    def __init__(self,filters,K,alpha,loops=False,activation=None,normalization=None,kernel_initializer="he_normal",name=None):
         super().__init__(name=name)
         if type(kernel_initializer)==str or type(kernel_initializer)==dict:
             self.kernel_initializer=tf.initializers.get(kernel_initializer)

@@ -4,7 +4,7 @@ from ..layers import augmentation,normalisation,padding
 keras=tf.keras
 from . import utils
 class MLP(keras.Model):
-    def __init__(self,graph_size,num_actions,state_shape,conv_layers=None, flat_layers=None,graph_max_size=None, transposed=False,name="MPGGNN"):
+    def __init__(self,graph_size,num_actions,state_shape, flat_layers=None,graph_max_size=None, transposed=False,name=None):
         if transposed:
             environment_shape=(2,graph_size,graph_size)
         else:

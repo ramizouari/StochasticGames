@@ -8,7 +8,7 @@ from . import aggregator
 class GrpahConv(tf.keras.layers.Layer):
     def __init__(self,filters, loops=False, activation=None, normalization=None, bias=True,
                  kernel_initializer="he_normal",
-                 bias_initializer="zero",trainable=True, name="GraphConv"):
+                 bias_initializer="zero",trainable=True, name=None):
         super().__init__(name=name)
         self.kernel_initializer: Callable
         if type(kernel_initializer) == str:
@@ -50,7 +50,7 @@ class GrpahConv(tf.keras.layers.Layer):
 
 class GCN(tf.keras.layers.Layer):
     def __init__(self, filters, loops=False, activation=None, normalization=None, kernel_initializer="he_normal"
-                 , trainable=True,name="GCN"):
+                 , trainable=True,name=None):
         super().__init__(name=name)
         if type(kernel_initializer) == str or type(kernel_initializer) == dict:
             self.kernel_initializer = tf.initializers.get(kernel_initializer)
@@ -86,7 +86,7 @@ class GCN(tf.keras.layers.Layer):
 class WGCN(tf.keras.layers.Layer):
     def __init__(self, filters, loops=False, activation=None, normalization=None, bias=True,
                  kernel_initializer="he_normal",
-                 bias_initializer="zero",trainable=True, name="WGCN"):
+                 bias_initializer="zero",trainable=True, name=None):
         super().__init__(name=name)
         self.kernel_initializer: Callable
         if type(kernel_initializer) == str:
