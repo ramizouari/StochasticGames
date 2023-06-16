@@ -1,0 +1,12 @@
+Input file is of the form:
+starting_node
+source1 destination1 weight1
+source2 destination2 weight2
+...
+sourceN destinationN weightN
+
+
+Output file is of the form:
+predicted_value
+predicted_policy
+
