@@ -1,4 +1,5 @@
 import abc
+from collections.abc import Iterable
 from typing import Union
 
 import numpy as np
@@ -95,3 +96,65 @@ class WithRandomStartingPositions(DatasetTransform):
     def call(self,dataset):
         raise NotImplementedError
 
+class StrategyEncoder(DatasetTransform):
+    def __init__(self, name=None):
+        super().__init__(name=name)
+
+    def mapper(self, *args):
+        x, y, *z = args
+        if isinstance(x,tuple) and len(x)>1:
+            x,starting_vertex,*v=x
+            size=tf.shape(x)[1]
+            policy=tf.one_hot(tf.cast(y[0],dtype=tf.int32),depth=size)
+            value=y[1]
+            return (x,starting_vertex,*v), (value,policy), *z
+        else:
+            raise NotImplementedError("For now, StrategyEncoder only works with WithStartingPosition transforms")
+            pass
+
+
+def unrag_tensor(X):
+    if isinstance(X,tf.RaggedTensor):
+        return X.to_tensor()
+    else:
+        return X
+
+def recursive_unrag_tensor(X):
+    return tf.nest.map_structure(unrag_tensor,X)
+
+class BatchDatasetTransform(DatasetTransform):
+    def __init__(self,batch_size,pad=True,name=None):
+        super().__init__(name=name)
+        self.batch_size=batch_size
+        self.pad=pad
+
+
+    def call(self,dataset) -> tf.data.Dataset:
+        return dataset.ragged_batch(self.batch_size).map(self.mapper)
+
+    def mapper(self,*args):
+        if self.pad:
+            return recursive_unrag_tensor(args)
+        else:
+            return args
+
+
+class Transposer(DatasetTransform):
+    def __init__(self,name=None):
+        super().__init__(name=name)
+
+
+    def _transpose(self,X):
+        shape=tf.shape(X)
+        rank=tf.rank(X)
+        base_permutation=tf.constant([1,2,0])
+        permutation=tf.concat([shape[:-3],base_permutation + rank -3],axis=0)
+        return tf.transpose(X,permutation)
+
+    def mapper(self,*args):
+        X,y,*z=args
+        if isinstance(X,tuple):
+            X,*v=X
+            return (self._transpose(X),*v),y,*z
+        else:
+            return self._transpose(X),y,*z
