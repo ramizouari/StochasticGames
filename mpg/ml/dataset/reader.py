@@ -1,4 +1,5 @@
 import os
+from typing import TypedDict, List
 
 import pandas as pd
 import tensorflow as tf
@@ -7,24 +8,29 @@ import tensorflow_probability as tfp
 import mpg.mpgio
 from mpg.ml.dataset import utils
 
+from . import transforms
+
 
 def _read_mpg_to_tensor_sparse(file):
-    game=mpg.mpgio.read_mpg(file,edgetype=float)
-    I=[]
-    W=[]
-    A=[]
-    n=game.number_of_nodes()
-    for u,v in game.edges:
-        I.append([u,v])
-        W.append(game.edges[u,v]["weight"])
+    game = mpg.mpgio.read_mpg(file, edgetype=float)
+    I = []
+    W = []
+    A = []
+    n = game.number_of_nodes()
+    for u, v in game.edges:
+        I.append([u, v])
+        W.append(game.edges[u, v]["weight"])
         A.append(1)
-    return I,A,W,n
-def read_mpg(file:str,target:str,target_data,generated_input: str, flatten:bool,n,weight_type,dense:bool=False):
+    return I, A, W, n
+
+
+def read_mpg(file: str, target: str, row, generated_input: str, flatten: bool, n, weight_type,
+             dense: bool = False, ret_filename:bool= False):
     """
     Reads a dataset from a file
     :param file: The path to the file
     :param target: The target to generate. One of "winners", "strategy", "all", "none"
-    :param target_data: The target data. If None, the target will be calculated from the input
+    :param row: The target data. If None, the target will be calculated from the input
     :param generated_input: The input to generate. One of "adjacency", "weight", "both"
     :param flatten: Whether to flatten the input
     :param n: The number of nodes
@@ -32,18 +38,18 @@ def read_mpg(file:str,target:str,target_data,generated_input: str, flatten:bool,
     :param dense: Whether to return dense matrices
     :return: The dataset
     """
-    I,A,W,N=_read_mpg_to_tensor_sparse(file)
-    I=tf.cast(tf.ensure_shape(I,[None,2]),dtype=tf.int64)
-    A=tf.ensure_shape(A,[None])
-    W=tf.ensure_shape(W,[None])
-    W=tf.sparse.SparseTensor(I,tf.cast(tf.constant(W),dtype=tf.float32),[N,N])
-    A=tf.sparse.SparseTensor(I,tf.cast(tf.constant(A),dtype=tf.float32),[N,N])
-    W=tf.sparse.reorder(W)
-    A=tf.sparse.reorder(A)
+    I, A, W, N = _read_mpg_to_tensor_sparse(file)
+    I = tf.cast(tf.ensure_shape(I, [None, 2]), dtype=tf.int64)
+    A = tf.ensure_shape(A, [None])
+    W = tf.ensure_shape(W, [None])
+    W = tf.sparse.SparseTensor(I, tf.cast(tf.constant(W), dtype=tf.float32), [N, N])
+    A = tf.sparse.SparseTensor(I, tf.cast(tf.constant(A), dtype=tf.float32), [N, N])
+    W = tf.sparse.reorder(W)
+    A = tf.sparse.reorder(A)
     if dense:
-        W=tf.sparse.to_dense(W)
-        A=tf.sparse.to_dense(A)
-    dtype=weight_type
+        W = tf.sparse.to_dense(W)
+        A = tf.sparse.to_dense(A)
+    dtype = weight_type
     if flatten:
         if generated_input == "both":
             output = tf.concat(utils.cast_all(dtype, A, W), axis=0)
@@ -52,13 +58,19 @@ def read_mpg(file:str,target:str,target_data,generated_input: str, flatten:bool,
         else:
             output = utils.cast_all(dtype, W)
         if target != "none":
-            if target_data is None:
+            if row is None:
                 target_value = utils.generate_target(output, target, weight_type, flatten)
             else:
-                target_value = utils.get_target(target_data, target, weight_type, flatten)
+                target_value = utils.get_target(row, target, flatten)
             target_value = utils._target_ensure_shape(output, target, target_value, n)
-            return (tf.cast(output, dtype=tf.float32), tf.cast(target_value, dtype=tf.float32))
-        return output
+            if ret_filename:
+                return (tf.cast(output, dtype=tf.float32), tf.cast(target_value, dtype=tf.float32), tf.constant(file))
+            else:
+                return (tf.cast(output, dtype=tf.float32), tf.cast(target_value, dtype=tf.float32))
+        if ret_filename:
+            return (tf.cast(output, dtype=tf.float32), tf.constant(file))
+        else:
+            return output
     else:
         if generated_input == "both":
             output = tf.cast(tf.stack([A, W], axis=0), dtype=tf.float32)
@@ -67,16 +79,74 @@ def read_mpg(file:str,target:str,target_data,generated_input: str, flatten:bool,
         else:
             output = tf.cast(W, dtype=tf.float32)
         if target != "none":
-            target_value = utils.generate_target(output, target, weight_type, flatten)
+            if row is None:
+                target_value = utils.generate_target(output, target, weight_type, flatten)
+            else:
+                target_value = utils.get_target(row, target, flatten)
             target_value = utils._target_ensure_shape(output, target, target_value, n)
-            return (output, tf.cast(target_value, dtype=tf.float32))
-        return output
+            if ret_filename:
+                return (output, tf.cast(target_value, dtype=tf.float32), tf.constant(file))
+            else:
+                return (output, tf.cast(target_value, dtype=tf.float32))
+        if ret_filename:
+            return (output, tf.constant(file))
+        else:
+            return output
+
+
+
+class SolvedInstanceRow(TypedDict):
+    dataset: str
+    graph: str
+    winner: str
+    max_strategy: List[int]
+    min_strategy: List[int]
+    mean_payoffs_max: List[float]
+    mean_payoffs_min: List[float]
+    running_time: float
+    status: str
+    winners_max: List[int]
+    winners_min: List[int]
+
+    @staticmethod
+    def elements_from_dataframe(dataframe):
+
+        for index,series in dataframe.iterrows():
+            # index is either:
+            # 1. a tuple of (dataset, graph)
+            # 2. a graph
+            # 3. a count
+            if len(index) == 2:
+                dataset, graph = index
+            elif len(index) == 1:
+                dataset = series.dataset
+                if "graph" in series.index:
+                    graph = series.dataset
+                else:
+                    graph = index
+            else:
+                raise ValueError("index must have length 1 or 2")
+
+            yield SolvedInstanceRow(
+                dataset=dataset,
+                graph=graph,
+                winner=series.winner,
+                max_strategy=series.max_strategy,
+                min_strategy=series.min_strategy,
+                mean_payoffs_max=series.mean_payoffs_max,
+                mean_payoffs_min=series.mean_payoffs_min,
+                running_time=series.running_time,
+                status=series.status,
+                winners_max=series.winners_max,
+                winners_min=series.winners_min
+            )
 
 
 class FileReaderIterator:
-    def __init__(self,path:str,target:str=None, target_path:str=None,generated_input: str = "both", flatten=False,n=None,weight_type: str = "int",
-                 filter:callable=None):
-        self.path=path
+    def __init__(self, path: str, target: str = None, target_path: str = None, generated_input: str = "both",
+                 flatten=False, n=None, weight_type: str = "int",
+                 filter: callable = None, debug=False):
+        self.path = path
         if target is None or target == False:
             target = "none"
         elif target == True:
@@ -87,34 +157,47 @@ class FileReaderIterator:
             raise ValueError("generated_input must be one of 'adjacency', 'weight', 'both'")
         if target_path is not None:
             target_data = pd.read_json(target_path)
-            target_data.set_index("graph",inplace=True)
+            target_data.set_index("graph", inplace=True)
         else:
-            target_data=None
-        self.target_data=target_data
-        self.target=target
-        self.generated_input=generated_input
-        self.flatten=flatten
-        self.n=n
-        self.weight_type=weight_type
+            target_data = None
+        self.target_data = target_data
+        self.target = target
+        self.generated_input = generated_input
+        self.flatten = flatten
+        self.n = n
+        self.weight_type = weight_type
         if type(path) is str:
-            self.path_iter=iter(os.listdir(path))
+            self.path_iter = iter(os.listdir(path))
         else:
-            self.path_iter=iter(path)
-        self.filter=filter
+            self.path_iter = iter(path)
+
+        def dummy_filter(x):
+            return True
+        if filter is None:
+            filter = dummy_filter
+        self.filter = filter
+
+        self.debug = debug
 
     def __iter__(self):
         return self
 
+
+    def _instance_solved(self, file):
+        return file in self.target_data.index and self.target_data.loc[file, "status"].casefold() == "ok"
+
     def __next__(self):
         file = next(self.path_iter)
-        if self.filter is not None:
-            while not self.filter(file):
-                file = next(self.path_iter)
-        return read_mpg(os.path.join(self.path,file), self.target, self.target_data, self.generated_input, self.flatten, self.n,
-                        self.weight_type, dense=True)
+        while not self.filter(file) or self.target_data is not None and not self._instance_solved(file):
+            file = next(self.path_iter)
+        return read_mpg(os.path.join(self.path, file), self.target, self.target_data.loc[file], self.generated_input,
+                        self.flatten, self.n,
+                        self.weight_type, dense=True,ret_filename=self.debug)
+
 
 class MPGGraphReader(tf.data.Dataset):
-    def __new__(cls, path:str,target:str=None, target_path:str=None,generated_input: str = "both", flatten=False,n=None,weight_type: str = "int"):
+    def __new__(cls, path: str, target: str = None, target_path: str = None, generated_input: str = "both",
+                flatten=False, n=None, weight_type: str = "int", debug=False):
         """
         Reads a dataset from a file
         :param path: The path to the file
@@ -122,19 +205,23 @@ class MPGGraphReader(tf.data.Dataset):
         """
         if target is None or target == False:
             target = "none"
+        # Do not simplify this, as the target might be a string
         elif target == True:
             target = "both"
         if target not in ("winners", "strategy", "all", "none"):
             raise ValueError("target must be one of 'winners', 'strategy', 'all', 'none'")
         if generated_input not in ("adjacency", "weight", "both"):
             raise ValueError("generated_input must be one of 'adjacency', 'weight', 'both'")
-        options=tf.data.Options()
 
-        options.experimental_deterministic=False
-        signature=utils.get_reader_signature(generated_input=generated_input, flatten=flatten, target=target, n=n)
-        file_reader=FileReaderIterator(path,target,target_path,generated_input,flatten,n,weight_type)
+        options = tf.data.Options()
+
+        options.experimental_deterministic = False
+        signature = utils.get_reader_signature(generated_input=generated_input, flatten=flatten, target=target, n=n, output_filename=debug)
+        file_reader = FileReaderIterator(path, target, target_path, generated_input, flatten, n, weight_type, debug=debug)
         print(signature)
+
         def generator():
             for input in file_reader:
                 yield input
-        return tf.data.Dataset.list_files(path).from_generator(generator,output_signature=signature).with_options(options)
+
+        return tf.data.Dataset.from_generator(generator, output_signature=signature).with_options(options)

@@ -187,19 +187,19 @@ The target is generated using the C++ implementation of the arc consistency algo
                           Tout=tf.int32 if weight_type == tf.int32 or weight_type == tf.int64 else tf.float32)
 
 
-def get_target(target_dataset,filename, target, flatten: bool):
+def get_target(row, target, flatten: bool):
     """
     Gets the target from the dataset
     """
     match target:
         case "strategy":
-            R= np.array(target_dataset.loc[filename,["max_strategy","min_strategy"]].to_list()).T
+            R= np.array(row[["max_strategy","min_strategy"]].to_list())
         case "winners":
-            return np.array(target_dataset.loc[filename,["winners_max","winners_min"]].to_list()).T
+            R= np.array(row[["winners_max","winners_min"]].to_list())
         case "all":
-            A=np.array(target_dataset.loc[filename,["winners_max","winners_min"]].to_list()).T
-            B=np.array(target_dataset.loc[filename,["max_strategy","min_strategy"]].to_list()).T
-            R= np.array([A,B])
+            A= np.array(row[["max_strategy","min_strategy"]].to_list())
+            B= np.array(row[["winners_max","winners_min"]].to_list())
+            R= np.stack([A,B])
         case _:
             raise ValueError("Invalid target")
     if flatten:
@@ -360,7 +360,7 @@ def get_generator_signature(generated_input: str, n: int, target: str, flatten: 
 
     return signature
 
-def get_reader_signature(generated_input: str, n: int, target: str, flatten: bool):
+def get_reader_signature(generated_input: str, n: int, target: str, flatten: bool, output_filename=False):
     shape = None
     if flatten:
         if generated_input == "both":
@@ -380,6 +380,8 @@ def get_reader_signature(generated_input: str, n: int, target: str, flatten: boo
         else:
             shape = (2, n)
         signature = (*signature, tf.TensorSpec(shape=shape))
+    if output_filename:
+        signature = (*signature, tf.TensorSpec(shape=(), dtype=tf.string))
     if len(signature) == 1:
         return signature[0]
     return signature
@@ -417,3 +419,8 @@ def get_weight_type(weight_type: Union[str, tf.DType]):
     elif not isinstance(weight_type, tf.DType):
         raise ValueError("weight_type must be a string or a tf.DType")
     return weight_type
+
+
+def iterator_functor(iterator,func,*args,**kwargs):
+    for x in iterator:
+        yield func(x,*args,**kwargs)

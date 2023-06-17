@@ -1,7 +1,9 @@
+from typing import Union
+
 import numpy as np
 import tensorflow as tf
 import tensorflow_probability as tfp
-from . import utils
+from . import utils,transforms
 
 
 class MPGGeneratedDenseDataset(tf.data.Dataset):
@@ -175,4 +177,51 @@ Generates a potentially sparse G(n,p) dataset.
         if starting_position == "random" or not starting_position:
             starting_position = tf.random.uniform(shape=(self.n,), minval=0, maxval=2, dtype=tf.int32)
         return self.map(lambda x: tf.concat([x, starting_position]))
+
+
+
+
+def with_starting_position(dataset, starting_vertex, starting_turn, reduce_turn=True):
+    """
+    Assume a starting position for the dataset
+    :param dataset: The data to assume the starting position for
+    :param starting_vertex: The starting vertex
+    :param starting_turn: The starting turn
+    :param reduce_turn: Whether to reduce the turn information by applying the symmetry of the game
+    :return: The dataset with the starting position assumed
+    """
+    def _assume_starting_position(x, y):
+        if reduce_turn:
+            k=1 if starting_turn else -1
+            return ((x,starting_vertex), k*y[..., starting_turn, starting_vertex])
+        return ((x,starting_vertex,starting_turn), y[..., starting_turn, starting_vertex])
+
+    return dataset.map(_assume_starting_position)
+
+
+def transpose(dataset):
+    """
+    Transpose the dataset. This is useful as the models expect the input to be in the form (?, n, n, 2)
+    :param dataset: The dataset to transpose
+    :return: The dataset transposed
+    """
+    return dataset.map(lambda x, y: (tf.transpose(x, perm=[1, 2, 0]), y))
+
+def with_random_starting_position(dataset,seed, repeats=1, reduce_turn=True):
+    """
+    Assume a starting position for the dataset
+    :param dataset: The data to assume the starting position for
+
+    :return: The dataset with the starting position assumed
+    """
+
+    def _assume_random_starting_position(x, y):
+        vertex=tf.random.uniform(shape=(), minval=0, maxval=tf.shape(x)[1], dtype=tf.int32, seed=seed)
+        player=tf.random.uniform(shape=(), minval=0, maxval=2, dtype=tf.int32, seed=seed)
+        if reduce_turn:
+            k=1 if player==0 else -1
+            return ((x,vertex), k*y[..., player, vertex])
+        else:
+            return ((x,vertex,player), y[..., player, vertex])
+    raise NotImplementedError("This function is not implemented yet")
 
