@@ -1,5 +1,5 @@
 import os
-from typing import TypedDict, List
+from typing import TypedDict, List, Union
 
 import pandas as pd
 import tensorflow as tf
@@ -143,7 +143,7 @@ class SolvedInstanceRow(TypedDict):
 
 
 class FileReaderIterator:
-    def __init__(self, path: str, target: str = None, target_path: str = None, generated_input: str = "both",
+    def __init__(self, path: str, target: str = None, target_path: Union[pd.DataFrame,str] = None, generated_input: str = "both",
                  flatten=False, n=None, weight_type: str = "int",
                  filter: callable = None, debug=False):
         self.path = path
@@ -156,8 +156,11 @@ class FileReaderIterator:
         if generated_input not in ("adjacency", "weight", "both"):
             raise ValueError("generated_input must be one of 'adjacency', 'weight', 'both'")
         if target_path is not None:
-            target_data = pd.read_json(target_path)
-            target_data.set_index("graph", inplace=True)
+            if type(target_path) is str:
+                target_data = pd.read_json(target_path)
+                target_data.set_index("graph", inplace=True)
+            else:
+                target_data = target_path
         else:
             target_data = None
         self.target_data = target_data

@@ -44,5 +44,8 @@ class RagPolicy(tf.keras.layers.Layer):
         super().__init__(name=name)
 
     def call(self, inputs, **kwargs):
-        policy_dense, row_lengths = inputs
-        return tf.RaggedTensor.from_tensor(policy_dense, row_lengths,ragged_rank=1)
+        environment,policy_dense, row_lengths = inputs
+        if isinstance(environment,tf.RaggedTensor):
+            return tf.RaggedTensor.from_tensor(policy_dense, row_lengths,ragged_rank=1)
+        else:
+            return policy_dense

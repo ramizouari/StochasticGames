@@ -58,14 +58,22 @@ class WithStartingPosition(DatasetTransform):
             starting_turn = self.starting_turn
         return starting_vertex,starting_turn
 
+    def _transform_valuation(self,y):
+        a=tf.constant([1,2],dtype=tf.float32)
+        b=tf.constant([0,1],dtype=tf.float32)
+        return a*y -b
+
     def mapper(self,*args):
         x,y,*z=args
         starting_vertex,starting_turn=self._get_starting_position(x)
+        y=y[...,starting_turn,starting_vertex]
+        y=self._transform_valuation(y)
         if self.reduce_turn:
             k=1 if starting_turn else -1
-            return (k*x,starting_vertex),y[...,starting_turn,starting_vertex],*z
+            K=tf.constant([1,k],dtype=tf.float32)
+            return (K*x,starting_vertex),K*y,*z
         else:
-            return (x,starting_vertex,starting_turn),y[...,starting_turn,starting_vertex],*z
+            return (x,starting_vertex,starting_turn),y,*z
 
 
 
@@ -158,3 +166,79 @@ class Transposer(DatasetTransform):
             return (self._transpose(X),*v),y,*z
         else:
             return self._transpose(X),y,*z
+
+
+class WeightNormalizer(DatasetTransform):
+    def __init__(self,order="channels_last",name=None):
+        super().__init__(name=name)
+        self.order=order
+        if order not in ["channels_first","channels_last"]:
+            raise ValueError("order must be one of 'channels_first' or 'channels_last'")
+        raise NotImplementedError("WeightNormalizer is not implemented yet")
+        #self.weight_normalizer=tf.keras.layers.LayerNormalization(axis=-1 if order=="channels_last" else 1)
+
+    def mapper(self,*args):
+        X,*y= args
+        if isinstance(X,tuple):
+            X,*v=X
+            return (self.weight_normalizer(X),*v),*y
+        else:
+            return self.weight_normalizer(X),*y
+
+
+class RandomPermutation(DatasetTransform):
+    def __init__(self,seed=None,name=None):
+        super().__init__(name=name)
+        if seed is None:
+            seed = np.random.randint(0, 1 << 32)
+        self.seed=seed
+        self.seeder=tfp.util.SeedStream(seed, "random_permutation")
+
+    def mapper(self,*args):
+        raise NotImplementedError("RandomPermutation is not implemented yet")
+
+class EdgeConnectionNoise(DatasetTransform):
+    def __init__(self,p:float,seed=None,name=None):
+        super().__init__(name=name)
+        self.p=p
+        if seed is None:
+            seed = np.random.randint(0, 1 << 32)
+        self.seed=seed
+        self.seeder=tfp.util.SeedStream(seed, "edge_connection_noise")
+        self.bernoulli=tfp.distributions.Bernoulli(probs=p)
+
+    def mapper(self,*args):
+        X,*y=args
+        if isinstance(X,tuple):
+            X,*v=X
+            raise NotImplementedError("EdgeConnectionNoise is not implemented yet")
+        else:
+            raise NotImplementedError("EdgeConnectionNoise is not implemented yet")
+
+
+
+class PolicyNoise(DatasetTransform):
+    def __init__(self,noise:tfp.distributions = None,activation = None,seed=None,name=None):
+        super().__init__(name=name)
+        if noise is None:
+            noise=tfp.distributions.Uniform(loc=0,scale=1)
+        self.noise=noise
+        self.activation=activation
+        if seed is None:
+            seed = np.random.randint(0, 1 << 32)
+        self.seed=seed
+        self.seeder=tfp.util.SeedStream(seed, "policy_noise")
+
+    def mapper(self,*args):
+        X,y,*z=args
+        if isinstance(y,tuple) and len(y)>=2:
+            v,pi,*t=y
+            n=tf.shape(pi)[-1]
+            noise=self.noise.sample(tf.shape(pi),seed=self.seeder()) / n
+            pi=pi+noise
+            if self.activation is not None:
+                pi=self.activation(pi)
+            pi=pi/tf.reduce_sum(pi,axis=-1,keepdims=True)
+            return X,(v,pi),*z
+        else:
+            raise ValueError("PolicyNoise only supports y being a tuple of (value,policy,...)")

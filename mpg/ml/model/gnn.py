@@ -38,6 +38,7 @@ class GNN(keras.Model):
             self.input_environment = keras.layers.Input(shape=environment_shape,
                                                     name="environment")  # s: batch_size x board_x x board_y
             input_environment=self.input_environment
+            ragged_input_environment=input_environment
 
         if transposed:
             input_environment=tf.transpose(self.input_environment,perm=[0,2,3,1],name="transpose_environment")
@@ -56,8 +57,6 @@ class GNN(keras.Model):
         # state_encoding is of shape (batch_size,1,graph_size)
         state_encoding = tf.one_hot(input_state,depth=graph_size,name="state_encoding")
         # legals mask is of shape (batch_size,graph_size,1)
-        print(A.shape)
-        print(state_encoding.shape)
         legals_mask = keras.layers.Dot(axes=(-2, -1), name="legals_mask")([A, state_encoding])
         # We transform it to a boolean mask with shape (batch_size,graph_size)
         legals_mask = legals_mask[...,0] > 0.5
@@ -104,7 +103,7 @@ class GNN(keras.Model):
             else:
                 pi = keras.layers.Softmax(name="policy_targets_static")(Z)  # batch_size x num_actions
             row_lengths=tf.cast(ragged_input_environment.row_lengths(),tf.int32)
-            self.pi=utils.RagPolicy(name="policy_targets")([pi,row_lengths])
+            self.pi=utils.RagPolicy(name="policy_targets")([self.input_environment,pi,row_lengths])
         else:
             if masked_softmax:
                 self.pi = activation.MaskedSoftmax(name="policy_targets")([Z,legals_mask])  # batch_size x num_actions

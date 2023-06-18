@@ -9,9 +9,7 @@ class MPGNormalisationLayer(keras.layers.Layer):
     This layer normalises the edge weights of a graph. The normalisation is done by dividing by the standard deviation.
     """
 
-    def __init__(self, edges_interval: tuple = None, weights_matrix: int = None, mask_zeros=False,
-                 mask_tensor: int = None,
-                 regularisation=1, **kwargs):
+    def __init__(self, mask_zeros=False, regularisation=1, name=None):
         """
         :param edges_interval: The interval of the edge weights to normalise. The interval is given as a tuple of the form
         (start, end). The start and end are included in the interval.
@@ -23,44 +21,25 @@ class MPGNormalisationLayer(keras.layers.Layer):
         :param regularisation: The regularisation term. The standard deviation is added to the regularisation factor.
         :param kwargs: The keyword arguments of the keras layer.
         """
-        super(MPGNormalisationLayer, self).__init__(**kwargs)
-        self.edges_interval = edges_interval
-        self.edges_matrix = weights_matrix
-        if weights_matrix is not None and edges_interval is not None:
-            raise ValueError("edges_interval and edges_matrix can not be set at the same time")
+        super(MPGNormalisationLayer, self).__init__(name=name)
         self.mask_zeros = mask_zeros
-        self.mask_tensor = mask_tensor
         self.regularisation = regularisation
 
-    def get_std(self, input):
-        if self.mask_tensor is not None:
-            mask = input[..., self.mask_tensor:self.mask_tensor + 1, :, :]
-            mask = tf.cast(mask, tf.bool)
-            return tf.math.reduce_std(tf.ragged.boolean_mask(input, mask), axis=(-2, -1), keepdims=True).to_tensor()
-        elif self.mask_zeros:
-            mask = input != 0
-            return tf.math.reduce_std(tf.ragged.boolean_mask(input, mask), axis=(-2, -1), keepdims=True).to_tensor()
+
+    def get_std(self, A,W):
+        if self.mask_zeros:
+            mask = tf.cast(A, tf.bool)
+            return tf.math.reduce_std(tf.ragged.boolean_mask(W, mask), axis=(-2, -1), keepdims=True)
         else:
-            return tf.math.reduce_std(input, axis=(-2, -1), keepdims=True)
+            return tf.math.reduce_std(W, axis=(-2, -1), keepdims=True)
 
     def build(self, input_shape):
         super(MPGNormalisationLayer, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
-        if self.edges_matrix is not None:
-            submatrix = inputs[..., self.edges_matrix:self.edges_matrix + 1, :, :]
-            std = self.get_std(submatrix)
-            return tf.concat(
-                [inputs[..., :self.edges_matrix, :, :], submatrix / (std+self.regularisation), inputs[..., self.edges_matrix + 1:, :, :]],
-                axis=-3)
-        elif self.edges_interval is not None:
-            a, b = self.edges_interval
-            slice = inputs[..., a:b]
-            std = tf.math.reduce_std(slice, axis=-1, keepdims=True)
-            return tf.concat([inputs[..., :a], slice / (std+self.regularisation), inputs[..., b:]], axis=-1)
-        else:
-            std = self.get_std(inputs)
-            return inputs / (std+self.regularisation)
+        A,W=inputs
+        std = self.get_std(A,W)
+        return A,W / (std + self.regularisation)
 
     def compute_output_shape(self, input_shape):
         return input_shape
@@ -73,13 +52,11 @@ class MPGUniformNormalisationLayer(keras.layers.Layer):
     This layer normalises the edge weights of a graph. The normalisation is done by dividing by the standard deviation.
     """
 
-    def __init__(self, edges_interval: tuple = None, edges_matrix: int = None, mask_zeros=False,
-                 mask_tensor: int = None,
-                 regularisation=0.01, **kwargs):
+    def __init__(self, mask_zeros=False, regularisation=1, name=None):
         """
         :param edges_interval: The interval of the edge weights to normalise. The interval is given as a tuple of the form
         (start, end). The start and end are included in the interval.
-        :param edges_matrix: The index of the edge weights to normalise. The index is the index of the tensor in the input
+        :param weights_matrix: The index of the edge weights to normalise. The index is the index of the tensor in the input
         tensor.
         :param mask_zeros: If true, the standard deviation is calculated only on the non-zero edge weights.
         :param mask_tensor: The index of the tensor that contains the mask. The index is the index of the tensor in the
@@ -87,44 +64,73 @@ class MPGUniformNormalisationLayer(keras.layers.Layer):
         :param regularisation: The regularisation term. The standard deviation is added to the regularisation factor.
         :param kwargs: The keyword arguments of the keras layer.
         """
-        super(MPGUniformNormalisationLayer, self).__init__(**kwargs)
-        self.edges_interval = edges_interval
-        self.edges_matrix = edges_matrix
-        if edges_matrix is not None and edges_interval is not None:
-            raise ValueError("edges_interval and edges_matrix can not be set at the same time")
+        super(MPGUniformNormalisationLayer, self).__init__(name=name)
         self.mask_zeros = mask_zeros
-        self.mask_tensor = mask_tensor
         self.regularisation = regularisation
 
-    def get_max(self, input):
-        if self.mask_tensor is not None:
-            mask = input[..., self.mask_tensor:self.mask_tensor + 1, :, :]
-            mask = tf.cast(mask, tf.bool)
-            return tf.math.reduce_max(tf.ragged.boolean_mask(tf.abs(input), mask), axis=(-2, -1), keepdims=True).to_tensor()
-        elif self.mask_zeros:
-            mask = input != 0
-            return tf.math.reduce_max(tf.ragged.boolean_mask(tf.abs(input), mask), axis=(-2, -1), keepdims=True).to_tensor()
+    def get_max(self, A, W):
+        if self.mask_zeros:
+            mask = tf.cast(A, tf.bool)
+            return tf.math.reduce_max(tf.ragged.boolean_mask(W, mask), axis=(-2, -1), keepdims=True)
         else:
-            return tf.math.reduce_max(tf.abs(input), axis=(-2, -1), keepdims=True)
+            return tf.math.reduce_max(W, axis=(-2, -1), keepdims=True)
 
     def build(self, input_shape):
         super(MPGUniformNormalisationLayer, self).build(input_shape)
 
     def call(self, inputs, **kwargs):
-        if self.edges_matrix is not None:
-            submatrix = inputs[..., self.edges_matrix:self.edges_matrix + 1, :, :]
-            M=self.get_range(submatrix)
-            return tf.concat(
-                [inputs[..., :self.edges_matrix, :, :], submatrix / (M+self.regularisation), inputs[..., self.edges_matrix + 1:, :, :]],
-                axis=-3)
-        elif self.edges_interval is not None:
-            a, b = self.edges_interval
-            slice = inputs[..., a:b]
-            M = tf.math.reduce_max(tf.abs(slice), axis=-1, keepdims=True)
-            return tf.concat([inputs[..., :a], slice / (M+self.regularisation), inputs[..., b:]], axis=-1)
+        A, W = inputs
+        std = self.get_max(A, W)
+        return A, W / (std + self.regularisation)
+
+    def compute_output_shape(self, input_shape):
+        return input_shape
+
+
+class RandomConnectionLayer(keras.layers.Layer):
+    """
+    Random connection layer
+
+    This layer randomly connects nodes in a graph.
+    """
+
+    def __init__(self, p=0.01, degree=None, seed=None, name=None):
+        """
+        :param p: The probability of a connection between two nodes.
+        :param kwargs: The keyword arguments of the keras layer.
+        """
+        super(RandomConnectionLayer, self).__init__(name=name)
+        if p is None and degree is None:
+            raise ValueError("Either p or degree should be specified")
+        if p is not None and degree is not None:
+            raise ValueError("Only one of p and degree should be specified")
+        if p is not None:
+            if p < 0 or p > 1:
+                raise ValueError("p should be in the interval [0,1]")
+        if degree is not None:
+            if degree < 0:
+                raise ValueError("degree should be positive")
+        self.p = p
+        self.degree = degree
+        if seed is None:
+            seed=tf.random.uniform(shape=(),minval=0,maxval=100000,dtype=tf.int32)
+        self.seed = seed
+
+
+    def _get_connection_matrix(self, A):
+        if self.degree is not None:
+            raise NotImplementedError()
         else:
-            M = self.get_max(inputs)
-            return inputs / (M+self.regularisation)
+            return tf.maximum(tf.cast(tf.random.uniform(tf.shape(A)) < self.p, A.dtype), A)
+
+
+    def build(self, input_shape):
+        super(RandomConnectionLayer, self).build(input_shape)
+
+    def call(self, inputs, **kwargs):
+        A,W = inputs
+        A = self._get_connection_matrix(A)
+        return A,W
 
     def compute_output_shape(self, input_shape):
         return input_shape
