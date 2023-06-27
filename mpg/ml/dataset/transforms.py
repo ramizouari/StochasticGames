@@ -146,6 +146,10 @@ class BatchDatasetTransform(DatasetTransform):
         else:
             return args
 
+    def rebatch(self,new_batch_size):
+        self.batch_size=new_batch_size
+        return self
+
 
 class Transposer(DatasetTransform):
     def __init__(self,name=None):

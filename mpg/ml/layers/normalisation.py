@@ -86,56 +86,6 @@ class MPGUniformNormalisationLayer(keras.layers.Layer):
     def compute_output_shape(self, input_shape):
         return input_shape
 
-
-class RandomConnectionLayer(keras.layers.Layer):
-    """
-    Random connection layer
-
-    This layer randomly connects nodes in a graph.
-    """
-
-    def __init__(self, p=0.01, degree=None, seed=None, name=None):
-        """
-        :param p: The probability of a connection between two nodes.
-        :param kwargs: The keyword arguments of the keras layer.
-        """
-        super(RandomConnectionLayer, self).__init__(name=name)
-        if p is None and degree is None:
-            raise ValueError("Either p or degree should be specified")
-        if p is not None and degree is not None:
-            raise ValueError("Only one of p and degree should be specified")
-        if p is not None:
-            if p < 0 or p > 1:
-                raise ValueError("p should be in the interval [0,1]")
-        if degree is not None:
-            if degree < 0:
-                raise ValueError("degree should be positive")
-        self.p = p
-        self.degree = degree
-        if seed is None:
-            seed=tf.random.uniform(shape=(),minval=0,maxval=100000,dtype=tf.int32)
-        self.seed = seed
-
-
-    def _get_connection_matrix(self, A):
-        if self.degree is not None:
-            raise NotImplementedError()
-        else:
-            return tf.maximum(tf.cast(tf.random.uniform(tf.shape(A)) < self.p, A.dtype), A)
-
-
-    def build(self, input_shape):
-        super(RandomConnectionLayer, self).build(input_shape)
-
-    def call(self, inputs, **kwargs):
-        A,W = inputs
-        A = self._get_connection_matrix(A)
-        return A,W
-
-    def compute_output_shape(self, input_shape):
-        return input_shape
-
-
 class LaplacianMatrixLayer(keras.layers.Layer):
     """
     Laplacian matrix layer

@@ -73,16 +73,11 @@ class EdgeWeightsNoiseLayer(keras.layers.Layer):
 
     This layer adds noise to the edge weights of a graph.
     """
-    def __init__(self, noise_layer, edges_interval=None, weights_matrix=None, mask_zeros=False,
-                 mask_tensor: int = None, masked_assume_zero:bool=True, **kwargs):
+    def __init__(self, noise_layer,mask_zeros=True, **kwargs):
         """
         :param noise_layer: The noise layer to use. Can be a string or a keras layer.
-        :param edges_interval: The interval of the edge weights to add noise to.
-        :param weights_matrix: The index of the edge weights to add noise to.
         :param mask_zeros: If true, the noise is only added to non-zero edge weights.
-        :param mask_tensor: The index of the tensor to use as a mask. If set, the noise is only added to the edge weights
         where the mask tensor is not zero.
-        :param masked_assume_zero: If true, assume the masked edge weights are zero.
         :param kwargs: Additional arguments for the noise layer.
         """
         super(EdgeWeightsNoiseLayer, self).__init__(**kwargs)
@@ -93,17 +88,13 @@ class EdgeWeightsNoiseLayer(keras.layers.Layer):
             self.noise_layer = UniformNoise(**kwargs)
         elif isinstance(noise_layer,type):
             self.noise_layer = noise_layer(**kwargs)
+        else:
+            self.noise_layer = noise_layer
         if not isinstance(noise_layer,tf.keras.layers.Layer):
             raise TypeError("noise_layer must be a keras layer")
-        self.edges_interval=edges_interval
-        self.edges_matrix=weights_matrix
-        if edges_interval is not None and weights_matrix is not None:
-            raise ValueError("edges_interval and edges_matrix can not be set at the same time")
+
         self.mask_zeros=mask_zeros
-        self.mask_tensor=mask_tensor
-        self.masked_assume_zero=masked_assume_zero
-        if self.mask_zeros:
-            self.masked_assume_zero=True
+
 
     def build(self, input_shape):
         super(EdgeWeightsNoiseLayer, self).build(input_shape)
@@ -112,35 +103,66 @@ class EdgeWeightsNoiseLayer(keras.layers.Layer):
         if not training:
             return inputs
 
-        mask=tf.constant(1.)
-
-        if self.edges_matrix is not None:
-
-            submatrix = inputs[..., self.edges_matrix:self.edges_matrix + 1, :, :]
-            if self.mask_zeros:
-                mask = tf.cast(submatrix != 0, dtype=tf.float32)
-            if self.mask_tensor is not None:
-                mask = tf.cast(inputs[..., self.mask_tensor:self.mask_tensor + 1, :, :], dtype=tf.float32)
-            result=mask*self.noise_layer(submatrix)
-            if not self.masked_assume_zero:
-                result+=inverse_mask(mask)*submatrix
-            return tf.concat(
-                [inputs[..., :self.edges_matrix, :, :], result,
-                 inputs[..., self.edges_matrix + 1:, :, :]],
-                axis=-3)
-        elif self.edges_interval is not None:
-            a,b=self.edges_interval
-            slice=inputs[...,a:b]
-            noise=self.noise_layer(slice)
-            return tf.concat([inputs[...,:a],noise+slice,inputs[...,b:]],axis=-1)
+        A,W = inputs
+        if self.mask_zeros:
+            mask = A > 0.5
+            W = tf.where(mask, self.noise_layer(W), W)
         else:
-            if self.mask_zeros:
-                mask = tf.cast(inputs != 0, dtype=tf.float32)
-            if self.mask_tensor is not None:
-                mask = tf.cast(inputs[..., self.mask_tensor:self.mask_tensor + 1, :, :],dtype=tf.float32)
-            if self.masked_assume_zero:
-                return mask*self.noise_layer(inputs)
-            else:
-                return mask*self.noise_layer(inputs)+inverse_mask(mask)*inputs
+            W = self.noise_layer(W)
+        return A,W
     def compute_output_shape(self, input_shape):
         return input_shape
+
+
+
+class RandomConnectionLayer(keras.layers.Layer):
+    """
+    Random connection layer
+
+    This layer randomly connects nodes in a graph.
+    """
+
+    def __init__(self, p=0.01, degree=None, seed=None, name=None):
+        """
+        :param p: The probability of a connection between two nodes.
+        :param kwargs: The keyword arguments of the keras layer.
+        """
+        super(RandomConnectionLayer, self).__init__(name=name)
+        if p is None and degree is None:
+            raise ValueError("Either p or degree should be specified")
+        if p is not None and degree is not None:
+            raise ValueError("Only one of p and degree should be specified")
+        if p is not None:
+            if p < 0 or p > 1:
+                raise ValueError("p should be in the interval [0,1]")
+        if degree is not None:
+            if degree < 0:
+                raise ValueError("degree should be positive")
+        self.p = p
+        self.degree = degree
+        if seed is None:
+            seed=tf.random.uniform(shape=(),minval=0,maxval=100000,dtype=tf.int32)
+        self.seed = seed
+
+
+    def _get_connection_matrix(self, A):
+        if self.degree is not None:
+            raise NotImplementedError()
+        else:
+            return tf.maximum(tf.cast(tf.random.uniform(tf.shape(A)) < self.p, A.dtype), A)
+
+
+    def build(self, input_shape):
+        super(RandomConnectionLayer, self).build(input_shape)
+
+    def call(self, inputs,training=False, **kwargs):
+        if not training:
+            return inputs
+
+        A,W = inputs
+        A = self._get_connection_matrix(A)
+        return A,W
+
+    def compute_output_shape(self, input_shape):
+        return input_shape
+

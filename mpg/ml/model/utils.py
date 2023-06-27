@@ -39,7 +39,7 @@ class RagTensor(tf.keras.layers.Layer):
             return tf.RaggedTensor.from_tensor(inputs)
 
 
-class RagPolicy(tf.keras.layers.Layer):
+class PotentiallyRagPolicy(tf.keras.layers.Layer):
     def __init__(self, name=None):
         super().__init__(name=name)
 
