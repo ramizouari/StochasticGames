@@ -3,7 +3,7 @@ import mpg.gnn.gcn as gcn
 from . import utils
 
 keras = tf.keras
-from ..layers import augmentation, normalisation, activation
+from ..layers import augmentation, normalisation, activation,padding
 
 
 class GNN(keras.Model):
@@ -23,7 +23,8 @@ class GNN(keras.Model):
 
     def __init__(self, conv_layers=None, fc_layers=None, flat_model=None, transposed=False, masked_softmax=False,
                  ragged_batch=False, name=None, *, weight_normalisation=False, weight_normalisation_regularization=0.1,
-                 random_connection_probability: float = 0, weight_noise_layer=None):
+                 random_connection_probability: float = 0, weight_noise_layer=None,
+                 vacuous_connections=False):
         if transposed:
             environment_shape = (2, None, None)
         else:
@@ -46,6 +47,7 @@ class GNN(keras.Model):
 
         if transposed:
             input_environment = tf.transpose(self.input_environment, perm=[0, 2, 3, 1], name="transpose_environment")
+
         self.input_state = keras.layers.Input(shape=(), name="state")
         input_state = tf.cast(self.input_state, tf.int32)
         input_state = keras.layers.Reshape((1,))(input_state)
@@ -54,6 +56,8 @@ class GNN(keras.Model):
         graph_size = tf.shape(input_environment)[1]
 
         A = input_environment[..., utils.ADJACENCY_MATRIX_AXIS]
+        if vacuous_connections:
+            A = padding.VacuousConnections(name="vacuous_connections")(A)
         W = input_environment[..., utils.WEIGHT_MATRIX_AXIS]
 
         if random_connection_probability > 0:
@@ -160,7 +164,7 @@ class ResGNN(keras.Model):
                  ragged_batch=False, name=None, *, weight_normalisation=False, weight_normalisation_regularization=0.1,
                  random_connection_probability: float = 0, weight_noise_layer=None,
                  residual_connections=None, difference_residual=False,
-                 graph_normalisation=False):
+                 graph_normalisation=False,vacuous_connections=False):
         if transposed:
             environment_shape = (2, None, None)
         else:
@@ -194,6 +198,8 @@ class ResGNN(keras.Model):
         graph_size = tf.shape(input_environment)[1]
 
         A = input_environment[..., utils.ADJACENCY_MATRIX_AXIS]
+        if vacuous_connections:
+            A = padding.VacuousConnections(name="vacuous_connections")(A)
         W = input_environment[..., utils.WEIGHT_MATRIX_AXIS]
 
         if random_connection_probability > 0:

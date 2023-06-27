@@ -3,12 +3,11 @@ import tensorflow as tf
 
 class MaskedSoftmax(tf.keras.layers.Softmax):
 
-    def __init__(self,neg_infinity=1e-6, axis=-1, **kwargs):
+    def __init__(self, axis=-1, **kwargs):
         super().__init__(axis=axis, **kwargs)
-        self.neg_infinity=neg_infinity
     def call(self,inputs,mask=None):
         logits,mask=inputs
-        logits=tf.where(mask,logits,tf.fill(tf.shape(logits),self.neg_infinity))
+        logits = tf.where(mask, logits, tf.fill(tf.shape(logits), float("-inf")))
         return super().call(logits)
 
 

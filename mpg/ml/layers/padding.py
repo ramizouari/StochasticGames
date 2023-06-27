@@ -27,3 +27,20 @@ class GraphPaddingLayer(keras.layers.Layer):
     def compute_output_shape(self, input_shape):
         output_shape=tf.stack([*input_shape[:-2],self.vertices,self.vertices])
         return output_shape
+
+
+class VacuousConnections(tf.keras.layers.Layer):
+
+    def __init__(self,name=None):
+        super().__init__(name=name)
+
+
+    def call(self,inputs):
+        # Get the nodes that have at least one outgoing edge.
+        dtype=inputs.dtype
+        inputs=tf.cast(inputs,dtype=tf.bool)
+        Z=tf.reduce_any(inputs,axis=-1,name="extract_nodes_with_outgoing_edges")
+        C=tf.linalg.diag(~Z,name="create_vacuous_connection_matrix")
+        return tf.cast(tf.logical_or(inputs,C,name="add_vacuous_connections"),dtype=dtype)
+
+
