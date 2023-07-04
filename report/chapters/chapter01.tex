@@ -1,0 +1,156 @@
+\chapter{Analysis \& Implementation}
+\section{Introduction}
+
+\section{Formalisation}
+To define a Mean Payoff Game, we will start by formalising a weighted di-graph\footnote{Directed Graph}.
+
+\subsection{Di-Graph}
+A Weighted Di-Graph $\mathcal{G}$ is a tuple $(\mathcal{V},\mathcal{E},\mathcal{W})$ where:
+
+\begin{itemize}
+		\item $\mathcal{V}$ is the set of vertices.
+		\item $\mathcal{E} \subseteq V\times V$ is the set of edges.
+		\item $\mathcal{W}:\mathcal{E}\rightarrow \mathcal{R}$ is the weight function, assigning a weight for every edge, with $\mathcal{R}$ some set representing the weight.
+\end{itemize}
+\subsection{Mean Payoff Game}
+Formally, a \textbf{Mean Payoff Graph} is a tuple $(\mathcal{V},\mathcal{E},\mathcal{W},\mathcal{P},s,p)$ where:
+\begin{itemize}
+	\item $\mathcal{G}=(\mathcal{V},\mathcal{E},\mathcal{W})$ is a di-graph.
+		\item $s\in \mathcal{V}$ denotes the starting position.
+	\item $\mathcal{P}=\{\text{Max},\text{Min}\}$ is the set of players.
+	\item $p\in \mathcal{P}$ the starting player
+\end{itemize}
+
+
+A  \textbf{Mean Payoff Game} is a perfect information, zero-sum, turn based game played indefinitively on a Mean Payoff Graph as follow:
+\begin{itemize}
+\item The game starts at $u_0=s$, with player $p_0=p$ starting.
+\item For each $n\in\mathbb{N},$ Player $p_n$ will choose a vertex $u_{n+1}\in \Adj u_n,$ with a payoff $w_n\mathcal{W}(u_n,u_{n+1})$
+\item The winner of the game will be determined by the Mean Payoff. There are different winning conditions.
+\end{itemize}
+
+\subsubsection{Condition C1}
+Player $\text{Max}$ wins \textbf{iff}:
+$$
+\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k \ge 0
+$$ 
+Otherwise, Player $\text{Min}$ will win
+
+\subsubsection{Condition C2}
+Player $\text{Max}$ wins \textbf{iff}:
+$$
+\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k > 0
+$$ 
+Otherwise, Player $\text{Min}$ will win.
+\subsubsection{Condition C3}
+Player $\text{Max}$ wins \textbf{if}:
+$$
+\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k > 0
+$$ 
+
+Player $\text{Min}$ wins \textbf{if}:
+$$
+\limsup_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k < 0
+$$ 
+
+Otherwise, it is a draw.
+
+\subsection{Well Foundness}
+It is not very clear from the definition that the game is well founded. \newline
+In fact, there are choices for which the mean payoff does not converge. That is the sequence $\left(\frac{1}{n}\sum_{k=0}^{n-1} w_k \right)_{n\in\mathbb{N}^*}$ does not converge. \newline One such example is the sequence defined by:
+$$
+w_n=(-1)^{\lfloor  \log_2 (n+1)\rfloor}
+$$
+For that sequence, the $(2^r-1)$-step mean payoff is equal to:
+\begin{align*}
+	\sum_{k=0}^{2^r-2} w_k &= 	\sum_{k=1}^{2^r-1}(-1)^{\lfloor  \log_2 (k)\rfloor} \\
+	&= \sum_{i=0}^{r-1}\sum_{j=2^{i}}^{2^{i+1}-1}(-1)^{\lfloor  \log_2 (j)\rfloor} \\
+	&=\sum_{i=0}^{r-1}\sum_{j=2^{i}}^{2^{i+1}-1}(-1)^i \\
+	&=\sum_{i=0}^{r-1}(2^{i+1}-2^i)(-1^i) \\
+	&=\sum_{i=0}^{r-1}(-2)^i \\ 
+	&= \frac{1-(-2)^r}{3} \\
+	\implies \frac{1}{2^r-1}\sum_{k=0}^{2^r-2} w_k  &= \frac{1}{3} \cdot \frac{1-(-2)^r}{2^r-1} \\
+&= \frac{1}{3} \cdot \frac{2^{-r}-(-1)^r}{1-2^{-r}}
+\end{align*}
+That sequence has two accumulation points $\pm \frac{1}{3},$ and thus, it does not converge.
+
+On the other hand, the introduction of the supremum and infimum operators will solve the convergence problem, as the resulting sequences will become monotone.
+
+An example of an execution that gives a rise to such payoffs is the following game:  
+% Insert Mean Payoff Game
+With the following pair of strategies\footnote{Note that the proposed pair of strategies is odd in the sense that it appears that both players cooperated on the construction of non-convergent mean payoffs instead of trying ot win the game.}:
+% Insert Strategy.
+\subsection{Symmetries}
+
+\subsection{Strategy}
+Let $p$ be a player. \newline 
+A (deterministic) strategy\footnote{By default, we refer to deterministic strategies. If the strategy is not deterministic, we will explicit it.} is a function $\Pi_p:\mathcal{V}\rightarrow \mathcal{V}$ such that:
+$$
+\forall v\in\mathcal{V}, \Pi_p(v) \in \Adj v
+$$
+
+A probabilistic strategy $\Phi_p:\mathcal{V}\rightarrow \mathscr{P}(V)$ is a random process that assigns for each vertex $v\in\mathcal{V}$ a probability distribution over $\Adj v.$ This constitutes the most general strategy of a player.
+
+\section{Evaluating Strategies}
+Suppose we have a pair of potentially probabilitic strategies $(\Phi^{\Max},\Phi^{\Min}).$ The problem is to evaluate the winner without doing an infinite simulation of the game. 
+\subsection{Deterministic Strategies}
+If both strategies are deterministic. Then the generated sequence of vertices $(s_n)_{n\in\mathbb{N}}$ will be completely determined by the recurrence relation:
+$$
+s_n=\begin{cases}
+	s & \text{if } \space n=0 \\
+	\Phi^{\Max}(s_{n-1})& \text{if}\ n \ \text{is odd} \\
+	\Phi^{\Min} (s_{n-1}) & \text{otherwise}
+\end{cases}
+$$
+This can be represented in the compact form:
+$$
+\forall n\in\mathbb{N}^*,\quad \left(s_n, p_n
+\right) = \left(\Phi^{p_{n-1}}(s_{n-1}), \bar{p}_{n-1}\right) = F(s_{n-1},p_{n-1})
+$$
+
+Since $\mathcal{V} \times \mathcal{P}$ is a finite set and $F$ is a function, such sequence will be eventually periodic, that is:
+$$
+\exists N \in \mathbb{N},\exists T\in\mathbb{N}^*/\quad \forall n\in\mathbb{N}_{\ge N},\quad (s_{n},p_{n})=(s_{n+T},p_{n+T})
+$$
+
+We can calculate its eventual period using the turtle hare algorithm. %Reference?
+
+Now, the mean payoff will be equal to the mean of weights that appears on the cycle. \newline
+This can be proven as follow.:
+% w_n has offset N
+\begin{align*}
+	S_{aT+b+N}&=\sum_{k=0}^{aT+b+N-1} w_{k} \\
+	&= \sum_{k=0}^{N-1}  w_{k}  + \sum_{k=0}^{aT+b-1} w_{k+N} \\
+	&= \sum_{k=0}^{N-1}  w_{k}  + a\sum_{r=0}^{T-1} w_{r+N} +  \sum_{r=0}^{b-1} w_{r+N} \\
+	\implies \left \lvert S_{n+N}- \lfloor \frac{n}{T}\rfloor \sum_{r=0}^T w_{k+N}  \right\rvert &\le (N+T-1) \max_{(u,v)\mathcal{E}} \lvert \mathcal{W}(u,v) \rvert  \\
+	&\le (N+T-1) \lVert \mathcal{W} \rVert_{\infty} \\
+\implies \left \lvert \frac{1}{n+N}S_{n+N}-\frac{1}{n+N} \cdot \lfloor \frac{n}{T}\rfloor \sum_{r=0}^{T-1} w_{k+N}  \right\rvert &\le \frac{N+T-1}{n+N}  \lVert \mathcal{W} \rVert_{\infty} \\
+\end{align*}
+Now it can be proven that:
+$$
+\lim_{n\rightarrow +\infty } \frac{1}{n+N} \cdot \lfloor \frac{n}{T}\rfloor \sum_{r=0}^T w_{k+N}  = \frac{1}{T}\sum_{r=0}^{T-1}w_{r+N}
+$$
+With that:
+$$
+\lim_{n\rightarrow +\infty} \frac{1}{n}\sum_{k=0}^{n-1} w_k=\frac{1}{T}\sum_{r=0}^{T-1}w_{r+N}  \quad \blacksquare
+$$
+%Insert Graph Loop picture
+This calculation leads to the following $\mathcal{O}(\lvert V \rvert)$ algorithm that calculates the mean payoff of deterministic pairs of strategies:
+%Insert algorithm
+
+
+
+\subsection{Probabilistic Strategies}
+Due to the undeterministic nature of probabilistic strategies, it does not make sense to evaluate the mean payoffs, as different executions may lead to different mean payoffs. \newline
+%Proof of discrete distribution nature
+%My intuition says that it may not a distribution 
+Instead, probabilistic strategies gives rise to a discrete distribution of mean payoffs. \newline
+Now two closely related, but different evaluations are possible
+\begin{itemize}
+	\item Expected Mean Payoff
+	\item Distribution of winners 
+\end{itemize}
+Now, with both strategies fixed. A Mean Payoff Game can be considered as a Markov Chain.
+%Insert calculations
+
+\section{Countering Strategies}

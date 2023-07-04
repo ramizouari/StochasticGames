@@ -1,0 +1,27 @@
+\chapter*{Conclusion}
+\addcontentsline{toc}{chapter}{Conclusion}
+
+Durant ce stage, nous avons étudié les BNNs, implémenté une bibliothèque de BNNs basée sur tensorflow et larq qu'on a nommé binaryflow. \\
+\\
+Dans le premier chapitre, nous avons présenté \textbf{dB Sense} et ses activités. \\
+\\
+Dans le deuxième chapitre, nous avons présenté le problème de la grande complexité, introduit le concept des BNNs et proposé \textbf{binaryflow} comme notre solution pour les BNNs\\
+\\
+Dans le troisième chapiter, nous avons formalisé les BNNs, et nous avons décris leurs optimisations possible, et les problèmes rencontrés dans leur implémentation.\\
+\\
+Dans le quatrième chapitre, nous avons présenté des modèles BNNs, chacun en dérivant ses formules\\
+\\
+Dans le cinquième chapitre, nous avons donné notre implémentation de \textbf{binaryflow} en jusitifiant les paradigmes utilisés\\
+\\
+Dans le sixième chapitre, nous avons analysé 3 jeux de données en implémentant des modèles BNNs pour chacune de ces 3 jeux de données, et en comparant les performances de prédicition et la complexité temps et mémoire des modèles entraînés.\\
+\\
+Notre travail n'est qu'une petite introduction des BNNs. En effet, la liste des BNNs proposés dans la littérature est très vaste, et il existe plusieurs autres approches pour faciliter l'entraînement et l'interférence des BNNs que nous n'avons pas considéré vu les contraintes de stage, y parmi:
+\begin{enumerate}
+	\item Les méthodes d'optimisations discrètes
+	\item Les optimiseurs dédiés au BNNs
+	\item Les binarisations entraînables
+	\item Les méthodes ensemblistes pour régulaliser les BNNs
+\end{enumerate} 
+De plus, nous avons réussi à vérifier l'optimisation de la multiplication matricielle (L'éxecution est parfois 30 fois plus rapide), mais nous n'avons pas pu intégrer cette optimisation aux modèles tensorflow. Et malgré que larq supporte lui même un déploiement optimisé, nous n'avons pas aussi pu l'exploiter puisque ce déploiement ne supporte que les processeurs ARMv8, et nous utilisons une machine avec un processeur d'architecture x86-64.\\
+\\
+Finalement, nous avons fait une petite intégration du code carbone comme une mésure de coût d'entraînement. Une fois le problème de déploiement est résoulu, nous recommenderions l'utilisation de ce même métrique pour estimer le coût d'interférence qui va justifier l'utilisation des BNNs.   

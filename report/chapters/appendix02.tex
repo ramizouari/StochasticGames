@@ -1,0 +1,295 @@
+\chapter{On Random Graphs}
+In the previous chapters, we gave a rough analysis of graph generation.
+\newline In this chapter, we will dive into a more detailed analysis.
+
+\section{Introduction}
+\section{Sinkless $\mathcal{D}(n,p)$ Graph}
+
+\subsection{Property}
+
+Let $\mathtt{P}$ be the property\footnote{Formally, a property is a just a set of graphs. In practice, it is a set that has desirable ``properties".} ``Graph has not sink".
+\newline This property is increasing in the sense that:
+$$
+\forall H \ \text{spanning subgraph of}\ G, \quad H \in \mathtt{P}\implies G\in\mathtt{P}
+$$
+As a consequence:
+$$
+\forall n\in\mathbb{N},p,p'\in[0,1] / \quad p\le p',\quad \mathscr{P}(\mathcal{D}(n,p)\in \mathtt{P}) \le \mathscr{P}(\mathcal{D}(n,p')\in \mathtt{P})
+$$
+We will be interested in two properties:
+\begin{itemize}
+	\item The property ``Vertex $v$ has no sinks". We denote it by $\text{NoSink}(v)$.
+	\item The property ``Graph $G$ has no sinks at all". We denote it by $\text{Sinkless}(G)$.
+\end{itemize}
+
+\subsection{Basic Comparison with Normal $\mathcal{D}(n,p)$}
+We will calculate the expected value of $\deg v.$ By applying the law of total expectancy:
+\begin{align*}
+	\mathbb{E}[\deg v]&= \mathbb{E}[\deg v\mid \deg v > 0]\times \mathscr{P}(\deg v> 0) + \mathbb{E}[\deg v \mid \deg v = 0] \times \mathscr{P}(\deg v=0) \\
+	&=  \mathbb{E}[\deg v\mid \text{Sinkless}(G)]\times \mathscr{P}(\text{NoSink}(v))
+\end{align*}
+With that:
+\begin{align*}
+	\mathbb{E}[\deg v \mid \text{Sinkless}(G)] &= \frac{\mathbb{E}[\deg v]}{\mathscr{P}(\text{NoSink}(v))}=\frac{np}{1-(1-p)^n} \le \frac{np}{1-e^{-1}} \\
+	\mathbb{E}[\lvert \mathcal{E} \rvert] &=\sum_{v\in V} 	\mathbb{E}[\deg v \mid \text{Sinkless}(G)]= \frac{n^2p}{1-(1-p)^n} \le \frac{n^2p}{1-e^{-1}}
+\end{align*}
+This shows that the conditional distribution does inflict a small multiplicative bias on the expected number of edges and expected degree.
+\newline This serves as an evidence that $\mathcal{D}^S(n,p)$ is similar enough to $\mathcal{D}(n,p)$
+
+\subsection{Property Probability}
+\begin{itemize}
+\item Let $G\sim \mathcal{D}(n,p)$
+\item Let $v$ a vertex of $G$
+\end{itemize}
+The probability that $\text{NoSink}(v)$ occurs is:
+\begin{align*}
+\mathcal{P}(\text{NoSink}(v))&=1- \mathcal{P}(\Adj v=\varnothing) \\ 
+&=1-\mathcal{P}(\deg v=0)  \\
+&= 1-(1-p)^n  
+\end{align*}
+Now, it is clear that the sequence of events $(\text{NoSink}(v))_{v\in V}$ is independent.
+\newline With that, the probability that the whole graph is sinkless is:
+\begin{align*}
+	\mathcal{P}(\text{Sinkless}(G))&=\mathcal{P}(\Adj v\ne \varnothing\quad\forall v \in V)\\
+	&=\mathcal{P}\left(\bigwedge_{v\in V} \text{NoSink}(v)\right)\\
+	&=\prod_{v\in V}\mathcal{P}(\text{NoSink}(v)) \\
+	&=\left(1-(1-p)^n\right)^n
+\end{align*}
+\subsection{Asymptotic Analysis For Dense $\mathcal{D}(n,p)$}
+Let $c>0.$ We have for large enough $n$:
+$$
+(1-p)^n \le \frac{c}{n}
+$$
+Which implies:
+$$
+(1-\tfrac{c}{n})^n \le (1-(1-p)^n)^n \le 1
+$$
+If we take the limit, we have:
+$$
+  e^{-c}\le \lim_{n\rightarrow +\infty}  (1-(1-p)^n)^n \le 1 \quad \forall c>0 
+$$
+By tending $c$ to $0$, we get:
+$$
+\lim_{n\rightarrow +\infty} (1-(1-p)^n)^n=1
+$$
+\subsection{Asymptotic Analysis For Sparse $\mathcal{D}(n,p)$}
+Let:
+
+\begin{align*}
+	f:\mathbb{R}_+^*\times \mathbb{R}_+\times \mathbb{R} & \rightarrow \mathbb{R}_+\\
+	x,k,c&\rightarrow (1-g(x,k,c))^x\\
+	g:\mathbb{R}_+^*\times \mathbb{R}_+\times \mathbb{R} & \rightarrow \mathbb{R}_+\\
+	x,k,c&\rightarrow \left(1-\frac{k \ln x+c}{x}\right)^x
+\end{align*}
+
+By construction, $f(n,k,c)$ is the probability of a graph following $\mathcal{G}(n,\tfrac{k\ln n+c}{n})$ to contain no sink.
+
+We have:
+
+\begin{align*}
+	\ln g(k,x,c)&=x\ln\left(1-\frac{k\ln x+c}{x}\right)\\
+	&=-k\ln x-c -\frac{(k(\ln x)+c)^2}{2x}+o\left(\frac{(\ln x)^3}{x^2}\right)\\
+	\implies g(x,k,c)&=\exp\left(-k\ln x-c -\frac{(k\ln x+c)^2}{2x}+o\left(\frac{(\ln x)^3}{x^2}\right)\right) \\
+	&=\frac{e^{-c}}{x^k}\times e^{\frac{-(k\ln x+c)^2}{2x}+o\left(\frac{(\ln x)^3}{x^2}\right)}\\
+	&=\frac{e^{-c}}{x^k}\left(1-\frac{(k \ln x+c)^2}{2x}+o\left(\frac{(\ln x)^3}{x^2}\right)\right)  \\
+	&=\frac{e^{-c}}{x^k}-e^{-c}\frac{k^2(\ln x)^2}{2x^{k+1}}+o\left(\frac{(\ln x)^3}{x^{k+2}}\right)\\
+	&=\frac{e^{-c}}{x^k}+o\left(\frac{1}{x^k}\right)\\
+	\implies 1- g(x,k,c)&=1-\frac{e^{-c}}{x^{k}} +o\left(\frac{1}{x^k}\right)\\
+	\implies x\ln(1-g(x,k,c))&= -\frac{e^{-c}}{x^{k-1}}+o\left(\frac{1}{x^{k-1}}\right) \\
+	&\sim -\frac{e^{-c}}{x^{k-1}}  \\
+	\implies f(x,k,x) &= e^{-\frac{e^{-c}}{x^{k-1}}+o(\frac{1}{x^{k-1}})}
+\end{align*}
+
+Now with that:
+$$
+\lim_{x\rightarrow +\infty} x\ln (1-g(x,k,c))=\begin{cases}
+	-\infty  & \text{if} \space k\in[0,1[ \\
+	-e^{-c} & \text{if}\space k=1  \\
+	0 & \text{otherwise if}\space k\in ]1,+\infty[ 
+\end{cases}
+$$
+Finally, we can conclude that:
+$$
+\lim_{x\rightarrow +\infty} f(x,k)\begin{cases}
+	0  & \text{if} \space k\in[0,1[ \\
+	e^{-e^{-c}} & \text{if}\space k=1  \\
+	1 & \text{otherwise if}\space k\in ]1,+\infty[ 
+\end{cases}
+$$
+\section{Repeating Construction}
+\subsection{Estimating Complexity}
+Now the method of rejecting graphs that have sinks and retrying give us a natural question about how many times will the algorithm reject graph until finding a desirable one.\newline
+The number of such rejections will follow a geometric law $\mathcal{G}(h(n,p))$ where: $$
+h(n,p)=\mathscr{P}\left(\text{Sinkless}(\mathcal{D}(n,p))\right)=(1-(1-p)^n)^n
+$$
+\newline With that, the expected complexity of the algorithm will be:
+$$
+\tilde{\mathcal{O}}\left(\frac{C(n,p)}{h(n,p)}\right)=\tilde{\mathcal{O}}\left(\frac{C(n,p)}{(1-(1-p)^n)^n}\right)
+$$
+With $C(n,p)$ the cost of building the graph, depending on the algorithm\footnote{The two algorithms that we have discussed are the naive $\mathcal{O}(n^2)$ algorithm and the more optimized $\mathcal{O}(pn^2+n)$ algorithm.}.
+\subsection{Dense Graph case}
+Now it is clear for dense enough graphs, in particular with $p(n) \ge \frac{k\ln (n)}{n}$ for large enough $n$, the expected complexity will reduce to $\mathcal{O}(C(n,p))$. And thus, we consider the rejection method to be efficient.
+\subsection{Sparse Graph case}
+If $p(n)=\frac{k\ln n}{n}+c$ with $k<1.$ We have:
+$$
+(1-(1-p)^n)^n=e^{-e^{-c}x^{1-k}+o(x^{1-k})}
+$$
+With that, the expected complexity of the rejection method will be:
+$$
+\tilde{\mathcal{O}}\left(C(n,p)\times \exp\left(e^{-c}x^{1-k}+o(x^{1-k})\right)\right)
+$$
+which is an exponential algorithm, and thus inefficient for large graphs.
+Since property $\mathtt{P}$ is increasing, this argument generalises to $p(n) \le \frac{k\ln n}{n}+c$ for large enough $n$
+%Show that the repeating construction is slow for sparse graphs.
+\section{Binomial Rejection Construction}
+Instead of throwing the whole graph at once. For every vertex $u\in V,$ we try to construct the adjacenty vertices of $u,$ and repeat if the procedure gives $\Adj u =\varnothing$
+\newline With this trick, the expected complexity will reduce for both algorithms to:
+$$
+\tilde{\mathcal{O}}\left(\frac{C(n,p)}{1-(1-p)^n}\right)
+$$
+Now for our case, it is natural to assume that $p(n) \ge \frac{1}{n},$ as a Mean Payoff Graph does not have a sink. With that: 
+$$
+1-(1-p)^n \ge 1-(1-\tfrac{1}{n})^n \ge 1-e^{-1}
+$$
+Therefore, the expected complexity will simplify to:
+$$
+\tilde{\mathcal{O}}\left(C(n,p)\right)
+$$
+Moreover, the cost of the conditionning makes only a constant $\frac{1}{1-e^{-1}}\approx 1.582$ factor slowdown, which is effectively neligible.
+
+\section{Expected Mean Payoff}
+\subsection{Definition}
+\begin{itemize}
+	\item Let $\mathcal{G}=(\mathcal{V},\mathcal{E})$ be a mean-payoff game
+	\item For $u\in\mathcal{V},$ Let $\mathscr{P}(u)$ be the set of probability distributions over the set $\text{Adj}(u)$
+	\item We define a fractional strategy as a function $\Phi\in \mathscr{P}$
+
+\end{itemize}
+
+
+\subsection{Matrix Form}
+\begin{itemize}
+	\item Let $n=\lvert \mathcal{V}\rvert$
+	\item Let $u_1,\dots,u_n$ an enumeration of elements of $\mathcal{V}$
+	A fractional strategy can be represented as a matrix $A$ such that:
+	$$
+	\mathcal{P}(\Phi(u_i)=u_j)=A_{i,j}
+	$$
+\end{itemize}
+
+\subsection{Fractional Strategies}
+\subsubsection{Notations}
+\begin{itemize}
+	\item Let $A,B$ be a pair of fractional strategies
+	\item Let $P_m,Q_m$ two random variables defining the mean-payoffs for the respective players after turn $m$
+	
+\end{itemize}
+
+\subsubsection{Expected Cost of $\frac{1}{2}$-turn}
+
+
+Let $\Pi \in \{A,B\}$
+
+We have:
+
+\begin{align*}
+	\mathbb{E}\left[w(u,\Pi(u))\right]&=\sum_{v\in \Adj u} w(u,v)\cdot \mathcal{P}(\Pi(u)=v) \\
+\end{align*}
+\subsubsection{Expected Cost of full turn}
+
+Let $h$ be the cost of a turn
+
+We have:
+
+\begin{align*}
+	\mathbb{E}\left[h(u,A(u),B \circ A(u))\right]&= \mathbb{E}[w(u,A(u))]+\sum_{v\in \Adj u} \mathbb{E}[w(v,B(v))]\cdot \mathcal{P}(A(u)=v) \\
+\end{align*}
+
+\subsubsection{Expected Total Payoff}
+
+\begin{itemize}
+	\item Let $\Pi=B\circ A$
+	\item Let $(X_m)_{m\in\mathbb{N}}$ defined as follow:$$
+	\begin{cases}
+		X_0&=s\\
+		\forall m\in\mathbb{N}^*,\quad X_m&= \Pi(X_{m-1})
+	\end{cases}
+	$$
+	\item Let $(R_m)_{m\in\mathbb{N}}$ defined as follow: $$
+	\begin{cases}
+		R_0&=0\\
+		\forall m\in\mathbb{N}^*,\quad  R_m&= R_{m-1}+\displaystyle\sum_{u\in V}h(u,A(u),\Pi(u)) \cdot \mathcal{P}(X_{m-1}=u)
+	\end{cases}
+	$$
+\end{itemize}
+
+
+We have:
+
+\begin{align*}
+	\mathbb{E}[R_m]&= \mathbb{E}[R_{m-1}]+\sum_{u\in V}\mathbb{E}[h(u,A(u),\Pi(u))] \cdot \mathcal{P}(X_{m-1}=u) \\
+	&=\mathbb{E}[R_{m-1}]+\sum_{u\in V}P^{m-1}(s,u)\times q(u)\\ 
+	&=\mathbb{E}[R_{m-1}]+(P^{m-1}\cdot q)(s)\quad \text{(Matrix Multiplication)} \\
+	&=\sum_{k=1}^m(P^{k-1}\cdot q)(s)+ \mathbb{E}[R_0]  \\
+	&=\left(\sum_{k=0}^{m-1}P^{k}\cdot q\right)(s)+ \mathbb{E}[R_0] \\
+	&=\left(\sum_{k=0}^{m-1}P^{k}\cdot q\right)(s)
+\end{align*}
+
+Now, we may see that the formula is easy generalisable to any starting vertex:
+$$
+\mathbb{E}[R_m]=\sum_{k=0}^{m-1}P^{k}\cdot q
+$$
+
+\subsubsection{Expected Mean Payoffs}
+The mean-payoff is defined as:
+$$
+K_m=\frac{R_m}{m}
+$$
+We define $K_\infty$ as:
+$$
+K_\infty=K_{+\infty}=\lim_{m \rightarrow +\infty} \frac{R_m}{m}
+$$
+
+Let $m\in\mathbb{N}\cup\{+\infty\}$
+Now, the expected mean-payoff can act as a the judge for who is winning:
+\begin{enumerate}
+	\item Player $0$ wins if $\mathbb{E}[K_m]>0$
+	\item Player $1$ wins if $\mathbb{E}[K_m]<0$
+	\item Else, it is a tie
+\end{enumerate}
+
+
+Now, if $m$ is finite, we can calculate $\mathbb{E}[K_m]$ directly.
+Otherwise, we have:
+$$
+\mathbb{E}[K_{\infty}]=\lim_{m\rightarrow +\infty}\frac{1}{m} \sum_{k=0}^m P^k \cdot q
+$$
+Now, $P$ can be seen as a stochastic matrix.
+Thus it has a simple eigenvalue of value $1$, and all its other eigenvalue $\lambda$ satisfies:
+$$
+\lambda \neq 1 \wedge \lvert\lambda \rvert \le 1
+$$
+Also, we have (Proof?):
+$$
+\lvert \lambda \rvert =1\implies \lambda \space\text{is a simple eigenvalue}
+$$
+
+With that, it can be proven that the $\lim_{m\rightarrow +\infty}\frac{1}{m} \sum_{k=0}^m P^k$ converges so some matrix $T$
+
+This matrix can be constructed as follow.
+Let $P=VJV^{-1}$ the jordan normal form of $P$
+
+Without a loss of generality, we will suppose that the first eigenvalue of this decomposition is $1$
+We have then:
+$$
+T=V\begin{pmatrix}1 & 0\\
+	0&\boldsymbol{0}_{n-1}\end{pmatrix}V^{-1}
+$$
+
+
+\subsubsection{Discounted Payoffs}
+Using the same approach as the mean payoffs. Let $R_m$ be the discounted payoff.
+It can be shown that:
+$$
+\mathbb{E}[R_m]=\sum_{n\in\mathbb{N}} \gamma^nP^n \cdot q=(\text{Id}-\gamma P)^{-1}q
+$$

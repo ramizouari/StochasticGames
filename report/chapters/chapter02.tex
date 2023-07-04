@@ -1,0 +1,374 @@
+\chapter{Dataset Generation}
+
+\section{Introduction}
+\section{Analysis}
+Generating a Mean Payoff Game can be decomposed into two subsequent objectives.
+\begin{enumerate}
+	\item Generate the Graph itself.
+	\item Generate the Weights
+\end{enumerate}
+
+
+\section{Graph Distributions}
+There are many well studied graph distributions in the litterature. \newline
+One of the most explored ones are the $\mathcal{G}(n,p)$ and $\mathcal{G}(n,m)$ families.
+\subsection{$\mathcal{G}(n,p)$ Family}
+For $n\in\mathbb{N},p\in[0,1],$ a graph $G$ is said to follow a $\mathcal{G}(n,p)$ distribution if $\lvert V \rvert=n$ and:
+$$
+\forall e\in \mathscr{E}, \quad \mathscr{P}(s\in \mathcal{E})=p
+$$
+Where $\mathscr{E}$ is a set of valid edges. 
+
+\subsection{$\mathcal{G}(n,m)$ Family}
+For $n\in\mathbb{N},m\in\mathbb{N},$ a graph $G$ is said to follow a $\mathcal{G}(n,m)$ distribution if $\lvert V \rvert=n,\lvert  E \rvert=m$ and the edges $e_1,\dots,e_m$ were drawn from a set of valid edges $\mathscr{E}.$
+\subsection{Valid edges}
+The set of valid edges $\mathscr{E}$ is the set defining the potential edges of the graph. It is equal to:
+\begin{enumerate}
+	\item $V\times V$ for directed graphs with loops 
+	\item $(V\times V)\setminus V\odot V$ for directed graphs without loops
+	\item The set of subsets of size $2$ of $V$ denoted $\mathscr{P}_2(V)$ for undirected graphs with loops.
+	\item The set of subsets of size $2$ of $V$ denoted $\mathscr{P}_2(V)$ for undirected graphs with loops.
+\end{enumerate}
+\subsection{$\mathcal{D}(n,p)$ Graph Construction}
+
+\subsubsection{Naive Method}
+The definition of $\mathcal{D}(n,p)$ gives a straightforward construction. \newline
+This is achieved by flipping a coin\footnote{The coin is potentially biased with a probability of obtaining head equal to $p\in [0,1]$} for each pair of node $(u,v)\in V^2$, we add an edge if we get a Head. 
+\newline This is implemented in the following algorithm:
+\begin{algorithm}
+	\caption{$\mathcal{D}(n,p)$ Graph Generation}\label{alg:Dnp_Naive}
+	\begin{algorithmic}
+		\Require $n\in\mathbb{N}^*$ the size of the graph
+		\Require $p\in\mathbb{N}^*$ the edge probability 
+		\Ensure $G\sim \mathcal{D}(n,p)$  
+		\State $A:(u,v)\in V\times V\rightarrow 0$
+		\For{ $u\in V$} 
+		\For { $v \in V$ }
+		\State Generate $X\sim \mathcal{B}(p)$
+		\Comment{$\mathcal{B}(p)$ is the bernoulli distribution}
+		\State $A(u,v)\leftarrow X$
+		\EndFor
+		\EndFor
+		\State \Return $G\leftarrow \texttt{GraphFromAdjacencyMatrix}(A)$
+	\end{algorithmic}
+\end{algorithm}
+\FloatBarrier
+The complexity\footnote{We assume the cost of generating a Bernoulli random variable as $\mathcal{O}(1)$} of the following algorithm is $\mathcal{O}(n^2).$
+\subsubsection{Optimized Method}
+Instead of iterating over all possible pair of nodes. For each vertex $v\in V$:
+\begin{itemize}
+	\item We can sample a number $d$ from the outgoing degree distribution\footnote{Or the ingoing degree distribution, they are in fact equal.}
+	\item We then choose $d$ numbers uniformly without replacement from an indexable representation of $V$
+\end{itemize}
+The following algorithm implements the optimized method:
+\begin{algorithm}
+	\caption{$\mathcal{D}(n,p)$ Graph Generation Optimisation}\label{alg:Dnp_Fast}
+	\begin{algorithmic}
+		\Require $n\in\mathbb{N}^*$ the size of the graph
+		\Require $p\in\mathbb{N}^*$ the edge probability 
+		\Ensure $G\sim \mathcal{D}(n,p)$  
+		\State $A:u\in V\rightarrow \varnothing$
+		\For{ $u\in V$} 
+		\State Generate $d\sim \mathcal{B}(n,p)$
+		\Comment{$d$ represents the degree, $\mathcal{B}(n,p)$ is the binomial distribution}
+		\State $A(u)\leftarrow \choice(V,d)$
+		\EndFor
+		\State \Return $G\leftarrow \texttt{GraphFromAdjacencyList}(A)$
+	\end{algorithmic}
+\end{algorithm}
+\FloatBarrier
+Now, Let $C(n,m)$ be the cost of choice function. The expected complexity of this algorithm will be:
+$$
+\tilde{\mathcal{O}}\left(n\mathbb{E}_d[C(n,d)]\right) \quad \text{where}\ d\sim \mathcal{B}(n,p)
+$$
+We will show on the next section what choice function should we use.
+\subsection{Choice Function}
+\subsubsection{First Proposition}
+We propose here a simple choice algorithm, but it is still efficient for our use case.
+\newline It works simply by drawing without replacement, but we ignore duplicate elements. This is implemented as follow
+\begin{algorithm}
+	\caption{$\mathcal{D}(n,p)$ Choice without replacement}\label{alg:Choice}
+	\begin{algorithmic}
+		\Require $S$ a list
+		\Require $m\in\{0,\dots \lvert S \rvert\}$ the number of chosen elements
+		\Ensure $H$ a set of size $m$ containing uniformly drawn elements without replacement. 
+		\State $H\leftarrow \varnothing$
+		\While{$\lvert H \rvert < m$}
+			\State Generate $v\sim \mathcal{U}(S)$ 
+			\Comment{Where $\mathcal{U}(S)$ is the uniform distribution over $S$}
+			\State $H\leftarrow H \cup \{v\}$
+		\EndWhile
+		\State \Return $H$
+	\end{algorithmic}
+\end{algorithm}
+\FloatBarrier
+To estimate the cost of this algorithm, we will use probabilistic reasoning.
+\newline Let $X_{n,m}=C(n,m)$ the running time of an execution of algorithm \ref{alg:Choice} in a set $S$ of size $n$, with $m$ elements to be chosen.
+We have:
+\begin{align*}
+	X_{n,0} & \ \text{is deterministic}\\
+	X_{n,0}&=\mathcal{O}(1) \\
+	\mathbb{E}[X_{n,m}]&=1+\frac{1}{n}\sum_{k=0}^{n-1} \mathbb{E}[X_{n,m} \mid \text{The last drawn number is}\ k] \\
+	&=1+\frac{1}{n}\sum_{k=0}^{m-2} \mathbb{E}[X_{n,m}]+\frac{1}{n}\sum_{k=m-1}^{n-1} \mathbb{E}[X_{n,m-1}] \\
+	&= 1+\frac{m-1}{n}\mathbb{E}[X_{n,m}]+\frac{n-m+1}{n}\mathbb{E}[X_{n,m-1}]
+\end{align*}
+Now we arrived at a recurrent formula. We will simplify it as shown below:
+\begin{align*}
+\frac{n-m+1}{n}\mathbb{E}[X_{n,m}]&=\frac{n-m+1}{n}\mathbb{E}[X_{n,m-1}] +1\\
+\implies \mathbb{E}[X_{n,m}]&=\frac{n-m+1}{n-m+1}\mathbb{E}[X_{n,m-1}]+\frac{n}{n-m+1}\\
+&=\mathbb{E}[X_{n,m-1}]+\frac{n}{n-m+1} \\
+&=\sum_{k=1}^m\frac{n}{n-k+1}+\mathcal{O}(1)\\
+&=\sum_{k=0}^{m-1}\frac{n}{n-k}+\mathcal{O}(1) \\
+&=n\sum_{k=n-m+1}^n\frac{1}{k}+\mathcal{O}(1)\\
+&=n(H_n-H_{n-m})+\mathcal{O}(1)
+\end{align*}
+Here $(H)_{n\in\mathbb{N}^*}$ is the harmonic series, and we define $H_0=0.$
+\subsubsection{Complexity}
+%Prooof!!!
+The expected complexity of algorithm \ref{alg:Choice} depends on both $n$ and $m$:
+\begin{itemize}
+	\item If $m=o(n),$ then it is $\tilde{\mathcal{O}}(m).$
+	\item If $m=kn+o(n)$ with $k\in\mathopen]0,1\mathclose[$, then it is $\tilde{\mathcal{O}}(m).$
+	\item If $m=n-o(n)$, It is\footnote{Here we use the minus sign to emphasize that $m\le n$} $\tilde{\mathcal{O}}(m\log m).$ 
+\end{itemize}
+To prove this result, we use a well known asymptotic approximation of the Harmonic series:
+$$
+H_n=\ln n+\gamma -\frac{1}{2n}+\mathcal{O}\left(\frac{1}{n^2}\right)
+$$
+We can prove this claim as follow:
+\begin{align*}
+	m=o(n),\quad \mathbb{E}[C(n,m)]&=-n\ln \left(1-\frac{m}{n}\right) -\frac{1}{2}\left(1-\frac{n}{n-m}\right)+\mathcal{O}\left(\frac{1}{n}\right) \\
+	&=m+o(m)\\
+	&=\mathcal{O}(m)\\
+	m=km+o(m),k\in \mathopen]0,1\mathclose[,\quad \mathbb{E}[C(n,m)]&=-n\ln \left(1-\frac{m}{n}\right) -\frac{1}{2}\left(1-\frac{n}{n-m}\right)+\mathcal{O}\left(\frac{1}{n}\right) \\
+&=-n\ln (1-k+o(1))+\frac{1}{n}(1-\tfrac{1}{1-k+o(1)})+\mathcal{O}(\tfrac{1}{n})\\
+&=\mathcal{O}(m)\\
+\end{align*}
+For $m=n-o(n),$ we prove it by noting that:
+\begin{align*}
+\mathbb{E}[C(n,m)]&\le\mathbb{E}[C(n,n)] \\
+ &\le nH_n \\
+&\le n\ln n +\gamma n +\frac{1}{2}+\mathcal{O}\left(\frac{1}{n}\right) \\
+&= \mathcal{O}(m\log m)
+\end{align*}
+
+\subsubsection{Refinement}
+If $m$ tends to $n,$ it is more hard to select $m$ elements from a set of size $n$ without replacement. This explains the extra logarithmic factor.
+\newline In that case, we can instead focus on the dual problem: ``Find the $n-m$ elements that will not be selected". This can be calculated in $\mathcal{O}(n-m).$
+\newline Once we find the elements that will not be selected, their set complement are exactly the $m$ elements that will be selected. This new algorithm is guaranteed to be $\mathcal{O}(m)$ irrespective of $n$ and $m$
+\begin{algorithm}
+	\caption{Fine tuned $\mathcal{D}(n,p)$ Choice without replacement }\label{alg:ChoiceFineTuned}
+	\begin{algorithmic}
+		\Require $S$ a list
+		\Require $m\in\{0,\dots \lvert S \rvert\}$ the number of chosen elements
+		\Require $\choice$ The choice function defined on algorithm \ref{alg:Choice}
+		\Require Threshold $\tau$
+		\Ensure $H$ a set of size $m$ containing uniformly drawn elements without replacement. 
+		\If {$\frac{m}{\lvert S \rvert} \le \tau$}
+			\State $H\leftarrow \choice(V,n)$
+		\Else
+			\State $H\leftarrow V\setminus \choice(S,n-m)$
+		\EndIf
+		\State \Return $H$
+	\end{algorithmic}
+\end{algorithm}
+\subsection{Complexity of Optimised $\mathcal{D}(n,p)$ Graph Construction}
+We return to evaluate the asymptotic behaviour of $\mathbb{E}_d[C(n,d)].$
+\newline Let $\delta \in \mathbb{R}_+^*$
+\newline The Chebychev Inequality implies that:
+$$
+\mathscr{P}\left(\left \lvert \frac{1}{n}\sum_{i=1}^nX_i -p \right \rvert \ge \frac{\delta}{n^2}p(1-p)  \right) \le \frac{1}{\delta^2}
+$$
+By setting: $\delta=p^{-1},$ we have:
+$$\mathscr{P}\left(\left \lvert \frac{1}{n}\sum_{i=1}^nX_i -p \right \rvert \ge \frac{1-p}{n^2}  \right) \le p^2
+$$
+We have:
+\begin{align*}
+\mathbb{E}\left[C(n,d)\right] &\le \mathbb{E}\left[C(n,d) \mid d\in [np-\tfrac{1-p}{n},np+\tfrac{1-p}{n}]\right] + p^2C(n,n) \\
+&\le C(n,np+\tfrac{1-p}{n}) + p^2C(n,n) \quad \text{for large enough}\ n \\
+C(n,np+\tfrac{1-p}{n})&=\mathcal{O}(np+\tfrac{1-p}{n})\\
+&=\mathcal{O}(np)\\
+C(n,n)&=\mathcal{O}(n) \quad \text{With the refined choice algorithm}
+ \end{align*}
+Now, by combining both estimations, we get:
+$$
+\tilde{\mathcal{O}}(n\mathbb{E}_d[C(n,d)])=\tilde{\mathcal{O}}(n^2p) \quad \blacksquare
+$$
+
+\subsection{$\mathcal{D}(n,m)$ Construction}
+To construct a random $\mathcal{D}(n,m)$ graph, we only have to select $m$ uniformly random elements from the set $V\times V.$
+\newline We will use algorithm \ref{alg:ChoiceFineTuned} for this purpose\footnote{It is essential that the list $V\times V$ be lazy loaded. In particular, each element will only be loaded when it is indexed. This is essential to reduce the complexity. Otherwise, we will be stuck in an $\mathcal{O}(n^2)$ algorithm.}:
+\begin{algorithm}
+	\caption{Fine tuned $\mathcal{D}(n,p)$ Choice without replacement }\label{Dnm} 
+	\begin{algorithmic}
+		\Require $n\in\mathbb{N}^*$
+		\Require $m\in\{0,\dots,n^2\}$ the number of chosen elements
+		\Ensure $G\sim \mathcal{D}(n,m)$
+		\State $E\leftarrow \choice(\text{Lazy}(V)\times \text{Lazy}(V),m)$ \Comment{We only need the $m$ elements on-demand.}
+		\State \Return $G\leftarrow \text{GraphFromEdges}(E)$\Comment{This justifies using \text{Lazy}}
+	\end{algorithmic}
+\end{algorithm}
+\FloatBarrier
+Here $\text{Lazy}(V)\times \text{Lazy}(V)$ is a lazy implementation of cartesian product that supports bijective indexing\footnote{Indexing is required for uniform sampling} over $\{0,\dots,n^2-1\}.$
+\newline The complexity of this construction is: $
+\mathcal{O}(m)
+$ 
+
+\section{Sinkless Conditionning}
+Sampling from a graph distribution may lead to graphs that have at least one sink. 
+\newline These graphs are problematic as Mean Payoff Graphs are exactly the sinkless graphs.
+\newline To migitate this, we will impose a conditionning on both distribution that will gives a guaranteed Mean Payoff Graph.
+\newline We will explore such conditionning both distribution:
+\begin{itemize}
+	\item $\mathcal{G}^S(n,p):$ This is the distribution of graphs following $\mathcal{G}(n,p)$ with the requirement that they do not have a sink.
+	\item $\mathcal{G}^S(n,m):$ This is the distribution of graphs following $\mathcal{G}(n,m)$ with the requirement that they do not have a sink.
+\end{itemize}
+\subsection{Repeating Construction}
+\subsubsection{Algorithm}
+This method is very intuitive. It will repeat the sampling until getting the desired graph. \newline The following is an implemention of the repeating construction.
+\begin{algorithm}
+	\caption{Fine tuned $\mathcal{D}(n,p)$ Choice without replacement }\label{alg:RepeatingConstruction}
+	\begin{algorithmic}
+		\Require $n\in\mathbb{N}^*$
+		\Require $m\in\{0,\dots \lvert S \rvert\}$ the number of chosen elements
+		\Require $\choice$ The choice function defined on algorithm \ref{alg:Choice}
+		\Require Threshold $\tau$
+		\Ensure $H$ a set of size $m$ containing uniformly drawn elements without replacement. 
+		\If {$\frac{m}{\lvert S \rvert} \le \tau$}
+		\State $H\leftarrow \choice(V,n)$
+		\Else
+		\State $H\leftarrow V\setminus \choice(S,n-m)$
+		\EndIf
+		\State \Return $H$
+	\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Analysis}
+We will analyse the runtime of generating a $\mathcal{G}^S(n,p).$
+\newline We expect a similar runtime for $\mathcal{G}^S(n,m)$ due to the similarity between $\mathcal{G}(n,m)$ and $\mathcal{G}(n,p).$ 
+\newline Let $F(n)$
+
+
+\section{Weights Distribution}
+\subsection{Construction}
+Once the graph is constructed. We only have to generate the weights. \newline
+This will be done by creating a random weight function:
+$$
+W(u,v):(u,v)\rightarrow W_{u,v}
+$$
+Here $W_{u,v}$ will be a sequence of real random variables. \newline
+In our case, we set $(W_{u,v})_{(u,v)\in E}$ to be independent and identically distributed over a real distribution $\mathcal{W}.$ 
+
+
+\section{Proposed MPG Distribution}
+\subsection{Desired Properties of Mean Payoff Game Distributions}
+\subsubsection{Fairness in the Limit}
+This is essential, as we intend to generate a sequence of Mean Payoff Games that do not favour statistically a certain player, in the sense that, if we generate sufficient independent and identically distributed Mean Payoff Games $G_1,\dots,G_n$, we expect the following:
+$$
+\lim_{n\rightarrow +\infty} \left\lvert \mathtt{R}_{\Max}(G_1,\dots,G_n)-\mathtt{R}_{\Min}(G_1,\dots,G_n)\right \rvert = 0
+$$
+Where $\mathtt{R}$ is defined as follow:
+$$
+\mathtt{R}_{\text{Op}}(G_1,\dots,G_n)=\frac{1}{n}\sum_{i=1}^n\mathscr{P}(\text{Op wins} \ G_i\ \text{assuming optimal strategies})
+$$
+\subsubsection{Symmetric}
+A real distribution is said to be symmetric if:
+$$
+\forall [a,b]\in \mathbb{R},X\sim \mathcal{W},\quad \mathscr{P}(X\in [a,b]) = \mathscr{P}(X\in [-b,-a])
+$$
+We will define a symmetric Mean Payoff Game distribution as a distribution of Mean Payoff Game whose weights are independent and identically distributed on a symmetric real distribution.
+This property is stronger than Fairness in the Limit, as it implies that:
+$$
+\mathscr{P}(\text{Max wins} \ G\ \text{assuming optimal strategies}) = \mathscr{P}(\text{Min wins} \ G\ \text{assuming optimal strategies})
+$$
+We will require a Symmetric Mean Payoff Game as we do not want a player to have an inherit advantage other the other one\footnote{Other than the first move.}
+\subsection{Implemented Distributions}
+The following table resumes the implemented distributions:
+\begin{table}[h]
+	\small
+	\begin{tabularx}{\textwidth}{| X | X | X |}
+		\hline
+		
+		Distribution Family & Parameters & Type  \\
+		\hline
+		$\mathcal{D}(n,p)$ & \vspace{-5mm}
+		\begin{itemize}
+			  \setlength\itemsep{0em}
+			\item $n:$ Graph size
+			\item $p:$ Edge probability
+		\end{itemize} & Graph distribution \\
+		\hline
+		$\mathcal{D}(n,m)$ & 
+		\vspace{-5mm}
+		\begin{itemize}
+			  \setlength\itemsep{0em}
+			\item $n:$ Graph size
+			\item $m:$ Number of edges
+		\end{itemize} & Graph distrbiution  \\
+		\hline
+		$\mathcal{U}_{\text{discrete}}(-r,r)$ &
+		\vspace{-5mm}
+		\begin{itemize}
+			  \setlength\itemsep{0em}
+			\item $r:$ The radius of the support
+		\end{itemize}
+		 &  Weight distribution\\
+		\hline
+		$\mathcal{U}(-r,r)$ &\vspace{-5mm}
+		\begin{itemize}
+			  \setlength\itemsep{0em}
+			\item $r:$ The radius of the support
+		\end{itemize} & Weight distribution \\
+		\hline
+		$\mathcal{N}(0,\sigma)$ &
+		\vspace{-5mm}
+		\begin{itemize}
+			  \setlength\itemsep{0em}
+			\item $\sigma:$ The standard deviation
+		\end{itemize} & Weight distribution\\ 
+		\hline 
+		
+	\end{tabularx}
+	\caption{Le tableau d'avancement des BNNs}
+\end{table}
+\FloatBarrier
+
+
+\section{MPG Generation}
+\subsection{Distribution}
+\begin{itemize}
+	\item Each generated graph will follow a distribution $\mathcal{G}(n,p(n))$  for some $n\in\mathbb{N}^*$
+	\item The weights will follow the discrete uniform distribution $\mathcal{D}(-1000,1000)$
+
+\end{itemize}
+
+We will generate two kinds of datasets, depending on the nature of the graph
+
+\subsection{Dense Graphs}
+\begin{itemize}
+	\item Let $\mathcal{P}=\{0.1,0.2,0.3,0.5,0.7,0.8,0.9,1\}$
+	\item $\mathcal{N}=\{10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,200,250,300,400,500\}$
+	\item For each $(n,p)\in \mathcal{N}\times \mathcal{P},$ we will generate $K=1000$ observations $G^{n,p}_1,\dots,G^{n,p}_{K} \sim \mathcal{G}(n,p)$ 
+\end{itemize} 
+
+The total number of examples is:
+$$
+K\times\lvert \mathcal{N} \rvert \times \lvert \mathcal{P}\rvert=160000
+$$
+The generation was done on a `haswell64` partition with 24 cores. and it took 02:12:38 hours.
+
+\section{Annotation}
+Now, non-polynomial algorithms are known for Mean Payoff Games. 
+\newline 
+The algorithm that we followed is based on \textbf{CSPs}.If the weights are represented as integers, it is exponential on the size of the input\footnote{Assuming that the input is not represented on a unary system.}.
+
+
+A max atom system is a generalisation of a ternary max atom system. 
+
+\subsection{Transformations}r
+To call a CSP solver on the game, we need to transform it to a CSP problem.
+\newline We will use a transformation to a Min-Max System\footnote{See the appendix for a formalisation of Min-Max System.}.\newline
+A Min-Max System is a CSP over 
+
+
+\subsection{Arc Consistency}

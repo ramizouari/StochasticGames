@@ -1,0 +1,55 @@
+# 1. Automate
+
+## 1.1 Définition
+
+Une automate est un quintuplé $\mathcal{A}=(V,\Sigma,q_0,F,\delta)$ avec:
+
+- $V$ est l'ensemble d'états
+- $\Sigma$ est un ensemble représentant l'alphabet qui peut être exécuté par l'automate
+- $q_0\in V$ est l'état initial de l'automate
+- $F \subseteq V$  est l'ensemble des états finaux de l'automate
+- $\delta \subseteq V\times \Sigma \times V$ est la relation de transition
+
+
+
+## 1.2 Transition
+
+On dit que $e=(u,a,v)$ est une transition si $e\in \delta$  
+
+Informellement, si l'automate est dans un état $u$ et elle reçoit $a$ , un des états possibles qu'elle peut passer à est l'état $v$
+
+
+
+## 1.3 Automate déterministe
+
+Une automate déterministe est une automate $\mathcal{A}=(V,\Sigma,q_0,F,\delta)$ est une automate dont laquelle $\delta$ est une fonction partielle.
+
+C'est à dire $\delta:\mathcal{T}\rightarrow V$ est une fonction avec $\mathcal{T}\subseteq V\times \Sigma $
+
+Informellement, c'est à dire que si l'automate est dans un état $u$ et elle reçoit $a$ , elle ne peut passer qu'au maximum un seul état, et ça doit être l'état $\delta(u,a)$
+
+
+
+## 1.3 Exemple
+
+```mermaid
+flowchart LR
+	start[( )] --> 0
+	0 --a--> 1
+	1 --b--> 2
+	1 --b--> 1
+	2 --c--> 0
+    style 2 fill:#F70,stroke:#333,stroke-width:3px
+    style 0 fill:#F70,stroke:#333,stroke-width:3px
+    style start fill:#FFF,stroke:#FFF
+```
+
+L'exemple ci dessus représente une automate $\mathcal{A}=(V,\Sigma,q_0,F,\delta)$ avec:
+
+- $V=\{0,1,2\}$
+- $\Sigma=\{a,b,c\}$
+- $q_0=0$
+- $F=\{0,2\}$ représente les états finaux
+
+
+

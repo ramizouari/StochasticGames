@@ -1,0 +1,239 @@
+\chapter{On Constraint Satistfaction Problems}
+In the previous chapters, we described how the system works, without formalising the CSP approach.\newline
+On this chapter, we will describe the CSP systems that we have used, with an equivalence proof between them.
+
+
+
+\section{Max Atom System}
+\subsection{Ternary Max Atom Systems}
+\begin{itemize}
+	\item Let $\mathcal{X}$ be a finite set of variables
+	\item Let $D=I\cup \{-\infty\},$ with $I\subseteq \mathbb{R}$.
+	\item  For $x,y,z\in \mathcal{X},c\in I$, let $\text{MA}(x,y,z,c)$ be defined as follow:
+	$$
+	\text{MA}(x,y,z,c)\iff x\le \max(y,z)+c
+	$$
+\end{itemize}
+
+A ternary max atom system is $\text{CSP}(D,\Gamma)$ where:
+\begin{align*}
+	\Gamma&=\left\{\text{MA}(x,y,z,c),\quad (x,y,z,c)\in \mathscr{R}\right\}\\
+	\mathscr{R}&\subseteq \mathcal{X}^3\times I\\
+	\mathscr{R}& \space \text{is finite}
+\end{align*}
+
+
+
+\subsection{Max Atom Systems}
+\begin{itemize}
+	\item Let $\mathcal{X}$ be a finite set of variables
+	\item Let $D=I\cup \{-\infty\},$ with $I\subseteq \mathbb{R}$   
+	\item For $x\in \mathcal{X},Y\subseteq\mathcal{X}^m,c\in I$, let $\text{MA}(x,Y,c)$ be defined as follow:
+	$$
+	\text{MA}(x,Y,c)\iff x\le \max Y+c
+	$$
+\end{itemize}
+
+A max atom system is $\text{CSP}(D,\Gamma)$ where:
+
+\begin{align*}
+	\Gamma&=\left\{\text{MA}(x,Y,c),\quad (x,Y,c)\in \mathscr{R}\right\}\\
+	\mathscr{R}&\subseteq \mathcal{X}\times \left(\mathscr{P}(\mathcal{X}) \setminus \{\varnothing\}\right)\times I \\
+	\mathscr{R}&\space \text{is finite}
+\end{align*}
+
+\subsection{Min Max System $\le$ Max Atom System}
+\begin{itemize}
+	\item Let $S=\text{CSP}(\mathcal{X},D,\Gamma)$ a max atom system.
+	\item Let $R\in \Gamma$
+	\item Let $x\in \mathcal{X},Y\in\mathscr{P}(\mathcal{X}),c\in I$ such that $R=\text{MA}(x,Y,c)$ such that $\lvert Y \rvert >2$
+\end{itemize}
+
+\subsubsection{Recursive Reduction}
+We will reduce the arity of $R$ as follow:
+\begin{itemize}
+	\item Let $y,z\in Y$ such that $y\ne z$
+	\item We introduce a variable $w\notin \mathcal{X}$
+	\item Let $\mathcal{X}'=\mathcal{X}\cup\{w\}$
+	\item Let $Y'=(Y\cup \{w\})\setminus\{y,z\}$
+	\item Let $R'=\text{MA}(x,Y',c)$
+	\item Let $R_w=\text{MA}(w,\{y,z\},0)$
+	\item Let $\Gamma'=(\Gamma\cup\{R',R_w\})\setminus \{R\}$
+	\item Let $S'=\text{CSP}(\mathcal{X}',D,\Gamma)$
+\end{itemize}
+
+
+We will prove that $S'$ is equivalent to $S.$
+
+Without a loss of generality:
+\begin{itemize}
+	\item we will order $\mathcal{X}$ such that $x_0\le\dots\le x_{n-1}$ with $n=\lvert \mathcal{X}\rvert$ 
+	\item $x_{n-2}=y$
+	\item $x_{n-1}=z$
+	\item We will set $x_n=w$
+	\item Let $i\in\{0,\dots,n-1\}$ such that $x_i=x$
+\end{itemize}
+
+
+\paragraph{Implication}
+Let $s_0,\dots,s_{n}$ an assignment of $S'.$ It is trivial that $s_0,\dots,s_{n-1}$ is an assignment of $S$ 
+
+\paragraph{Equivalence}
+\begin{itemize}
+	\item Let $s_0,\dots,s_{n-1}$ an assignment of $S'$
+	\item Let $s_n=\max(s_{n-1},s_{n-2})$
+\end{itemize}
+Then, $s_0,\dots,s_n$ is an assignment of $S'$
+
+\subsubsection{Induction}
+Since the number of variables is finite. The number of constraints is finite, and the arity of each constraint is finite. Applying such reduction iteratively will eventually give a system $S^*$ equivalent to $S$ with:
+\begin{itemize}
+	\item $\mathcal{X}^*$ the set of variables with $\mathcal{X}\subseteq \mathcal{X}'$ 
+	\item $\Gamma^*$ is the set of constraints:
+	\item Each constraint is of the form $\text{MA}(x,Y,c)$ with $x\in \mathcal{X}',Y\subseteq \mathcal{X}',c\in I$ with $\lvert Y\rvert \le 2$   
+\end{itemize}
+Now such system can be transformed to a ternary system $S_3$ as follow:
+\begin{itemize}
+	\item The set of variables is $\mathcal{X}^*$
+	\item The domain is $D$
+	\item For every relation $R=\text{MA}(x,Y,c)$ we map it to the relation $R_3=\text{MA}(x,y,z,c)$ as follow:
+	\item $y,z$ constitute the elements of $Y$ if $\lvert  Y \rvert=2$
+	\item $z=y$ if $\lvert Y \rvert=1$
+\end{itemize}
+
+
+It is trivial that $S^*$ is equivalent to $S_3.$
+With that, $S$ is equivalent to $S_3.$
+
+
+\begin{algorithm}
+	\caption{Converting a Max Atom System to Ternary Max Atom System}\label{alg:MaxAtomToTernaryMaxAtom}
+	\begin{algorithmic}
+		\Require $S$ an $N$-ary Max Atom system
+		\Ensure $S'$ a ternary Max Atom system  
+		\State $S'\leftarrow \varnothing$
+		\State $H\leftarrow\varnothing$ \Comment{$H$ is a symmetric map between variable,variable to variables}
+		\State $V\leftarrow \text{Variables}(S)$  \Comment{$V$ is a set containing all variables}
+		\For {$\mathcal{C}\in S$}
+		\Comment{Iterate over constraints}
+		\State $c$ is the constant in the right hand side of $\mathcal{C}$
+		\State $Y$ is the variables in the right hand side of $\mathcal{C}$
+		\State $x$ is the variable in the left hand side of $\mathcal{C}$
+			\While{$\lvert Y \rvert > 2$}
+				\State $y\leftarrow \pop(Y)$
+				\State $z\leftarrow \pop(Y)$
+				\If {$(y,z) \notin \domain  H$}
+					\State $w\leftarrow \text{newVariable}(V)$\Comment{Generate a new formal variable not included in $V$}
+					\State $V\leftarrow V\cup\{w\}$
+					\State $H(y,z)\leftarrow w$
+					\State $H(z,y)\leftarrow w$
+				\EndIf
+				\State $w\leftarrow H(y,z)$
+				\State $S'\leftarrow S'\cup\{\text{MA}(w,y,z,c)\}$
+				\State $Y\leftarrow Y\cup\{w\}$
+			\EndWhile
+		\EndFor
+		\State \Return $S'$
+	\end{algorithmic}
+\end{algorithm}
+
+\section{Min-Max System}
+
+\begin{itemize}
+	\item Let $\mathcal{X}$ be a finite set of variables
+	\item Let $I$ be the domain of the variables.
+	\item Let $D=I\cup \{-\infty\},$ with $I\subseteq \mathbb{R}$  
+	\item For $x\in \mathcal{X},Y\subseteq\mathcal{X}^m,c\in I$, let $\text{MA}(x,Y,c)$ be defined as follow:
+	$$
+	\text{MA}(x,Y,c)\iff x\le \max Y+c
+	$$
+	\item For $x\in \mathcal{X},Y\subseteq\mathcal{X}^m,c\in I$, let $\text{MI}(x,Y,c)$ be defined as follow:
+	$$
+	\text{MI}(x,Y,c)\iff x\le \min Y+c
+	$$
+\end{itemize}
+
+A min-max system is $\text{CSP}(D,\Gamma)$ where:
+\begin{align*}
+	\Gamma&=\left\{O(x,Y,c),\quad (O,x,Y,c)\in \mathscr{R}\right\}\\
+	\mathscr{R}&\subseteq \{\text{MA},\text{MI}\}\times\mathcal{X}\times \left(\mathscr{P}(\mathcal{X}) \setminus \{\varnothing\}\right)\times I \\
+	\mathscr{R}&\space \text{is finite}
+\end{align*}
+
+
+\subsection{Equivalence with Max Atom Systems}
+A Max Atom system is trivially a Min Max system. So we will only prove the latter implication.
+
+Let $S'=\text{CSP}(D,\Gamma)$ be a Min Max system, and let:
+- $\Gamma_{\text{MI}}$ be the constraints that has $\text{MI}$ 
+- $\Gamma_{\text{MA}}$ be the constraints that has $\text{MA}$
+
+For each $\text{MI}(x,Y,c)\in \Gamma_{\text{MI}}.$ we replace it with the following constraints:
+$$
+\Gamma^{x,Y,c}=\bigcup_{y\in Y}\left\{\text{MA}(x,\{y\},c)\right\}
+$$
+Now, let:
+$$
+\Gamma'=\Gamma_{\text{MA}}\cup\bigcup_{\text{MI(x,Y,c)}\in \Gamma_{\text{MI}}} \Gamma^{x,Y,c}
+$$
+The system $\text{CSP}(D,\Gamma')$ is a max system
+
+\begin{algorithm}
+	\caption{Converting a Min-Max System to Max Atom}\label{alg:MinMaxToMaxAtom}
+	\begin{algorithmic}
+		\Require $S$ a Min-Max system
+		\Ensure $S'$ an $N$-ary Max Atom system  
+		\State $S'\leftarrow \varnothing$
+		\State $H\leftarrow\varnothing$ \Comment{$H$ is a map between variable,offsets to variables}
+		\State $V\leftarrow \text{Variables}(S)$  \Comment{$V$ is a set containing all variables}
+		\For {$\mathcal{C}\in S$}
+		 \Comment{Iterate over constraints}
+		 \State $C$ is the constants in the right hand side of $\mathcal{C}$
+		 \State $Y$ is the variables in the right hand side of $\mathcal{C}$
+		 \State $x$ is the variable in the left hand side of $\mathcal{C}$
+		\If {$\mathcal{C}$ is a min constraint}
+			\State $S'\leftarrow S'\cup\left\{\text{MA}(x,\{y,y\},c),\quad (y,c)\in \zip(Y,C)\right\}$
+		\Else
+			\State $Z\leftarrow \varnothing$
+			\For {$(y,c)\in \zip(Y,C)$}
+				\If {$(y,c) \notin \domain{H}$}
+					\State $z\leftarrow \text{newVariable}(V)$ \Comment{Generate a new formal variable not included in $V$}
+					\State $V\leftarrow V\cup\{z\}$
+					\State $H(y,c)\leftarrow z$
+				\EndIf
+				\State $S'\leftarrow S'\cup\{\text{MA}(H(y,c),\{y,y\},c)\}$
+				\State $Z\leftarrow Z\cup \{H(y,c)\} $
+			\EndFor
+			\State $S' \leftarrow S' \cup \{\text{MA}(x,Z,0)\}$
+		\EndIf
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}
+	\caption{Converting a Mean Payoff Game to a Min Max system}\label{alg:MPGToMinMax}
+	\begin{algorithmic}
+		\Require $G$ a Mean Payoff Game
+		\Ensure $S$ an Min-Max system 
+		\State $E\leftarrow E(G)$ \Comment{The edges of $G$}
+		\State $V\leftarrow V(G)$\Comment{The variables of $G$}
+		\State $W \leftarrow W(G)$ \Comment{The weight function of $G$}
+		\State $P \leftarrow P(G)$ \Comment{The set of player of $G$}
+		\For {$(u,p) \in V\times P$}
+			\State $x\leftarrow (u,p)$
+			\State $A\leftarrow \Adj(x)$
+			\State $Y=\{(a,\bar{p}),\quad a\in A\}$
+			\State $C\leftarrow W(A)$ \Comment{Calculating the weights element wise.}
+			\If {$p$ is Max}:
+				\State $\text{OP}\leftarrow \text{MA}$			
+			\Else
+				\State $\text{OP}\leftarrow \text{MI}$	
+			\EndIf
+			\State $S\leftarrow S\cup \left\{\text{OP}(x,Y,C)\right\}$
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\section{Polymorphisms}
+A polymor

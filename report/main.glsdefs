@@ -1,0 +1,90 @@
+\ifglsentryexists{ny}{}%
+{%
+\gls@defglossaryentry{ny}%
+{%
+name={NY},%
+sort={NY},%
+type={acronym},%
+first={New York\glsspace (NY)},%
+firstplural={New Yorks\glsspace (NYs)},%
+text={NY},%
+plural={NYs},%
+description={New York},%
+descriptionplural={New York\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={New York},%
+longplural={New Yorks},%
+short={NY},%
+shortplural={NYs},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{la}{}%
+{%
+\gls@defglossaryentry{la}%
+{%
+name={LA},%
+sort={LA},%
+type={acronym},%
+first={Los Angeles\glsspace (LA)},%
+firstplural={Los Angeless\glsspace (LAs)},%
+text={LA},%
+plural={LAs},%
+description={Los Angeles},%
+descriptionplural={Los Angeles\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={Los Angeles},%
+longplural={Los Angeless},%
+short={LA},%
+shortplural={LAs},%
+counter={page},%
+parent={},%
+%
+}%
+}%
+\ifglsentryexists{un}{}%
+{%
+\gls@defglossaryentry{un}%
+{%
+name={UN},%
+sort={UN},%
+type={acronym},%
+first={United Nations\glsspace (UN)},%
+firstplural={United Nationss\glsspace (UNs)},%
+text={UN},%
+plural={UNs},%
+description={United Nations},%
+descriptionplural={United Nations\acrpluralsuffix },%
+symbol={\relax },%
+symbolplural={\relax },%
+user1={},%
+user2={},%
+user3={},%
+user4={},%
+user5={},%
+user6={},%
+long={United Nations},%
+longplural={United Nationss},%
+short={UN},%
+shortplural={UNs},%
+counter={page},%
+parent={},%
+%
+}%
+}%

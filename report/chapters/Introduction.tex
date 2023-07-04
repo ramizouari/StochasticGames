@@ -1,0 +1,31 @@
+\chapter*{Introduction}
+
+\addcontentsline{toc}{chapter}{Introduction}
+
+Avec l'explosion de l'intelligence artificielle, et surtout les modèles d'apprentissage profonds, la complexité des modèles a subi une croissance considérable, qui les rend inexploitable dans les systèmes à complexité limitée.
+\\
+\\
+Dans ce rapport, nous allons étudier la quantification des paramètres et des entrées des couches du réseau de neurones sur un seul bit.
+\\
+\\
+Ce rapport va détailler notre approche de la formalisation des BNNs, de l'analyse et généralisation des approches existantes, vers l'implémentation d'une bibliothèque unifiant les BNNs, et son utilisation. Il est composé de $6$ chapitres.
+\\
+\\
+Dans le premier chapitre, nous allons présenter la societé \textbf{dB Sense} et sa méthodologie.
+\\
+\\
+Dans le deuxième chapitre, nous allons donner une petite histoire de l'apprentissage profond, et puis poser le problème de la grande complexitée de ces modèle, en posant la binarisation comme une solution.
+\\
+\\
+Dans le troisième chapitre, nous allons formaliser notre approche, en définissant les BNNs. Après nous allons poser quelques problèmes dans l'entraînement. Après nous allons proposer les optimisations temps et mémoire qu'on peut exploiter avec les BNNs.
+\newline Finalement, nous allons proposer l'algorithme d'entraînement et d'interférence des BNNs. 
+\\
+\\
+Dans le quatrième chapitre, nous allons étudier et analyser quelques BNNs répandus dans la littérature, en conformant avec notre définition proposée.
+\\
+\\
+Dans le cinquième chapitre, nous allons implémenter la bibliothèque \textbf{binaryflow}, en justifiant les paradigmes utilisés.
+\\
+\\
+Dans le sixième chapitre, nous allons utiliser les différents BNNs étudiés sur $3$ jeux de données. 
+\newline Pour chacun de ces modèles nous allons analyser son performance de prédiction, sa taille mémoire au déploiement, et une estimation sur la complexité de son interférence en calculant le nombres d'instruction équivalents.
