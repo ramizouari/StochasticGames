@@ -12,7 +12,7 @@
 \usepackage{afterpage}
 \usepackage{rotating}
 \usepackage[export]{adjustbox}% http://ctan.org/pkg/adjustbox
-\usepackage{subfig}
+
 
 % Algorithms
 \usepackage{algorithm}
@@ -50,6 +50,7 @@
 \usepackage{csquotes} %in-line and display quotations
 \usepackage[margin=1in]{geometry}  %to reduce margins to 1 inch 
 \usepackage{sidecap} %to enable side captions on figures
+\usepackage{subcaption}
 \usepackage{setspace} %to enable double spacing   
 \usepackage{float}
 \usepackage{footnote}
@@ -57,7 +58,7 @@
 \usepackage{mathrsfs}
 \usepackage{pgf-umlcd}
 \usepackage{dirtytalk}
-
+\usepackage{tikz} 
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
 
@@ -78,11 +79,34 @@
 \DeclareMathOperator{\zip}{zip}
 \DeclareMathOperator{\domain}{domain}
 \DeclareMathOperator{\pop}{pop}
+\DeclareMathOperator{\False}{\textbf{False}}
+\DeclareMathOperator{\True}{\textbf{True}}
+\DeclareMathOperator{\Not}{\textbf{not}}
+\DeclareMathOperator*{\transform}{transform}
+\DeclareMathOperator*{\projection}{projection}
+\DeclareMathOperator{\arcconsistency}{arc consistency}
+\DeclareMathOperator{\CSP}{\mathtt{CSP}}
+\DeclareMathOperator{\WeakOptimal}{\mathtt{WeakOptimal}}
+\DeclareMathOperator{\StrongOptimal}{\mathtt{StrongOptimal}}
+\DeclareMathOperator{\PayoffOptimal}{\mathtt{PayoffOptimal}}
 \newtheorem{definition}{Définition}
 \newtheorem{remark}{Remarque}
 \newtheorem{proof}{Preuve}
 \newtheorem{lemma}{Lemme}
-
+%Used for encapsulation
+\newcommand{\VertexSet}{V}
+\newcommand{\EdgeSet}{E}
+\newcommand{\PlayerSet}{P}
+\newcommand{\Dnp}[2]{\mathcal{D}(#1,#2)}
+\newcommand{\Dnm}[2]{\mathcal{D}(#1,#2)}
+\newcommand{\Dsnp}[2]{\mathcal{D}^S(#1,#2)}
+\newcommand{\Dsnm}[2]{\mathcal{D}^S(#1,#2)}
+\newcommand{\PowerSet}[1]{\mathscr{P}(#1)}
+\newcommand{\Probability}[1]{\mathscr{P}\left(#1\right)}
+\newcommand{\ConditionalProbability}[2]{\mathscr{P}\left(#1 \mid #2\right)}
+\newcommand{\ComRing}{\mathcal{R}}
+\newcommand{\Enclose}[1]{\left(#1\right)}
+\newcommand{\Distribution}[1]{\mathscr{D}(#1)}
 
 % header and footer
 \pagestyle{fancy}
@@ -148,6 +172,8 @@
 \tableofcontents
 \listoffigures
 \listoftables
+\listofalgorithms
+
 
 \input{chapters/Introduction}
 \input{chapters/chapter00}

@@ -131,7 +131,7 @@ The expected complexity of algorithm \ref{alg:Choice} depends on both $n$ and $m
 	\item If $m=kn+o(n)$ with $k\in\mathopen]0,1\mathclose[$, then it is $\tilde{\mathcal{O}}(m).$
 	\item If $m=n-o(n)$, It is\footnote{Here we use the minus sign to emphasize that $m\le n$} $\tilde{\mathcal{O}}(m\log m).$ 
 \end{itemize}
-To prove this result, we use a well known asymptotic approximation of the Harmonic series:
+To prove this result, we use a well known asymptotic approximation of the Harmonic series\footnote{This asymptotic approximation can be proven using the Euler–Maclaurin formula}:
 $$
 H_n=\ln n+\gamma -\frac{1}{2n}+\mathcal{O}\left(\frac{1}{n^2}\right)
 $$
@@ -162,34 +162,45 @@ If $m$ tends to $n,$ it is more hard to select $m$ elements from a set of size $
 		\Require $S$ a list
 		\Require $m\in\{0,\dots \lvert S \rvert\}$ the number of chosen elements
 		\Require $\choice$ The choice function defined on algorithm \ref{alg:Choice}
-		\Require Threshold $\tau$
+		\Require $\tau$ a fine tuned threshold. We will use $\tau=\frac{1}{2}$ for all practical purposes.
 		\Ensure $H$ a set of size $m$ containing uniformly drawn elements without replacement. 
 		\If {$\frac{m}{\lvert S \rvert} \le \tau$}
 			\State $H\leftarrow \choice(V,n)$
 		\Else
-			\State $H\leftarrow V\setminus \choice(S,n-m)$
+			\State $H\leftarrow S\setminus \choice(S,n-m)$
 		\EndIf
 		\State \Return $H$
 	\end{algorithmic}
 \end{algorithm}
+\FloatBarrier
+Also, an important point is that by combining the analysis of all possible cases, we can extract a constant factor that is independent of $n.$ So that the Big-O notation is only a function of $m$.
 \subsection{Complexity of Optimised $\mathcal{D}(n,p)$ Graph Construction}
 We return to evaluate the asymptotic behaviour of $\mathbb{E}_d[C(n,d)].$
 \newline Let $\delta \in \mathbb{R}_+^*$
 \newline The Chebychev Inequality implies that:
 $$
-\mathscr{P}\left(\left \lvert \frac{1}{n}\sum_{i=1}^nX_i -p \right \rvert \ge \frac{\delta}{n^2}p(1-p)  \right) \le \frac{1}{\delta^2}
+\mathscr{P}\left(\left \lvert \frac{1}{n}\sum_{i=1}^nX_i -p \right \rvert \ge \frac{\delta}{\sqrt{n}}\sqrt{p(1-p)}  \right) \le \frac{1}{\delta^2}
 $$
-By setting: $\delta=p^{-1},$ we have:
-$$\mathscr{P}\left(\left \lvert \frac{1}{n}\sum_{i=1}^nX_i -p \right \rvert \ge \frac{1-p}{n^2}  \right) \le p^2
+By setting: $\delta=\frac{1}{\sqrt{p}},$ we have:
+$$\mathscr{P}\left(\left \lvert \frac{1}{n}\sum_{i=1}^nX_i -p \right \rvert \ge \frac{\sqrt{1-p}}{\sqrt{n}}  \right) \le p 
 $$
+Let $I=[np-\sqrt{n(1-p)},np+\sqrt{n(1-p)}].$
+\newline 
 We have:
 \begin{align*}
-\mathbb{E}\left[C(n,d)\right] &\le \mathbb{E}\left[C(n,d) \mid d\in [np-\tfrac{1-p}{n},np+\tfrac{1-p}{n}]\right] + p^2C(n,n) \\
-&\le C(n,np+\tfrac{1-p}{n}) + p^2C(n,n) \quad \text{for large enough}\ n \\
-C(n,np+\tfrac{1-p}{n})&=\mathcal{O}(np+\tfrac{1-p}{n})\\
-&=\mathcal{O}(np)\\
-C(n,n)&=\mathcal{O}(n) \quad \text{With the refined choice algorithm}
+\mathbb{E}\left[C(n,d)\right]  &\le \mathbb{E}\left[C(n,d) \mid d\in I\right] + p^2\mathbb{E}\left[C(n,d) \mid d\notin I\right] \\
+&\le \max_{m\in \mathbb{N} \cap I}C(n,m) + \max_{m\in\{0,\dots,n\}}p^2C(n,m) 
  \end{align*}
+To further simplify this, we need two key observations:
+\begin{itemize}
+	\item The interval $m\in \mathbb{N} \cap [np-1+p,np+1-p]$ contains at most $3$ integers, all of which are within a distance of $1$ to $np$
+	\item The complexity of $\mathbb{E}[C(n,m)]$ does only depend on $m.$
+\end{itemize}
+Thus, we have the following:
+\begin{align*}
+	\max_{m\in \mathbb{N} \cap [np-1+p,np+1-p]}C(n,m) &= \mathcal{O}(np) \\
+	\max_{m\in\{0,\dots,n\}}p^2C(n,m) &= \mathcal{O}(np^2)
+\end{align*}
 Now, by combining both estimations, we get:
 $$
 \tilde{\mathcal{O}}(n\mathbb{E}_d[C(n,d)])=\tilde{\mathcal{O}}(n^2p) \quad \blacksquare
@@ -211,7 +222,7 @@ To construct a random $\mathcal{D}(n,m)$ graph, we only have to select $m$ unifo
 \FloatBarrier
 Here $\text{Lazy}(V)\times \text{Lazy}(V)$ is a lazy implementation of cartesian product that supports bijective indexing\footnote{Indexing is required for uniform sampling} over $\{0,\dots,n^2-1\}.$
 \newline The complexity of this construction is: $
-\mathcal{O}(m)
+\tilde{\mathcal{O}}(m)
 $ 
 
 \section{Sinkless Conditionning}
@@ -358,17 +369,94 @@ $$
 The generation was done on a `haswell64` partition with 24 cores. and it took 02:12:38 hours.
 
 \section{Annotation}
-Now, non-polynomial algorithms are known for Mean Payoff Games. 
-\newline 
-The algorithm that we followed is based on \textbf{CSPs}.If the weights are represented as integers, it is exponential on the size of the input\footnote{Assuming that the input is not represented on a unary system.}.
+\subsection{Approach}
+We used the CSP algorithm $\ref{alg:AC3Optimized}$ to annotate the dataset, potentially augmented with some heuristics. 
+\newline We implemented a program that takes the path of the dataset, and solves the Mean Payoff Games one by one.
+\newline To maximize efficiency, the program launches many solver threads, with each one independently working on a single file, and the results are accumulated using a ConcurrentQueue.
+\subsection{Target Values}
+The solver will calculate the following targets:
+\begin{itemize}
+	\item The optimal pair of strategies
+	\item The mean payoffs for each starting position, turn.
+	\item The winners for each starting position, turn.
+\end{itemize}
+Also, some additional metadata are generated for analysis:
+\begin{itemize}
+	\item \texttt{dataset}: The name of the whole dataset
+	\item \texttt{graph}: The name of the graph.
+	\item \texttt{status}: The solver's status on the given graph. In particular, whether it succeeded to solve the instance or not\footnote{We expect that the solver may crash due to several reasons (corrupted file, out of memory, etc\dots). For that we made additional effort for exception handling, so that an error for a single instance does not propagate to the whole program.}. Equal to ``OK" if the execution is successful.
+	\item \texttt{running\_time}: The time needed to solve the instance.
 
+\end{itemize}
 
-A max atom system is a generalisation of a ternary max atom system. 
+\subsection{Heuristics}
+To accelerate the annotation of the two datasets, we had to apply some heuristics to the algorithm. We made essentially two kinds of heuristics.
+\subsubsection{Linear Bound Heuristic}
+This is the heuristic based on the view that for almost all solutions of a Ternary Max Atom system extracted from our generated random games, either:
+\begin{itemize}
+	\item All variables are infinite: 
+	$$
+	X(u)=-\infty \quad \forall u\in V$$
+	\item The diameter of assignments is in the order of $\lVert W\rVert_{\infty}$
+	$$
+	\Delta X = \sup_{u\in V}X(u)-\inf_{u\in V,X(u)>-\infty}X(u)= \mathcal{O}(\lVert W\rVert_{\infty})$$
+\end{itemize}
+This heuristic suggests a much tighter search space to the worst case $\lVert W \rVert_{1}$ one. Going further, with uniform random weights:
+$$
+\lVert W \rVert_{1}=\mathcal{O}\left(\lvert E \rvert \times \lVert W \rVert_{\infty}\right)
+$$
+We believe this heuristic arises due to the random property of graphs, because in general, one can build an infinite family of ternary max atom systems that violate this heuristic. \newline In fact, going further, one can build ternary max atom systems were the $\lVert W \rVert_{1}$ estimation is tight.
+%Example of such system:
+% Linear chain of constraints 
 
-\subsection{Transformations}r
-To call a CSP solver on the game, we need to transform it to a CSP problem.
-\newline We will use a transformation to a Min-Max System\footnote{See the appendix for a formalisation of Min-Max System.}.\newline
-A Min-Max System is a CSP over 
+To generating the dataset, we applied this heuristic with $\Delta X=4\lVert W\rVert_{\infty}$
+$$
+D = \{-\infty,-2 \lVert W\rVert_{\infty},,-2 \lVert W\rVert_{\infty}+1 ,\dots ,2\lVert W\rVert_{\infty} \}
+$$
 
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}[node distance={20mm}, thick, main/.style = {draw, circle}]
+		\node[main] (1) {$0$}; 
+		\node[main] (2) [right of =1] {$1$}; 
+		\node[main] (3) [right of =2] {$2$}; 
+		\node[main] (4) [right of =3] {$3$}; 
+		\node[main] (5) [right of =4] {$\dots$}; 
+		\node[main] (6) [right of =5] {$n-1$}; 
+		\node[main] (7) [right of =6] {$n$}; 
+		\draw[->] (1) -- node[midway, above right, sloped, pos=0.3] {-5} (2);
+		\draw[->] (2) -- node[midway, above, sloped, pos=0.5]{6} (3);
+		\draw[->] (3) -- node[midway, above, sloped, pos=0.5] {-8} (4);
+		\draw[->] (4) -- node[midway, above, sloped, pos=0.5] {-5}(5);
+		\draw[->] (5) -- node[midway, above, sloped, pos=0.5] {7}(6);
+		\draw[->] (6) -- node[midway, above, sloped, pos=0.5] {2}(7);
+	\end{tikzpicture} 
+	\caption{A counter example of the Linear Bound heuristic}
+\end{figure}
 
-\subsection{Arc Consistency}
+\subsubsection{Early Stopping}
+If after any iteration of arc consistency, $\max_{x\in V}\nu(x) < \sup D.$ Then, $\nu(t)$ will converge to $-\infty$ for all $t.$ 
+\newline Thus, we stop the algorithm and sets $\nu(t)\leftarrow -\infty,\quad \forall t$
+\paragraph{Proof} suppose that in fact there is an assignment with: 
+$$
+-\infty < \max_{u\in V}\nu(u) < \sup D$$
+We will take the $u$ with the biggest such $\nu(u).$  
+\newline Now our system is a tropical max atom system, which means translations are also a polymorphism of this system, so for any assignment $\nu:V\rightarrow\mathbb{Z},\ X+t$ is also an assignment $\forall t\in \mathbb{Z}.$ With that, $\nu+\sup D-\nu(u)$ is also an assignment.
+\newline This assignment has the property: $$
+\forall s\in V,\quad \nu(s)+\sup D-\nu(u) \in D
+$$
+Which is a contradiction, as it violates the consistency of arc consistency, and the maximality of the solution with respect to the domain $D$
+
+  
+The efficiency of the Early Stopping heuristic depends on the density of the graph. Empirically, for dense graphs. the analoguous ternary max atom system has two kind of assignments:
+\begin{enumerate}
+	\item Either all variables are finite
+	\item Either all variables are $-\infty$
+\end{enumerate}
+This translates back in a dense Mean Payoff setting, that the winner of the game does not depend in the starting position and the starting turn. 
+\newline With that, the Early Stopping heuristic will quickly detect the second case, which is the usually hurdle of the algorithm.
+\newline On the other hand, for sparse graphs, we do not have this nice distinction between finite and infinite assignments, and they can overlap, and so will make this heuristic useless in practice.
+
+\subsection{Deployment}
+After some experiments, it was very clear that vertical scaling with the number of threads is not sufficient. By analysing the running time of some samples, we estimated the total running time solving both datasets to exceed $30$ days.
+\newline As a result of this, we deployed a pipeline of $24$ nodes, each with $24$ threadss working simultaneously on a partition of the dataset.

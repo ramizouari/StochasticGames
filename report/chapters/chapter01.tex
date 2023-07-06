@@ -10,7 +10,7 @@ A Weighted Di-Graph $\mathcal{G}$ is a tuple $(\mathcal{V},\mathcal{E},\mathcal{
 \begin{itemize}
 		\item $\mathcal{V}$ is the set of vertices.
 		\item $\mathcal{E} \subseteq V\times V$ is the set of edges.
-		\item $\mathcal{W}:\mathcal{E}\rightarrow \mathcal{R}$ is the weight function, assigning a weight for every edge, with $\mathcal{R}$ some set representing the weight.
+		\item $\mathcal{W}:\mathcal{E}\rightarrow \mathbb{G}$ is the weight function, assigning a weight for every edge, with $\mathbb{G}$ some ordered abelian group\footnote{This definition is too general. We will only consider $\mathbb{G}\in \{\mathbb{Z},\mathbb{Q},\mathbb{R}\}.$ Also, $\mathbb{G}$ itself should be clear from the context.}. 
 \end{itemize}
 \subsection{Mean Payoff Game}
 Formally, a \textbf{Mean Payoff Graph} is a tuple $(\mathcal{V},\mathcal{E},\mathcal{W},\mathcal{P},s,p)$ where:
@@ -76,25 +76,91 @@ That sequence has two accumulation points $\pm \frac{1}{3},$ and thus, it does n
 
 On the other hand, the introduction of the supremum and infimum operators will solve the convergence problem, as the resulting sequences will become monotone.
 
-An example of an execution that gives a rise to such payoffs is the following game:  
-% Insert Mean Payoff Game
-With the following pair of strategies\footnote{Note that the proposed pair of strategies is odd in the sense that it appears that both players cooperated on the construction of non-convergent mean payoffs instead of trying ot win the game.}:
-% Insert Strategy.
+An example of an execution that gives a rise to such payoffs is the following Meab Payoff Game instance\footnote{Note that the proposed pair of strategies is odd in the sense that it appears that both players cooperated on the construction of non-convergent mean payoffs instead of trying ot win the game.}:
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}[b]{0.45\textwidth}
+		\raggedleft
+		\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,
+			thick,main node/.style={circle,draw,font=\Large\bfseries}]
+			\node[main node, fill=gray!50] (1) {$0$}; 
+			\node[main node] (2) [right of =1] {$1$}; 
+			\path (1) edge [loop above] node {1} (1)
+			edge [bend right] node [below] {-1} (2)
+			(2) edge [bend right] node [above] {1} (1)
+			edge [loop above] node {-1} (2);
+		\end{tikzpicture} 
+		\caption{Representation of the Mean Payoff Game}
+	\end{subfigure}
+  \hfill
+	\begin{subfigure}[b]{0.45\textwidth}
+		\raggedright
+		\small
+		Pair of strategies defined as:
+		\begin{align*}
+		\Phi: &V^+ \times P \rightarrow V \\
+		 &(s_0\dots s_r, p) \rightarrow B(r)\bmod 2
+		\end{align*}
+		\scriptsize
+		With $B(r)$ the position of the left-most bit in the binary representation of $r$
+		\caption{Definition of both strategies}
+	\end{subfigure}
+	\caption{An example of an execution with non-convergent Mean Payoffs}
+\end{figure}
 \subsection{Symmetries}
 
 \subsection{Strategy}
+\subsubsection{Deterministic Strategies}
 Let $p$ be a player. \newline 
-A (deterministic) strategy\footnote{By default, we refer to deterministic strategies. If the strategy is not deterministic, we will explicit it.} is a function $\Pi_p:\mathcal{V}\rightarrow \mathcal{V}$ such that:
+A (deterministic) strategy\footnote{By default, we refer to deterministic strategies. If the strategy is not deterministic, we will explicit it.} is a function $\Pi^{p}:\VertexSet^+\rightarrow \VertexSet$ such that:
 $$
-\forall v\in\mathcal{V}, \Pi_p(v) \in \Adj v
+\forall v_0\dots v_r\in \VertexSet^+, \quad \Pi_p(v_0\dots v_r) \in \Adj v
+$$	
+If the strategy does only depend on the current vertex, we say it is a memoryless (deterministic) strategy $\Pi:\VertexSet\rightarrow \VertexSet$
+\subsubsection{Probabilistic Strategies}
+A probabilistic strategy is a random process that assigns for each sequence of vertices $v\in\mathcal{V}$ a probability distribution over $\Adj v.$ This constitutes the most general strategy of a player:
 $$
+\forall v_0\dots v_r\in \VertexSet^+, \quad \Pi_p(v_0\dots v_r) \in \Distribution{\Adj v}
+$$
+\subsubsection{Considered Strategies}
+Strategies that depends in complete past histories are in general intractable. For Mean Payoff Game, it is proven that the optimal strategy is a \textbf{deterministic} and \textbf{memoryless}.
+\newline For that we will only consider \textbf{memoryless} strategies. And for the scope of this report:
+\begin{itemize}
+	\item A deterministic strategy should refer to memoryless deterministic strategy.
+	\item A probabilistic strategy should refer to memoryless probabilistic strategy.
+	\item A strategy should refer to memoryless deterministic strategy.
+\end{itemize}
+We will still consider (memoryless) probabilistic strategies as they reside in a smooth space, and thus they can be used for machine learning purposes.
+\subsubsection{Deterministic Optimal Strategy}
+There are three kinds of optimality:
+\paragraph{Weak Optimality}: In the deterministic case, a strategy $\Phi$ of player $p\in \PlayerSet$ is weakly optimal if one of the following is true:
+\begin{itemize}
+	\item For each strategy $\Phi^{p}$ of player $p,$ player $\bar{p}$ can win the game by finding a countering strategy $\Phi^{\bar{p}}.$
+	\item Player $p$ will not lose the game no matter his opponent's strategy
+\end{itemize}
 
-A probabilistic strategy $\Phi_p:\mathcal{V}\rightarrow \mathscr{P}(V)$ is a random process that assigns for each vertex $v\in\mathcal{V}$ a probability distribution over $\Adj v.$ This constitutes the most general strategy of a player.
+\paragraph{Strong Optimality}: In the deterministic case, a strategy $\Phi$ of player $p\in \PlayerSet$ is strongly optimal if one of the following is true:
+\begin{itemize}
+	\item For each strategy $\Phi^{p}$ of player $p,$ player $\bar{p}$ can win or tie the game by finding a countering strategy $\Phi^{\bar{p}}.$
+	\item Player $p$ will win the game no matter his opponent's strategy
+\end{itemize}
+
+\paragraph{Payoff Optimality}: In the deterministic case, a strategy $\Phi$ of player $p\in \PlayerSet$ is payoff optimal if independently of $\bar{p}$'s strategy it:
+\begin{itemize}
+	\item Maximises the Mean Payoff if $p=\text{Min}$ 
+	\item Minimises the Mean Payoff otherwise
+\end{itemize}
+Now we have the following hiearchy considering the set of optimal strategies:
+$$
+\forall \text{Mean Payoff Game}\ G,\forall p\in \PlayerSet,\quad \PayoffOptimal(G,p) \subseteq \StrongOptimal(G,p) \subseteq \WeakOptimal(G,p)
+$$
 
 \section{Evaluating Strategies}
 Suppose we have a pair of potentially probabilitic strategies $(\Phi^{\Max},\Phi^{\Min}).$ The problem is to evaluate the winner without doing an infinite simulation of the game. 
-\subsection{Deterministic Strategies}
-If both strategies are deterministic. Then the generated sequence of vertices $(s_n)_{n\in\mathbb{N}}$ will be completely determined by the recurrence relation:
+\subsection{Monte-Carlo Simulations}
+This is the most intuitive evaluation method 
+\subsection{Memoryless Deterministic Strategies}
+If both strategies are deterministic and memoryless. Then the generated sequence of vertices $(s_n)_{n\in\mathbb{N}}$ will be completely determined by the recurrence relation:
 $$
 s_n=\begin{cases}
 	s & \text{if } \space n=0 \\
@@ -134,10 +200,39 @@ With that:
 $$
 \lim_{n\rightarrow +\infty} \frac{1}{n}\sum_{k=0}^{n-1} w_k=\frac{1}{T}\sum_{r=0}^{T-1}w_{r+N}  \quad \blacksquare
 $$
-%Insert Graph Loop picture
-This calculation leads to the following $\mathcal{O}(\lvert V \rvert)$ algorithm that calculates the mean payoff of deterministic pairs of strategies:
-%Insert algorithm
+Now, our algorithm will be composed of $3$ main parts:
+\begin{itemize}
+	\item Calculating the transition function $F:\VertexSet\times \PlayerSet \rightarrow \VertexSet\times \PlayerSet$. This is straightforward from the construction.
+	\item Calculating the period and the offset of the sequence. We will use Floyd's cycle finding algorithm for that.
+	\item Calculating the Mean Payoff
+\end{itemize}
+This is an illustrative implementation of our algorithm.
+\begin{algorithm}
+	\caption{Deterministic strategies evaluation}\label{alg:DeterministicEvaluation}
+	\begin{algorithmic}
+		\Require $G=(V,E,P,s,p)$ a mean payoff game
+		\Require $(\Phi^{\text{Max}},\Phi^{\text{Min}})$ the edge probability 
+		\Ensure $R$ The mean payoff  
+		\State $F\leftarrow \text{Transition}(G,\Phi^{\text{Max}},\Phi^{\text{Min}})$\Comment{Calculate the transition function}
 
+		\State $x_0\leftarrow (s,p)$
+		\State $(T,r)\leftarrow \text{FloydCycleFinding}(F,x_0)$ \Comment{Find the period and the offset}
+		\State $S\leftarrow 0$ \Comment{$S$ represents the cumulative payoffs along a cycle}
+		\State $x\leftarrow x_0$
+		\For {$k\in\{1,\dots,r\}$} \Comment{Advance until arriving to the cycle}
+			\State $x\leftarrow F(x)$
+		\EndFor
+		\For {$k\in \{1,\dots,T\}$}
+			\State $y\leftarrow \leftarrow F(x)$
+			\State $u\leftarrow \displaystyle\projection_{V\times P\rightarrow V}(x)$ \Comment{Extracts the current vertex}
+			\State $v\leftarrow \displaystyle\projection_{V\times P\rightarrow V}(y)$ \Comment{Extracts the next vertex}
+			\State $S\leftarrow S+W(u,v)$
+			\State $x\leftarrow y$
+		\EndFor
+		\State \Return $R\leftarrow \frac{S}{T}$
+	\end{algorithmic}
+\end{algorithm}
+\FloatBarrier
 
 
 \subsection{Probabilistic Strategies}

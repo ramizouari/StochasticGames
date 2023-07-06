@@ -2,29 +2,45 @@
 In the previous chapters, we described how the system works, without formalising the CSP approach.\newline
 On this chapter, we will describe the CSP systems that we have used, with an equivalence proof between them.
 
+\section{Constraint Satisfaction Problem}
+\subsection{Definition}
+A constraint satisfaction problem
+\subsection{Assignment}
+An assignment of a $\CSP(\mathcal{X},D,\Gamma)$ is a function $X:\mathcal{X}\rightarrow D$ such that, by replacing each $x\in\mathcal{X},$ by $X(x),$ all the constraints will evaluate to $\True$
+\subsection{Polymorphism}
+A function $F:\mathscr{F}(\mathcal{X},D)^k\rightarrow \mathscr{F}(\mathcal{X},D)$ is said to be a polymorphism if:
+$$
+\forall X_1,\dots,X_k \ \text{assignments of}\ \CSP(\mathcal{X},D,\Gamma),\quad F(X_1,\dots,X_k) \ \text{is also an assignment of}\ \CSP(\mathcal{X},D,\Gamma)
+$$
+Now, in the next section, we will define an important class of CSPs that is used to solve Mean Payoff Games, with the polymorphisms required for the solution algorithm's correctness
 
-
-\section{Max Atom System}
-\subsection{Ternary Max Atom Systems}
+\section{Ternary Max Atom Systems}
+\subsection{Definition}
 \begin{itemize}
 	\item Let $\mathcal{X}$ be a finite set of variables
 	\item Let $D=I\cup \{-\infty\},$ with $I\subseteq \mathbb{R}$.
-	\item  For $x,y,z\in \mathcal{X},c\in I$, let $\text{MA}(x,y,z,c)$ be defined as follow:
+	\item  For $x,y,z\in \mathcal{X},c\in I$, let $\text{MA}_3(x,y,z,c)$ be defined as follow:
 	$$
-	\text{MA}(x,y,z,c)\iff x\le \max(y,z)+c
+	\text{MA}_3(x,y,z,c)\iff x\le \max(y,z)+c
 	$$
 \end{itemize}
-
-A ternary max atom system is $\text{CSP}(D,\Gamma)$ where:
+A ternary max atom system is $\CSP(D,\Gamma)$ where:
 \begin{align*}
-	\Gamma&=\left\{\text{MA}(x,y,z,c),\quad (x,y,z,c)\in \mathscr{R}\right\}\\
+	\Gamma&=\left\{\text{MA}_3(x,y,z,c),\quad (x,y,z,c)\in \mathscr{R}\right\}\\
 	\mathscr{R}&\subseteq \mathcal{X}^3\times I\\
 	\mathscr{R}& \space \text{is finite}
 \end{align*}
+\subsection{Example}
+An example of a ternary max atom system is the following $\CSP(D,\Gamma)$ with $D=\mathbb{Z}$ and $\Gamma$ represented as follow:
+\begin{align*}
+	x &\le \max(y,z)-1 \\
+	y &\le \max(z,x)-1 \\
+	z & \le \max(x,y)-1
+\end{align*}
 
 
-
-\subsection{Max Atom Systems}
+\section{Max Atom Systems}
+\subsection{Definition}
 \begin{itemize}
 	\item Let $\mathcal{X}$ be a finite set of variables
 	\item Let $D=I\cup \{-\infty\},$ with $I\subseteq \mathbb{R}$   
@@ -34,7 +50,7 @@ A ternary max atom system is $\text{CSP}(D,\Gamma)$ where:
 	$$
 \end{itemize}
 
-A max atom system is $\text{CSP}(D,\Gamma)$ where:
+A max atom system is $\CSP(D,\Gamma)$ where:
 
 \begin{align*}
 	\Gamma&=\left\{\text{MA}(x,Y,c),\quad (x,Y,c)\in \mathscr{R}\right\}\\
@@ -42,9 +58,9 @@ A max atom system is $\text{CSP}(D,\Gamma)$ where:
 	\mathscr{R}&\space \text{is finite}
 \end{align*}
 
-\subsection{Min Max System $\le$ Max Atom System}
+\subsection{$\text{MA} \le \text{MA}_3$}
 \begin{itemize}
-	\item Let $S=\text{CSP}(\mathcal{X},D,\Gamma)$ a max atom system.
+	\item Let $S=\CSP(\mathcal{X},D,\Gamma)$ a max atom system.
 	\item Let $R\in \Gamma$
 	\item Let $x\in \mathcal{X},Y\in\mathscr{P}(\mathcal{X}),c\in I$ such that $R=\text{MA}(x,Y,c)$ such that $\lvert Y \rvert >2$
 \end{itemize}
@@ -59,46 +75,39 @@ We will reduce the arity of $R$ as follow:
 	\item Let $R'=\text{MA}(x,Y',c)$
 	\item Let $R_w=\text{MA}(w,\{y,z\},0)$
 	\item Let $\Gamma'=(\Gamma\cup\{R',R_w\})\setminus \{R\}$
-	\item Let $S'=\text{CSP}(\mathcal{X}',D,\Gamma)$
+	\item Let $S'=\CSP(\mathcal{X}',D,\Gamma)$
 \end{itemize}
 
 
 We will prove that $S'$ is equivalent to $S.$
 
-Without a loss of generality:
-\begin{itemize}
-	\item we will order $\mathcal{X}$ such that $x_0\le\dots\le x_{n-1}$ with $n=\lvert \mathcal{X}\rvert$ 
-	\item $x_{n-2}=y$
-	\item $x_{n-1}=z$
-	\item We will set $x_n=w$
-	\item Let $i\in\{0,\dots,n-1\}$ such that $x_i=x$
-\end{itemize}
-
-
 \paragraph{Implication}
-Let $s_0,\dots,s_{n}$ an assignment of $S'.$ It is trivial that $s_0,\dots,s_{n-1}$ is an assignment of $S$ 
+Let $X:\mathcal{X}'\rightarrow D$ an assignment of $S'.$ It is trivial that by removing $X(w)$, $X_{\mid \mathcal{X}}$ is an assignment of $S$ 
 
 \paragraph{Equivalence}
 \begin{itemize}
-	\item Let $s_0,\dots,s_{n-1}$ an assignment of $S'$
-	\item Let $s_n=\max(s_{n-1},s_{n-2})$
+	\item Let $X:\mathcal{X}'\rightarrow D$ such that $X_{\mid \mathcal{X}}$ is an assignment of $S.$
+	\item We will set $X(w)=\max(X(y),X(z))$
 \end{itemize}
-Then, $s_0,\dots,s_n$ is an assignment of $S'$
+Then, $X$ is an assignment of $S'$
 
 \subsubsection{Induction}
-Since the number of variables is finite. The number of constraints is finite, and the arity of each constraint is finite. Applying such reduction iteratively will eventually give a system $S^*$ equivalent to $S$ with:
+Since the number of variables is finite, the arity of each constraint is finite. Also, as the the number of constraints is finite, Applying such reduction iteratively will eventually give a system $S^*$ equivalent to $S$ with:
 \begin{itemize}
-	\item $\mathcal{X}^*$ the set of variables with $\mathcal{X}\subseteq \mathcal{X}'$ 
+	\item $\mathcal{X}^*$ the set of variables with $\mathcal{X}\subseteq \mathcal{X}^*$ 
 	\item $\Gamma^*$ is the set of constraints:
-	\item Each constraint is of the form $\text{MA}(x,Y,c)$ with $x\in \mathcal{X}',Y\subseteq \mathcal{X}',c\in I$ with $\lvert Y\rvert \le 2$   
+	\item Each constraint is of the form $\text{MA}(x,Y,c)$ with $x\in \mathcal{X}^*,Y\subseteq \mathcal{X}^*,c\in I$ with $\lvert Y\rvert \le 2$   
 \end{itemize}
 Now such system can be transformed to a ternary system $S_3$ as follow:
 \begin{itemize}
 	\item The set of variables is $\mathcal{X}^*$
 	\item The domain is $D$
 	\item For every relation $R=\text{MA}(x,Y,c)$ we map it to the relation $R_3=\text{MA}(x,y,z,c)$ as follow:
-	\item $y,z$ constitute the elements of $Y$ if $\lvert  Y \rvert=2$
-	\item $z=y$ if $\lvert Y \rvert=1$
+	\begin{itemize}
+		\item If $\lvert Y \rvert=2$, then $y,z$ are the elements of $Y.$
+		\item Otherwise, $\lvert Y \rvert=1,$ and $y=z$ are the same element of the singleton\footnote{A set with only one element} $Y.$
+	\end{itemize}
+	
 \end{itemize}
 
 
@@ -136,6 +145,18 @@ With that, $S$ is equivalent to $S_3.$
 		\State \Return $S'$
 	\end{algorithmic}
 \end{algorithm}
+\subsection{Polymorphisms}
+Two main family of polymorphisms are defined for Max Atom systems:
+\begin{itemize}
+	\item The max polymorphisms $M^{k}$ defined by:
+	$$
+	M^{k}(X_1,\dots,X_k)(x) = \max_{k\in\{1,\dots,k\}} X_k(x)
+	$$
+	\item The translation polymorphisms $T_{c}$ defined by:
+	$$
+	T_c(X)(x)=X(x)+c
+	$$
+\end{itemize}
 
 \section{Min-Max System}
 
@@ -143,41 +164,73 @@ With that, $S$ is equivalent to $S_3.$
 	\item Let $\mathcal{X}$ be a finite set of variables
 	\item Let $I$ be the domain of the variables.
 	\item Let $D=I\cup \{-\infty\},$ with $I\subseteq \mathbb{R}$  
-	\item For $x\in \mathcal{X},Y\subseteq\mathcal{X}^m,c\in I$, let $\text{MA}(x,Y,c)$ be defined as follow:
+	\item For $x\in \mathcal{X},Y\subseteq\mathcal{X}^m,C\in I^m$, let $\text{MA}(x,Y,C)$ be defined as follow:
 	$$
-	\text{MA}(x,Y,c)\iff x\le \max Y+c
+	\text{MA}(x,Y,c)\iff x\le \max (Y+C)
 	$$
-	\item For $x\in \mathcal{X},Y\subseteq\mathcal{X}^m,c\in I$, let $\text{MI}(x,Y,c)$ be defined as follow:
+	\item For $x\in \mathcal{X},Y\subseteq\mathcal{X}^m,C\in I^m$, let $\text{MI}(x,Y,C)$ be defined as follow:
 	$$
-	\text{MI}(x,Y,c)\iff x\le \min Y+c
+	\text{MI}(x,Y,C)\iff x\le \min (Y+C)
 	$$
 \end{itemize}
 
-A min-max system is $\text{CSP}(D,\Gamma)$ where:
+A min-max system is $\CSP(D,\Gamma)$ where:
 \begin{align*}
-	\Gamma&=\left\{O(x,Y,c),\quad (O,x,Y,c)\in \mathscr{R}\right\}\\
-	\mathscr{R}&\subseteq \{\text{MA},\text{MI}\}\times\mathcal{X}\times \left(\mathscr{P}(\mathcal{X}) \setminus \{\varnothing\}\right)\times I \\
-	\mathscr{R}&\space \text{is finite}
+	\Gamma&=\left\{O(x,Y,C),\quad (O,x,Y,C)\in \mathscr{R}\right\}\\
+	\mathscr{R}&\subseteq \{\text{MA},\text{MI}\}\times\mathcal{X}\times \left(\mathcal{X}\times I\right)^+ \\
+	\mathscr{R}&\  \text{is finite}
 \end{align*}
 
 
-\subsection{Equivalence with Max Atom Systems}
+\subsection{Transforming to Max Atom Systems}
 A Max Atom system is trivially a Min Max system. So we will only prove the latter implication.
 
-Let $S'=\text{CSP}(D,\Gamma)$ be a Min Max system, and let:
-- $\Gamma_{\text{MI}}$ be the constraints that has $\text{MI}$ 
-- $\Gamma_{\text{MA}}$ be the constraints that has $\text{MA}$
-
+Let $S'=\CSP(D,\Gamma)$ be a Min Max system, and let:
+\begin{itemize}
+	\item $\Gamma_{\text{MI}}$ be the constraints that has $\text{MI}$ 
+	\item $\Gamma_{\text{MA}}$ be the constraints that has $\text{MA}$
+\end{itemize}
+\subsubsection{Transforming $\text{MI}$ constraints}
 For each $\text{MI}(x,Y,c)\in \Gamma_{\text{MI}}.$ we replace it with the following constraints:
 $$
-\Gamma^{x,Y,c}=\bigcup_{y\in Y}\left\{\text{MA}(x,\{y\},c)\right\}
+\Gamma^{x,Y,C}_{\text{MI}}=\left\{\text{MA}(x,\{y\},c),\quad y,c\in \zip(Y,C)\right\}
 $$
+\subsubsection{Tranforming $\text{MA}$ constraints}
+For each $(y,c)\in \mathcal{X}\times I$ present in a max constraint of the system: \begin{itemize}
+	\item We add a formal variable $z^{y,c}$ if $c\ne 0.$
+	\item Else, we will simply represent by $z^{y,c}$ the variable $y.$
+\end{itemize}
+By denoting $Z^{Y,C}$ the following set:
+$$
+Z^{Y,C}=\{z^{y,c},\quad (y,c)\in \zip(Y,C)\}
+$$
+We build the following constraints:
+$$
+\Gamma^{x,Y,C}_{\text{MA}} = \left\{\text{MA}(x,Z^{Y,C},0)\right\}\cup\{\text{MA}(z^{y,c},\{y\},c),\quad (y,c)\in \zip(Y,C)\}
+$$
+\subsubsection{Building the Max Atom System}
 Now, let:
 $$
-\Gamma'=\Gamma_{\text{MA}}\cup\bigcup_{\text{MI(x,Y,c)}\in \Gamma_{\text{MI}}} \Gamma^{x,Y,c}
+\Gamma'=\bigcup_{\text{OP}\in\{\text{MI},\text{MA}\}}\bigcup_{\text{OP}(x,Y,C)\in \Gamma_{\text{OP}}} \Gamma^{x,Y,C}_{\text{OP}}
 $$
-The system $\text{CSP}(D,\Gamma')$ is a max system
-
+The system $\CSP(D,\Gamma')$ is an equivalent max system.
+\subsubsection{Equivalence}
+Let:
+\begin{itemize}
+	\item $\mathcal{X}' = \mathcal{X}\cup \mathcal{X}_{\text{Generated}}$ the augmented set of variables.
+	\item $\mathcal{C}=\text{OP}(x,Y,C)\in \CSP(D,\Gamma)$ be a constraint.
+	\item $X:\mathcal{X'}\rightarrow D$ an assignment of $\CSP(D,\Gamma').$
+\end{itemize}
+If $\text{OP}=\text{MI},$ it is trivial that $\text{OP}(x,Y,C)$ is equivalent to $\Gamma^{x,Y,C}_{\text{OP}}.$
+\newline Otherwise, for each $(y,c)\in \zip(Y,C)$ we have:
+$$
+X(z^{y,c}) \le \max\{X(y)\}+c = X(y)+c
+$$
+Now, we also have:
+$$
+X(x) \le \max_{(y,c)\in\zip(Y,C)}X(z^{y,c}) +0 \le \max_{(y,c)\in \zip(Y,C)}\left(X(y)+c\right)
+$$
+With that, $X_{\mid \mathcal{X}}$ is an assignment of $\CSP(D,\Gamma)$
 \begin{algorithm}
 	\caption{Converting a Min-Max System to Max Atom}\label{alg:MinMaxToMaxAtom}
 	\begin{algorithmic}
@@ -235,5 +288,98 @@ The system $\text{CSP}(D,\Gamma')$ is a max system
 	\end{algorithmic}
 \end{algorithm}
 
-\section{Polymorphisms}
-A polymor
+
+\begin{algorithm}
+	\caption{AC3 for Ternary Max Atom systems}\label{alg:AC3}
+	\begin{algorithmic}
+		\Require $\mathcal{C}$ a ternary Max Atom constraint
+		\Require $\nu:V\rightarrow \mathscr{P}(D)$ the admissible values function
+		\Require $Q$ a Queue of pending updates
+		\Ensure $\nu$ update the admissible values function.
+		\State	$x\leftarrow$ the left-hand side of $\mathcal{C}$
+		\State	$(y,z)\leftarrow$ the right-hand side variables of $\mathcal{C}$
+		\State	$c\leftarrow$ the right-hand side constant $\mathcal{C}$
+		\State $Z\leftarrow [x,y,z]$
+		\For {$o\in \{0,1,2\}$} \Comment{Iterate over all rotations}
+			\State $\text{admissible}\leftarrow \False$
+			\State $x\leftarrow Z[o]$
+			\State $y\leftarrow Z[(o+1)\bmod 3]$
+			\State $z\leftarrow Z[(o+2)\bmod 3]$
+			\State $\mu\leftarrow \varnothing$ \Comment{Set of values to delete}
+			\For {$a\in \nu(x)$}
+				\For {$(b,c)\in \nu(y)\times \nu(z)$}
+					\State $T\leftarrow[a,b,c]$
+					\State $p\leftarrow T[(-o)\bmod 3]$
+					\State $q\leftarrow T[(1-o)\bmod 3]$
+					\State $q\leftarrow T[(2-o)\bmod 3]$
+					\If {$p\le \max(q,r)+c$}
+						\State $\text{admissible}\leftarrow \True$
+					\EndIf
+				\EndFor
+				\If	{$\Not \text{admissible}$}
+					\State $\mu\leftarrow \mu \cup \{a\}$
+				\EndIf
+			\EndFor
+			\If {$\lvert \mu \rvert >0$}
+				\State $\nu(x)\leftarrow \nu(x)\setminus \mu$
+				\State $\text{append}(Q,\Adj x)$
+			\EndIf
+
+		\EndFor
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+	\caption{AC3 Optimized for Ternary Max Atom systems}\label{alg:AC3Optimized}
+	\begin{algorithmic}
+		\Require $\mathcal{C}$ a ternary Max Atom constraint
+		\Require $\nu:V\rightarrow D$ the maximum admissible value for each variable.
+		\Require $Q$ a Queue of pending updates
+		\Ensure $\nu$ update the maximum admissible values function.
+		\State	$x\leftarrow$ the left-hand side of $\mathcal{C}$
+		\State	$(y,z)\leftarrow$ the right-hand side variables of $\mathcal{C}$
+		\State	$c\leftarrow$ the right-hand
+		\State $r\leftarrow \max(\nu(y),\nu(z))+c$
+		\If {$r < L$}
+			\State $r\leftarrow -\infty$
+		\EndIf
+		\If {$r < \nu(x) $}
+			\State $\nu(x)\leftarrow r$
+			\State $\text{append}(Q,x)$
+		\EndIf
+	\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+	\caption{Solving a Mean Payoff Graph for all states}\label{alg:MPGSolver}
+	\begin{algorithmic}
+		\Require $G$ a Mean Payoff Graph
+		\Ensure $\Phi:V\times P\rightarrow V$ The optimal strategy of each player
+		\State $\Phi\leftarrow \varnothing$
+		\For {$p\in P$}
+			\If {$p$ is Max}
+				\State $G'\leftarrow G$
+			\Else
+				\State $G'\leftarrow \bar{G}$
+			\EndIf
+			\State $S \leftarrow \displaystyle \transform_{\text{MPG}\rightarrow \text{Min-Max}}(G')$ 
+			\State $S' \leftarrow \displaystyle \transform_{\text{Min-Max}\rightarrow \text{Max}}(S)$ 
+			\State $S'' \leftarrow \displaystyle \transform_{\text{Max}\rightarrow \text{Max}_3}(S')$
+			\State $X\leftarrow \arcconsistency(S'')$
+			\For {$\mathcal{C}\in S''$} \Comment{Iterate over constraints of $S''$}
+				\State $\text{OP}\leftarrow \text{Operator}(\mathcal{C})$
+				\Comment{Get the operator of $\mathcal{C}.$ Either Max or Min }
+				\State $Y$ the right-hand side variables of $\mathcal{C}$
+				\State $C$ the right-hand side constants of $\mathcal{C}$
+				\State $x$ the left-hand side variable of $\mathcal{C}$
+				\State $u\leftarrow \displaystyle \projection_{V\times P\rightarrow V}(x)$ \Comment{Extract the vertex}
+			
+				\If {$\text{OP}$ is Max}
+					\State $y^*,c^*\leftarrow  \displaystyle\argmax_{(y,c)\in \zip(Y,C)}\{X(y)+c\}$ \Comment{Extracts the maximum assignment}
+					\State $\Phi(u,p)\leftarrow \displaystyle \projection_{V\times P\rightarrow V}(y^*)$ \Comment{The Strategy is the vertex of the maximum assignment}
+				\EndIf
+			\EndFor
+		\EndFor
+		\State \Return $\Phi$
+	\end{algorithmic}
+\end{algorithm}
