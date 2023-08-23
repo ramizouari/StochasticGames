@@ -3,8 +3,18 @@
 \addvspace {10\p@ }
 \contentsline {figure}{\numberline {2.1}{\ignorespaces An example of an execution with non-convergent Mean Payoffs\relax }}{11}{figure.caption.10}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces A counter example of the Linear Bound heuristic\relax }}{26}{figure.caption.29}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces A counter example of the Linear Bound heuristic\relax }}{27}{figure.caption.30}%
 \addvspace {10\p@ }
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Three isomorphic Mean Payoff Games\relax }}{29}{figure.caption.38}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Mean Payoff Game, with a rescaled version using Maximum normalization\relax }}{31}{figure.caption.42}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Original Mean Payoff Game with a padded version\relax }}{32}{figure.caption.48}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces An MPG where the first player always wins.\relax }}{33}{figure.caption.49}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Graph Convolutional Network\relax }}{34}{figure.caption.50}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Weighted Graph Convolutional Network\relax }}{34}{figure.caption.51}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Preprocessing Block\relax }}{35}{figure.caption.52}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Graph Convolutional Block\relax }}{35}{figure.caption.53}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Graph Convolutional Block\relax }}{36}{figure.caption.54}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Model Architecture\relax }}{38}{figure.caption.55}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

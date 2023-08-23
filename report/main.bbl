@@ -935,6 +935,40 @@
     \field{year}{2021}
   \endentry
 
+  \entry{BNNReview}{article}{}
+    \name{author}{2}{}{%
+      {{hash=YC}{%
+         family={Yuan},
+         familyi={Y\bibinitperiod},
+         given={Chunyu},
+         giveni={C\bibinitperiod},
+      }}%
+      {{hash=ASS}{%
+         family={Agaian},
+         familyi={A\bibinitperiod},
+         given={Sos\bibnamedelima S.},
+         giveni={S\bibinitperiod\bibinitdelim S\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{YCASS1}
+    \strng{fullhash}{YCASS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{Y}
+    \field{sortinithash}{Y}
+    \verb{eprint}
+    \verb 2110.06804
+    \endverb
+    \field{title}{A comprehensive review of Binary Neural Network}
+    \verb{url}
+    \verb https://arxiv.org/abs/2110.06804
+    \endverb
+    \field{volume}{abs/2110.06804}
+    \field{journaltitle}{CoRR}
+    \field{eprinttype}{arXiv}
+    \field{year}{2021}
+  \endentry
+
   \entry{BNNDefinition}{article}{}
     \name{author}{2}{}{%
       {{hash=YC}{%
@@ -960,40 +994,6 @@
     \verb 2110.06804
     \endverb
     \field{pages}{3\bibrangedash 4}
-    \field{title}{A comprehensive review of Binary Neural Network}
-    \verb{url}
-    \verb https://arxiv.org/abs/2110.06804
-    \endverb
-    \field{volume}{abs/2110.06804}
-    \field{journaltitle}{CoRR}
-    \field{eprinttype}{arXiv}
-    \field{year}{2021}
-  \endentry
-
-  \entry{BNNReview}{article}{}
-    \name{author}{2}{}{%
-      {{hash=YC}{%
-         family={Yuan},
-         familyi={Y\bibinitperiod},
-         given={Chunyu},
-         giveni={C\bibinitperiod},
-      }}%
-      {{hash=ASS}{%
-         family={Agaian},
-         familyi={A\bibinitperiod},
-         given={Sos\bibnamedelima S.},
-         giveni={S\bibinitperiod\bibinitdelim S\bibinitperiod},
-      }}%
-    }
-    \strng{namehash}{YCASS1}
-    \strng{fullhash}{YCASS1}
-    \field{labelnamesource}{author}
-    \field{labeltitlesource}{title}
-    \field{sortinit}{Y}
-    \field{sortinithash}{Y}
-    \verb{eprint}
-    \verb 2110.06804
-    \endverb
     \field{title}{A comprehensive review of Binary Neural Network}
     \verb{url}
     \verb https://arxiv.org/abs/2110.06804

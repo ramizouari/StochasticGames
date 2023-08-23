@@ -109,6 +109,30 @@ An example of an execution that gives a rise to such payoffs is the following Me
 \end{figure}
 \subsection{Symmetries}
 
+\begin{figure}
+	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+		thick,main node/.style={circle,draw,font=\Large\bfseries}]
+		\node[main node, fill=gray!50] (1) {$0$}; 
+		\node[main node] (2) [above of =1] {$1$}; 
+		\node[main node] (3) [above right of =2] {$2$}; 
+		\node[main node] (4) [above of =3] {$3$}; 
+		\node[main node] (5) [above left of =2] {$4$}; 
+		\node[main node] (6) [above of =5] {$5$}; 
+		\node[main node] (7) [above of =6]{$6$}; 
+		\path (1) edge node {2} (2)
+		(2) edge node {3} (3)
+			edge node {3} (5)
+		(3) edge [bend left] node {-5} (4)
+			edge [bend left] node {-5} (2)
+		(4) edge [bend left] node {-5} (2)
+			edge [bend left] node {-2} (4)
+		(5) edge node {3} (6)
+			edge [bend left=25] node {3} (7)
+		(6) edge node {3} (1)
+		(7) edge [bend right=45] node {3} (1);
+	\end{tikzpicture} 
+\end{figure}
+
 \subsection{Strategy}
 \subsubsection{Deterministic Strategies}
 Let $p$ be a player. \newline 
@@ -154,6 +178,8 @@ Now we have the following hiearchy considering the set of optimal strategies:
 $$
 \forall \text{Mean Payoff Game}\ G,\forall p\in \PlayerSet,\quad \PayoffOptimal(G,p) \subseteq \StrongOptimal(G,p) \subseteq \WeakOptimal(G,p)
 $$
+
+
 
 \section{Evaluating Strategies}
 Suppose we have a pair of potentially probabilitic strategies $(\Phi^{\Max},\Phi^{\Min}).$ The problem is to evaluate the winner without doing an infinite simulation of the game. 
@@ -248,4 +274,30 @@ Now two closely related, but different evaluations are possible
 Now, with both strategies fixed. A Mean Payoff Game can be considered as a Markov Chain.
 %Insert calculations
 
+
 \section{Countering Strategies}
+By fixing the strategy of player $p\PlayerSet$ to $\Phi^p,$ then the Markov Game Process reduces to a Markov Decision Process, which can be solve by Linear Programming tools %Reference?
+\newline Moreover, in a deterministic Mean Payoffs, a counter strategy can be calculated efficiently by reducing the problem to finding a negative cycle in a di-graph.
+\subsection{Deterministic Counter Strategy}
+For simplicity, we assume that $p=\Max,$ the same results apply for $\Min$ player.
+\newline For a Mean Payoff Game $(\VertexSet,\EdgeSet,\PlayerSet,s,p'),$ we introduce the following graph:
+$$
+G'=\left(V,E',W'\right)
+$$
+where:
+\begin{itemize}
+	\item $E'$ is defined as follow:
+	$$
+	E'=\left\{(u,\Phi^p(v)),\quad (u,v)\in E\right\}
+	$$
+	\item Also, $W'$ is defined adequately:
+	$$
+	\forall (u,v)\in E: W'(u,\Phi^p(v))=W(u,v)+W(v,\Phi^p(v))
+	$$
+\end{itemize}	
+The problem of finding a counter strategy will be reduced to finding a negative cycle $\mathcal{C}$ in $G'$
+\newline This can be done in $\mathcal{O}(\lvert V\rvert^3)$
+\subsection{Probabilistic Counter Strategy}
+On the other hand, if $\Phi^p$ is probabilistic, then the problem can be reduced to optimizing the mean payoff of an infinite-horizon Markov Decision Process.
+\section{Learning Strategies}
+\subsection{Iterative Methods}

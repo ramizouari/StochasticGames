@@ -59,6 +59,7 @@
 \usepackage{pgf-umlcd}
 \usepackage{dirtytalk}
 \usepackage{tikz} 
+\usepackage{lscape}
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
 
@@ -128,8 +129,9 @@
 }
 
 % Glossaries and acronyms list
-\usepackage[acronym]{glossaries}
+\usepackage[acronym,toc]{glossaries}
 \makeglossaries
+\input{acronyms}
 \loadglsentries{glossary}
 
 % Bibliography --
@@ -153,6 +155,7 @@
 \renewcaptionname{english}{\contentsname}{Contenu}
 
 
+
 \begin{document}
 
 % Making title page
@@ -160,7 +163,7 @@
 \newpage
 \input{chapters/abstract}
 \input{chapters/acknowledgment}
-          
+
 
 % Roman page numbering to start from abstract onwards
 
@@ -170,6 +173,8 @@
 \hypersetup{linkcolor=black}
 
 \tableofcontents
+
+
 \listoffigures
 \listoftables
 \listofalgorithms
@@ -190,11 +195,9 @@
 
 \printbibliography[title=Bibliographie]
 \addcontentsline{toc}{chapter}{Bibliographie}
-%\printglossary[type=\acronymtype,title=Acronyms]
+\printglossary[type=\acronymtype,title=Acronyms]
 
-%\newacronym{ny}{NY}{New York}
-%\newacronym{la}{LA}{Los Angeles}
-%\newacronym{un}{UN}{United Nations}
+
 %\addcontentsline{toc}{chapter}{Acronymes}
 
 

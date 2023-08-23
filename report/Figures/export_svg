@@ -1,0 +1,10 @@
+#!/bin/bash
+for file in *; do
+	filename=$file
+	extension="${filename##*.}"
+	filename="${filename%.*}"
+	if [ ${extension,,} = "svg" ]; then
+		echo "$file -> $filename.png"
+		inkscape "$file" --export-filename="$filename.png" --export-dpi=256
+	fi
+done
