@@ -1,4 +1,5 @@
 \chapter{On Constraint Satistfaction Problems}
+\label{appendix:CSP}
 In the previous chapters, we described how the system works, without formalising the CSP approach.\newline
 On this chapter, we will describe the CSP systems that we have used, with an equivalence proof between them.
 
@@ -262,8 +263,10 @@ With that, $X_{\mid \mathcal{X}}$ is an assignment of $\CSP(D,\Gamma)$
 		\EndFor
 	\end{algorithmic}
 \end{algorithm}
-
-
+\section{Solving Mean Payoff}
+\subsection{Reduction to Min Max System}
+In this section, we will solve the mean payoff by converting it to a equivalent min max system.
+\newline The method we use is formalised in \cite{MPGMaxAtom}, and the equivalence is also proven in \cite{MPGMaxAtom}.
 \begin{algorithm}
 	\caption{Converting a Mean Payoff Game to a Min Max system}\label{alg:MPGToMinMax}
 	\begin{algorithmic}
@@ -287,8 +290,9 @@ With that, $X_{\mid \mathcal{X}}$ is an assignment of $\CSP(D,\Gamma)$
 		\EndFor
 	\end{algorithmic}
 \end{algorithm}
-
-
+\subsection{Arc Consistency}
+\subsubsection{First Implementation}
+At first, we took the original implementation of AC3 \cite[page.~171]{AIModernApproach} and modify it to support the max atom system:
 \begin{algorithm}
 	\caption{AC3 for Ternary Max Atom systems}\label{alg:AC3}
 	\begin{algorithmic}
@@ -328,13 +332,17 @@ With that, $X_{\mid \mathcal{X}}$ is an assignment of $\CSP(D,\Gamma)$
 		\EndFor
 	\end{algorithmic}
 \end{algorithm}
-
+\FloatBarrier
+This version was very slow, took a considerable time even for Mean Payoff Games with less than $20$ vertices.
+\subsubsection{Refinement}
+We were able to make many simplifications to the algorithm by taking advantage of the symmetry\footnote{$\max$ is a symmetric function: $\max(x,y)=\max(y,x)$} of the system and the fact that it has translations and maximum as polymorphisms \cite{TropicalCSP}:
 \begin{algorithm}
 	\caption{AC3 Optimized for Ternary Max Atom systems}\label{alg:AC3Optimized}
 	\begin{algorithmic}
 		\Require $\mathcal{C}$ a ternary Max Atom constraint
 		\Require $\nu:V\rightarrow D$ the maximum admissible value for each variable.
 		\Require $Q$ a Queue of pending updates
+		\Require $L=\inf D$ the smallest admissible value
 		\Ensure $\nu$ update the maximum admissible values function.
 		\State	$x\leftarrow$ the left-hand side of $\mathcal{C}$
 		\State	$(y,z)\leftarrow$ the right-hand side variables of $\mathcal{C}$
@@ -350,36 +358,3 @@ With that, $X_{\mid \mathcal{X}}$ is an assignment of $\CSP(D,\Gamma)$
 	\end{algorithmic}
 \end{algorithm}
 
-\begin{algorithm}
-	\caption{Solving a Mean Payoff Graph for all states}\label{alg:MPGSolver}
-	\begin{algorithmic}
-		\Require $G$ a Mean Payoff Graph
-		\Ensure $\Phi:V\times P\rightarrow V$ The optimal strategy of each player
-		\State $\Phi\leftarrow \varnothing$
-		\For {$p\in P$}
-			\If {$p$ is Max}
-				\State $G'\leftarrow G$
-			\Else
-				\State $G'\leftarrow \bar{G}$
-			\EndIf
-			\State $S \leftarrow \displaystyle \transform_{\text{MPG}\rightarrow \text{Min-Max}}(G')$ 
-			\State $S' \leftarrow \displaystyle \transform_{\text{Min-Max}\rightarrow \text{Max}}(S)$ 
-			\State $S'' \leftarrow \displaystyle \transform_{\text{Max}\rightarrow \text{Max}_3}(S')$
-			\State $X\leftarrow \arcconsistency(S'')$
-			\For {$\mathcal{C}\in S''$} \Comment{Iterate over constraints of $S''$}
-				\State $\text{OP}\leftarrow \text{Operator}(\mathcal{C})$
-				\Comment{Get the operator of $\mathcal{C}.$ Either Max or Min }
-				\State $Y$ the right-hand side variables of $\mathcal{C}$
-				\State $C$ the right-hand side constants of $\mathcal{C}$
-				\State $x$ the left-hand side variable of $\mathcal{C}$
-				\State $u\leftarrow \displaystyle \projection_{V\times P\rightarrow V}(x)$ \Comment{Extract the vertex}
-			
-				\If {$\text{OP}$ is Max}
-					\State $y^*,c^*\leftarrow  \displaystyle\argmax_{(y,c)\in \zip(Y,C)}\{X(y)+c\}$ \Comment{Extracts the maximum assignment}
-					\State $\Phi(u,p)\leftarrow \displaystyle \projection_{V\times P\rightarrow V}(y^*)$ \Comment{The Strategy is the vertex of the maximum assignment}
-				\EndIf
-			\EndFor
-		\EndFor
-		\State \Return $\Phi$
-	\end{algorithmic}
-\end{algorithm}

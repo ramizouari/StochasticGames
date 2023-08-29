@@ -1,4 +1,5 @@
 \chapter{Model Design}
+\label{section:ModelDesign}
 
 \section{Introduction}
 
@@ -16,7 +17,7 @@ A function is total if it is defined in the whole domain.
 \subsubsection{Importance}
 This property implies two main characteristics:
 \begin{enumerate}
-	\item The model works for any Mean Payoff Game whatever the size of $\lvert \VertexSet \rvert.$ This is difficult to not violate, as most machine learning models require static shapes.
+	\item The model works for any Mean Payoff Game whatever the size of $\lvert \VertexSet \rvert.$ This is tricky as most machine learning models act on a batch of data with a fixed shape.
 	\item The model works for any Mean Payoff Game whatever the representation is; This is implicitely verified by an encoding of the Mean Payoff Games.
 \end{enumerate}
 
@@ -188,15 +189,21 @@ This property states that the model should ouptut the same results for permuted 
 \subsubsection{Importance}
 While it is a special case of the Node Agnostic property, but it is still important as the encoding of the graphs is done implicitely, and thus Permutation Equivariance is enough to get a Node Agnostic model.
 \subsection{Stability under Padding}
+\label{section:Model:Properties:Scaling}
 \subsubsection{Definition}
-Let $G_1(V_1,E_1,W_1,s_1),G_2(V_2,E_2,W_2,s_2)$ be two disjoint Mean Payoff Games, in the sense that $V_1\cap V_2=\varnothing.$
-\newline The padding of $G_1$ by $G_2,$ denoted $G_1\rhd G_2$ defined as:
+\begin{itemize}
+	\item Let $G_1(V_1,E_1,W_1,s_1),G_2(V_2,E_2,W_2,s_2)$ be two disjoint Mean Payoff Games, in the sense that $V_1\cap V_2=\varnothing.$
+	\item Let $B=(E_3,W_3)$ with $E_3\subseteq V_2\times V_1$ a bridge from $G_2$ to $G_1,$ and $W_3$ is the weight function of $E_3$
+\end{itemize}
+The padding of $G_1$ by $G_2$ using $B$ as a bridge, denoted as $G_1\overset{B}{\rhd} G_2$ is defined as:
 $$
-G_1\rhd G_2=(V_1\cup V_2,E_1\cup E_2,W_1\cup W_2,s_1)
+G_1\overset{B}{\rhd} G_2=(V_1\cup V_2,E_1\cup E_2 \cup E_3,W_1\cup W_2 \cup W_3,s_1)
 $$
+If the bridge $B$ is empty, in the sense that $E_3=\emptyset,$ then we denote we will simplify the notation to $G_1 \rhd G_2.$
+\newline 
 A model is said to be stable under padding if:
 $$
-\mathcal{M}(G_1\rhd G_2)=\mathcal{M}(G_1)
+\mathcal{M}(G_1\overset{B}{\rhd} G_2)=\mathcal{M}(G_1)
 $$
 \subsubsection{Importance}
 Deep Learning algorithms generally accept batches of data having a homogeneous shape.
@@ -208,8 +215,7 @@ Deep Learning algorithms generally accept batches of data having a homogeneous s
 \end{itemize}
 For this reasons, we opted to pad the graphs to get homogeneous batches, and this is why the stability under padding is important.
 \subsubsection{Removing Unreachable Nodes}
-Another major point for this property, is it gives the possibility to remove unreachable nodes\footnote{If we ignore the orientation. A stronger property allowing unreachable nodes on the di-graph can also be defined, but this is beyond the scope.} without affecting the model's results.
-
+Another major point for this property, is it gives the possibility to remove unreachable nodes without affecting the model's results.
 \begin{figure}[H]
 	\begin{subfigure}[b]{0.45\textwidth}
 		\raggedleft
@@ -309,6 +315,55 @@ Such model predicts the strategy for each player.
 \section{Building the Model}
 Our model follows from well esta../Figures/PreprocessingBlock.pngblished graph neural network architectures, with minor modifications to suit our needs.
 \newline It is composed of blocks, each containing a \textbf{Weighted Graph Convolutional Network}.
+
+\subsection{Preprocessing Block}
+The preprocessing block is responsible to convert the graph to a format recognizable by the convolutional blocks.
+\newline It takes the following steps:
+\begin{enumerate}
+	\item It takes a batch, add a padding to each graph so that the resulting batch is of homogenous shape.
+	\item It adds some random edges to each graph, with some low probability \texttt{random\_connection\_probability}.
+	\item It normalizes the weights.
+	\item It adds some noise to the weights.
+\end{enumerate} 
+
+\subsubsection{Padding Layer}
+First of all, we define $H_k$ be the graph of size $k$ in which all the edges are loops with $0$ as a weight. 
+\newline Each graph $G^{(i)}=(A^{(i)},W^{(i)})$ in the batch has a size $r_i.$ 
+\newline Let $r=\max_i r_i.$ The padding layer adds a potential padding to each graph in the following manner:
+\begin{equation*}
+	G^{(i)}\leftarrow G^{(i)} \rhd I_{r-r_i}
+\end{equation*}
+With that, the resulting batch will be of shape $(?,r,r,2)$
+\subsubsection{Random Connections}
+This layer adds an edge with some probability $p:$
+\begin{equation*}
+	A^{(i)}\leftarrow A^{(i)} \vee B^{(i)}
+\end{equation*}
+Where $B^{(i)}$ is a matrix of shape $(r,r)$ whose elements are sampled from the bernoulli distribution $\mathcal{B}(p)$.
+\subsubsection{Weights Normalisation}
+We want the model to be invariant under positive scaling. To achieve that, we implemented a weights normalization layer conforming to section \ref{section:Model:Properties:Scaling}
+\subsubsection{Weights Noise}
+For regularization, we implemented a weights noise layer, that adds a small additive noise to the weights, in the following manner:
+\begin{equation*}
+		W^{(i)}\leftarrow W^{(i)} + N^{(i)} \odot A^{(i)}
+\end{equation*}
+Where $N^{(i)}$ is the noise matrix. We implemented two kinds of noise:
+\begin{itemize}
+	\item Uniform noise, where each element of $N^{(i)}$ follows $\mathcal{U}(-r,r)$
+	\item Gaussian noise, where each element of $N^{(i)}$ follows $\mathcal{N}(0,\sigma)$
+\end{itemize}
+\subsubsection{One Hot Encoding}
+The one hot encoding layer, as its name suggests, applies one hot encoding to the position $s.$
+
+
+\begin{figure}[H]
+	\noindent
+	
+	\makebox[\textwidth]{\includegraphics[width=1.2\textwidth]{Figures/PreprocessingBlock.png}}
+	\caption{Preprocessing Block}
+	\label{fig:PreprocessingBlock}
+\end{figure}
+
 \subsection{Weighted Graph Convolutional Network}
 The weighted graph convolutional network \textbf{WGCN}, as its name suggests, is a convolutional operator acting on graphs, with many desirable properties such as ``Permutation Equivariance" and ``Stability under Padding".
 \newline It is based on the graph convolutional network as described on the following figure
@@ -320,26 +375,22 @@ The weighted graph convolutional network \textbf{WGCN}, as its name suggests, is
 	\label{fig:GCN}
 \end{figure}
 \FloatBarrier
+Here $\oslash$ denotes the point-wise division operator.
+\newline 
 The problem with \textbf{GCN} is that they ignore the weights information. For Mean Payoff Games, such information is crucial to determine the winner and the strategies.
 \newline For that, we introduced \textbf{WGCN} to capitalize on the weights information. The figure below shows how it is implemented.
 
 \begin{figure}[H]
-	  \noindent
-	
-	\makebox[\textwidth]{\includegraphics[width=1.2\textwidth]{Figures/WGCN.png}}
-	\caption{Weighted Graph Convolutional Network}
-	\label{fig:WGCN}
-\end{figure}
-\FloatBarrier
-The \textbf{WGCN} operator exhibits the desired properties described on \ref{section:ModelDesign:Properties}, except property  \ref{section:ModelDesign:Properties:Invariance}.
-\subsection{Preprocessing Block}
-\begin{figure}[H]
 	\noindent
 	
-	\makebox[\textwidth]{\includegraphics[width=1.2\textwidth]{Figures/PreprocessingBlock.png}}
-	\caption{Preprocessing Block}
-	\label{fig:PreprocessingBlock}
+	\makebox[\textwidth]{\includegraphics[width=1.2\textwidth]{Figures/WGCN.png}}
+	\caption{Weighted Graph Convolutional Network \label{fig:WGCN}}
 \end{figure}
+\FloatBarrier
+The \textbf{WGCN} operator exhibits the desired properties described on \ref{section:ModelDesign:Properties}, except property  \ref{section:ModelDesign:Properties:Invariance}, the latter is already verified as a result of the preprocessing layer.
+\newline We were not able to find a reference to \textbf{WGCN} in the literature. The closest thing we have found that a PyTorch based GNN library named \textbf{Geometric} has an implementation for \textbf{GCN} supporting weighted graphs. Interestingly, we only differ to them by the normalization of the degrees.
+\newline As we are using \textit{TensorFlow}, we cannot use their approach, so we had to implement \textbf{WGCN} from scratch.
+
 \subsection{Convolutional Block}
 Each intermediate block is composed of a graph convolution, and then a batch normalisation operator, as described by the figure below:
 \begin{figure}[H]
@@ -349,6 +400,8 @@ Each intermediate block is composed of a graph convolution, and then a batch nor
 	\caption{Graph Convolutional Block}
 	\label{fig:ConvolutionalBlock}
 \end{figure}
+\FloatBarrier
+This block was inspired from convolutional blocks used in computer vision models.
 \subsection{Prediction Block}
 \begin{figure}[H]
 	\noindent
@@ -357,16 +410,18 @@ Each intermediate block is composed of a graph convolution, and then a batch nor
 	\caption{Graph Convolutional Block}
 	\label{fig:PredictionBlock}
 \end{figure}
+\FloatBarrier
 \subsection{Model Architecture}
 Putting all building block together, we designed a model that takes arbitrary graphs, encode them, predicts the strategy and the evaluation of the position.
-\newline This is detailed by the figure below:
-\newpage
+\newline We were very careful in the design so that we can verify all the desired properties described in section \ref{section:ModelDesign:Properties}.
+\newline The figure below shows the whole architecture:
+
 \begin{landscape}
 
 	\begin{figure}[H]
 	\centering
 		
-		{\includegraphics[height=0.95\textheight]{Figures/Architecture.png}}
+		{\includegraphics[height=0.93\textheight]{Figures/Architecture.png}}
 		\caption{Model Architecture}
 		\label{fig:ModelArchitecture}
 	\end{figure}

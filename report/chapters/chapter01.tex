@@ -25,36 +25,52 @@ Formally, a \textbf{Mean Payoff Graph} is a tuple $(\mathcal{V},\mathcal{E},\mat
 A  \textbf{Mean Payoff Game} is a perfect information, zero-sum, turn based game played indefinitively on a Mean Payoff Graph as follow:
 \begin{itemize}
 \item The game starts at $u_0=s$, with player $p_0=p$ starting.
-\item For each $n\in\mathbb{N},$ Player $p_n$ will choose a vertex $u_{n+1}\in \Adj u_n,$ with a payoff $w_n\mathcal{W}(u_n,u_{n+1})$
+\item For each $n\in\mathbb{N},$ Player $p_n$ will choose a vertex $u_{n+1}\in \Adj u_n,$ with a payoff $w_n=W(u_n,u_{n+1})$
 \item The winner of the game will be determined by the Mean Payoff. There are different winning conditions.
 \end{itemize}
 
-\subsubsection{Condition C1}
-Player $\text{Max}$ wins \textbf{iff}:
-$$
-\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k \ge 0
-$$ 
-Otherwise, Player $\text{Min}$ will win
-
-\subsubsection{Condition C2}
-Player $\text{Max}$ wins \textbf{iff}:
-$$
-\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k > 0
-$$ 
-Otherwise, Player $\text{Min}$ will win.
-\subsubsection{Condition C3}
-Player $\text{Max}$ wins \textbf{if}:
-$$
-\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k > 0
-$$ 
-
-Player $\text{Min}$ wins \textbf{if}:
-$$
-\limsup_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k < 0
-$$ 
-
-Otherwise, it is a draw.
-
+\begin{table}[h]
+	\small
+	\begin{tabularx}{\textwidth}{| p{2cm} | X | X | X |}
+		\hline
+		
+		Name & $\Max$ winning criteria & $\Min$ winning criteria & Draw criteria  \\
+		\hline
+		$C_1$ & \begin{equation*}
+			\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k >\ge 0
+		\end{equation*} & \begin{equation*}
+		\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k < 0
+		\end{equation*} & \cellcolor{gray!75} \\
+		\hline
+		$C_2$ & \begin{equation*}
+			\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k > 0
+		\end{equation*} & \begin{equation*}
+			\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k < 0
+		\end{equation*} & \begin{equation*}
+		\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k = 0
+		\end{equation*} \\
+		\hline
+		 $C_3$ & \begin{equation*}
+		 	\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k > 0
+		 \end{equation*} & \begin{equation*}
+		 	\limsup_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k < 0
+		 \end{equation*} & \begin{equation*}
+		 \begin{cases} 
+		 	\displaystyle \liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k \le 0 \\
+		 	 \displaystyle \limsup_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k \ge 0
+		 \end{cases}
+		 \end{equation*}\\
+		\hline
+	\end{tabularx}
+	\caption{Winning conditions for Mean Payoff Games}
+	\label{table:WinningConditions}
+\end{table}
+Here, table \ref{table:WinningConditions} gives the different winning criteria that we have considered:
+\begin{itemize}
+	\item $C_1$ was used in \cite{MPGMaxAtom} to calculate the optimal strategy for player $\Max$
+	\item $C_2$ is the dual of $C_1.$
+	\item $C_3$ is symmetric\footnote{It does not give an advantage towards any player.}, and will be used for our machine learning model.
+\end{itemize}
 \subsection{Well Foundness}
 It is not very clear from the definition that the game is well founded. \newline
 In fact, there are choices for which the mean payoff does not converge. That is the sequence $\left(\frac{1}{n}\sum_{k=0}^{n-1} w_k \right)_{n\in\mathbb{N}^*}$ does not converge. \newline One such example is the sequence defined by:
@@ -63,14 +79,10 @@ w_n=(-1)^{\lfloor  \log_2 (n+1)\rfloor}
 $$
 For that sequence, the $(2^r-1)$-step mean payoff is equal to:
 \begin{align*}
-	\sum_{k=0}^{2^r-2} w_k &= 	\sum_{k=1}^{2^r-1}(-1)^{\lfloor  \log_2 (k)\rfloor} \\
-	&= \sum_{i=0}^{r-1}\sum_{j=2^{i}}^{2^{i+1}-1}(-1)^{\lfloor  \log_2 (j)\rfloor} \\
-	&=\sum_{i=0}^{r-1}\sum_{j=2^{i}}^{2^{i+1}-1}(-1)^i \\
-	&=\sum_{i=0}^{r-1}(2^{i+1}-2^i)(-1^i) \\
-	&=\sum_{i=0}^{r-1}(-2)^i \\ 
-	&= \frac{1-(-2)^r}{3} \\
-	\implies \frac{1}{2^r-1}\sum_{k=0}^{2^r-2} w_k  &= \frac{1}{3} \cdot \frac{1-(-2)^r}{2^r-1} \\
-&= \frac{1}{3} \cdot \frac{2^{-r}-(-1)^r}{1-2^{-r}}
+	\sum_{k=0}^{2^r-2} w_k &= 	\sum_{k=1}^{2^r-1}(-1)^{\lfloor  \log_2 (k)\rfloor} = \sum_{i=0}^{r-1}\sum_{j=2^{i}}^{2^{i+1}-1}(-1)^{\lfloor  \log_2 (j)\rfloor} \\
+	&=\sum_{i=0}^{r-1}\sum_{j=2^{i}}^{2^{i+1}-1}(-1)^i =\sum_{i=0}^{r-1}(2^{i+1}-2^i)(-1^i) \\
+	&=\sum_{i=0}^{r-1}(-2)^i = \frac{1-(-2)^r}{3} \\
+	\implies \frac{1}{2^r-1}\sum_{k=0}^{2^r-2} w_k  &= \frac{1}{3} \cdot \frac{1-(-2)^r}{2^r-1} = \frac{1}{3} \cdot \frac{2^{-r}-(-1)^r}{1-2^{-r}}
 \end{align*}
 That sequence has two accumulation points $\pm \frac{1}{3},$ and thus, it does not converge.
 
@@ -105,10 +117,30 @@ An example of an execution that gives a rise to such payoffs is the following Me
 		With $B(r)$ the position of the left-most bit in the binary representation of $r$
 		\caption{Definition of both strategies}
 	\end{subfigure}
-	\caption{An example of an execution with non-convergent Mean Payoffs}
+	\caption{An example of an execution with non-convergent Mean Payoffs
+			\label{fig:MeanPayoffNonConvergence}}
 \end{figure}
-\subsection{Symmetries}
+\subsection{Properties}
+A Mean Payoff Game has many properties that are interesting from a game theory perspective.
+\subsubsection{Two Player}
+The game is a two player game.
+\subsubsection{Turn Based}
 
+\subsection{Symmetries}
+Mean Payoff Games exhibits many natural symmetries.
+\subsubsection{Duality}
+The main symmetry is the duality between 
+$\Max$ and $\Min.$
+\newline For this we will define the dual $\bar{G}$ of a mean payoff game $G=(\VertexSet,\EdgeSet,W\PlayerSet,s,p)$ as the following:
+$$
+\bar{G}= (\VertexSet,\EdgeSet,-W,s,\bar{p})
+$$
+This duality is important due to the following theorem.
+\begin{theorem}
+	For every mean payoff game $G$, the objective of player $\Max$ is equivalent to the objective of player $\Min$ in $\bar{G}.$
+\end{theorem}
+With that, there is not any major difference between $\Max$ and $\Min$ from a theoretical point of view.
+\newline In fact, without any loss of generality, we can assume that $\Max$ is the starting player. And this is what we will do by default in this report.
 \begin{figure}
 	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
 		thick,main node/.style={circle,draw,font=\Large\bfseries}]
@@ -136,11 +168,18 @@ An example of an execution that gives a rise to such payoffs is the following Me
 \subsection{Strategy}
 \subsubsection{Deterministic Strategies}
 Let $p$ be a player. \newline 
-A (deterministic) strategy\footnote{By default, we refer to deterministic strategies. If the strategy is not deterministic, we will explicit it.} is a function $\Pi^{p}:\VertexSet^+\rightarrow \VertexSet$ such that:
+A (deterministic) strategy is a function $\Pi^{p}:\VertexSet^+\rightarrow \VertexSet$ such that:
 $$
 \forall v_0\dots v_r\in \VertexSet^+, \quad \Pi_p(v_0\dots v_r) \in \Adj v
 $$	
-If the strategy does only depend on the current vertex, we say it is a memoryless (deterministic) strategy $\Pi:\VertexSet\rightarrow \VertexSet$
+If the strategy does only depend on the current vertex, we say it is a memoryless (deterministic) strategy.  $\Pi:\VertexSet\rightarrow \VertexSet$
+\newline In this report, we will use the term positional strategies as an alias for memoryless deterministic strategies, which is conforming to the established litterature of mean payoff games.
+\newline Positional strategies are crucial for our analysis as a result of the following theorem.
+\begin{theorem}
+	\label{theorem:OptimalStrategy}
+	For all Mean Payoff Games, each player has an optimal positional strategy.
+\end{theorem}
+
 \subsubsection{Probabilistic Strategies}
 A probabilistic strategy is a random process that assigns for each sequence of vertices $v\in\mathcal{V}$ a probability distribution over $\Adj v.$ This constitutes the most general strategy of a player:
 $$
@@ -178,14 +217,55 @@ Now we have the following hiearchy considering the set of optimal strategies:
 $$
 \forall \text{Mean Payoff Game}\ G,\forall p\in \PlayerSet,\quad \PayoffOptimal(G,p) \subseteq \StrongOptimal(G,p) \subseteq \WeakOptimal(G,p)
 $$
+\subsection{Mean Payoff}
+We have used the word ``Mean Payoff" extensively, and they are the central entity in mean payoff games\footnote{This explains the name ``mean payoff game".} but we still did not define it.
+\newline We had to delay the definition as it requires the knowledge of the mechanics of the game, and how strategies work. This section will define and formalize the mean payoff, and highlights its relevance.
+\subsubsection{Mean Payoff}
+For a mean payoff game $G$, with a deterministic pair of strategies $(\Phi^{\Max},\Phi^{\Min}),$ we will define two terms $v^+(G,\Phi^{\Max},\Phi^{\Min})$ and $v^-(G,\Phi^{\Max},\Phi^{\Min})$ as follow\footnote{For probabilistic strategies, both terms are random variables, so we will be interested in their expected values.}:
+\begin{align*}
+v^+(G,\Phi^{\Max},\Phi^{\Min}) &=\limsup_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k \\
+v^-(G,\Phi^{\Max},\Phi^{\Min}) &=\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k
+\end{align*} 
+Where $(w_n)_{n\in\mathbb{N}}$ is the sequence of payoffs generated by the instance.
+\newline These two terms were used in table $\ref{table:WinningConditions}$ when discussing the winning conditions, and we will call them respectively the supremum mean payoff, and the infimum mean payoff. 
+\begin{theorem}
+	For every mean payoff game $G$, and every pair of strategies $(\Phi^{\Max},\Phi^{\Min})$, both the supremum mean payoff $v^+(G,\Phi^{\Max},\Phi^{\Min})$ and the infimum mean payoff $v^-(G,\Phi^{\Max},\Phi^{\Min})$ are guaranteed to exist, and:
+	\begin{equation}
+		\label{eqn:InfSupRelationMeanPayoff}
+		v^-(G,\Phi^{\Max},\Phi^{\Min}) \le v^+(G,\Phi^{\Max},\Phi^{\Min})
+	\end{equation}
+\end{theorem}
+If both terms are equal in equation  \eqref{eqn:InfSupRelationMeanPayoff}, we say that the game instance has a mean payoff $v(G,\Phi^{\Max},\Phi^{\Min})=v^-(G,\Phi^{\Max},\Phi^{\Min})=v^+(G,\Phi^{\Max},\Phi^{\Min}).$
 
-
-
+\subsubsection{Convergence Issues}
+This mean payoff itself is the heart of mean payoff games. A major problem lies in the fact that the existence of a mean payoff is not guaranteed, and an example for such case is found in the \newline figure \ref{fig:MeanPayoffNonConvergence}.
+\newline Now, fortunately, this is not an issue, as we are interested in good strategies. Theorem \ref{theorem:OptimalStrategy} proven in \cite{PositionalStrategies} states that for each player, the set of optimal strategies contains a positional one. This is a very important result as we can limit the domain of our optimization problem\footnote{The problem of finding optimal strategies} to the more tractable positional\footnote{memoryless and deterministic} and behavioural\footnote{memoryless and probabilistic} strategies.
+\newline We start by tackling the existence of the mean payoff for positional strategies in the the following theorem:
+\begin{theorem}
+	\label{theorem:MeanPayoffExistence}
+	For every mean payoff $G$, and a pair of positional strategies $(\Phi^{\Max},\Phi^{\Min}),$ the mean payoff $v(G,\Phi^{\Max},\Phi^{\Min})$ exists.
+\end{theorem}
+We will give a constructive proof of theorem \ref{theorem:MeanPayoffExistence} in section \ref{section:StrategyEvalution}. We will also provide a linear algorithm for its calculation.
+\newline Furthermore, in our machine learning model, we will approach the problem using behavioural strategies. Also luckily, its existence is guaranteed by the following theorem:
+\begin{theorem}
+	\label{theorem:MeanPayoffExistenceProbabilstic}
+	For every mean payoff $G$, and a pair of behavioural strategies $(\Pi^{\Max},\Pi^{\Min}),$ the expected mean payoff $\mathbb{E}[v(G,\Pi^{\Max},\Pi^{\Min})]$ exists.
+\end{theorem}
+Unlike theorem \ref{theorem:MeanPayoffExistence} theorem \ref{theorem:MeanPayoffExistenceProbabilstic} was very challenging to prove, and we were not able to find a direct proof in the literature. We had some probabilistic arguments that affirmed the result for almost all mean payoff games. This alone was enough for us to use it as a metric for probabilistic strategies.
+\newline Eventually, we were able to give a formal proof, which is detailed in the appendix \ref{appendix:Probabilistic:Strategies}.
+\subsubsection{Game Value}
+By combining both theorems \ref{theorem:OptimalStrategy} and \ref{theorem:MeanPayoffExistence}, there is a mean payoff $v(G)$ that both players are guaranteed to achieve if they play optimally:
+\begin{align*}
+\exists \Phi^{\Max},\forall \Phi^ {\Min}, & \quad v^-(G,\Phi^{\Max},\Phi^{\Min}) \ge v(G) \\
+\exists \Phi^{\Min},\forall \Phi^{\Max}, & \quad v^+(G,\Phi^{\Max},\Phi^{\Min}) \le v(G) 
+\end{align*}
+Such mean payoff is called the value of the game. This value determines the winner of the game assuming both players play optimally.
 \section{Evaluating Strategies}
+\label{section:StrategyEvalution}
 Suppose we have a pair of potentially probabilitic strategies $(\Phi^{\Max},\Phi^{\Min}).$ The problem is to evaluate the winner without doing an infinite simulation of the game. 
 \subsection{Monte-Carlo Simulations}
 This is the most intuitive evaluation method 
-\subsection{Memoryless Deterministic Strategies}
+\subsection{Positional Strategies}
 If both strategies are deterministic and memoryless. Then the generated sequence of vertices $(s_n)_{n\in\mathbb{N}}$ will be completely determined by the recurrence relation:
 $$
 s_n=\begin{cases}
@@ -272,7 +352,22 @@ Now two closely related, but different evaluations are possible
 	\item Distribution of winners 
 \end{itemize}
 Now, with both strategies fixed. A Mean Payoff Game can be considered as a Markov Chain.
-%Insert calculations
+
+\begin{algorithm}
+	\caption{Probabilistic strategies evaluation}\label{alg:ProbabilisticEvaluation}
+	\begin{algorithmic}
+		\Require $G=(V,E,P,s,p)$ a mean payoff game
+		\Require $(\Pi^{\text{Max}},\Pi^{\text{Min}})$ the edge probability 
+		\Ensure $\mathbb{E}[R]$ The expected mean payoff  
+		\State $(A,W)\leftarrow \text{MRP}(G,\Phi^{\text{Max}},\Phi^{\text{Min}})$\Comment{Extract the MRP form. This is detailed in \ref{section:ProbabilisticStrategies:MRP}}
+		
+		\State $u\leftarrow (A\odot W)\ones$
+		\State $X\leftarrow \text{NullSpace}(\Id - A)$ \Comment{Extract the kernel-basis of $\Id - A$}
+		\State $Y\leftarrow \text{NullSpace}(\Id - A^T)$ \Comment{Extract the kernel-basis of $\Id - A^H.$}
+		\State $T \leftarrow X(Y^TX)^{-1}Y^T$ \Comment{Calculate the limit $\displaystyle\lim_{n\rightarrow +\infty}\frac{1}{n}\sum_{k=0}^{n-1}A^k.$ This is detailed in \ref{section:ProbabilisticStrategies:AverageTimeReward}}
+		\State \Return $\mathbb{E}[R]\leftarrow Tu$
+	\end{algorithmic}
+\end{algorithm}
 
 
 \section{Countering Strategies}
@@ -299,5 +394,261 @@ The problem of finding a counter strategy will be reduced to finding a negative 
 \newline This can be done in $\mathcal{O}(\lvert V\rvert^3)$
 \subsection{Probabilistic Counter Strategy}
 On the other hand, if $\Phi^p$ is probabilistic, then the problem can be reduced to optimizing the mean payoff of an infinite-horizon Markov Decision Process.
+
 \section{Learning Strategies}
-\subsection{Iterative Methods}
+\section{State of the Art}
+Mean Payoff Games are well-known in many fields, such that Optimization\cite{SimplexMPG}, Game Theory\cite{PositionalStrategies}, Formal Verification\cite{OmegaSpecsMPG}, Constraint Satisfaction Problems\cite{TropicalCSP,MPGMaxAtom}, Reinforcement Learning\cite{StrategyImprovement}.
+\newline While we were not able to trace the exact origin of Mean Payoff Games, we were able to find references to it since the seventies \cite{PositionalStrategies}. The problem itself is interesting as it connect many related fields. First of all, it is closely related to many problems in constraint satisfaction \cite{TropicalCSP,MPGMaxAtom}, model-checking \cite{OmegaSpecsMPG}, game theory \cite{PositionalStrategies}.
+\newline Also, another interesting fact is that deciding the winner of a mean payoff game is polynomial time equivalent\footnote{Each instance of both problems can be transformed to the latter in polynomial time.} to the Max Atom problem \cite{MPGMaxAtom}, which is in $\texttt{NP}\cap \texttt{co-NP},$ but its membership to $\mathtt{P}$ is still open. This is remarkable, there only few problems that share such fate \cite{NPInterCoNP}.
+
+
+This influenced mainly two research axes. The first deals with solving the decision problem\footnote{The decision problem of a mean payoff game is deciding the winner.}, and also optimization problem\footnote{The optimization problem is calculating the best strategy for each player.} related to calculating the optimal strategies. 
+\newline The optimization problem itself can be solved using exact methods \cite{MPGMaxAtom}, as well as iterative methods \cite{StrategyImprovement,SimplexMPG}.
+
+While we did not find a machine learning approach on mean payoff games in the literature, we were able to find some results in a superclass, known as stochastic parity games. In fact, a model free reinforcement learning approach was proposed using the Q-learning minimax algorithm , as well as a supervised learning approach on solved instances of that game.
+
+\section{Library Implementation}
+We have two implementations of our mean payoff game library:
+\begin{itemize}
+	\item The first is called \textbf{mpg}. It is implemented in Python, and it contains the core functionalities of mean payoff games, as well as visualisation and support for machine learning methods.
+	\item The second one is called \textbf{mpgcpp}. It is implemented in C++ to maximimize effeciency.
+\end{itemize}
+Also, the time-critical C++ functions are exported to Python. In they can be used via the \textbf{wrapper} module.
+\subsection{mpg}
+We have implemented a library called \textbf{mpg} that contains all the functionalities that we have discussed for mean payoff games.
+\newline Here we list the modules of that library:
+\begin{figure}[H]
+	\centering
+	    \begin{tikzpicture}
+	    	
+	   \begin{package}{ mpg }
+		\begin{class}[text width=3cm]{csp}{0,0}
+		\end{class}
+		
+		\begin{class}[text width=3cm]{games}{4,0}			
+		\end{class}
+
+		\begin{class}[text width=3cm]{graphs}{8,0}
+		\end{class}
+		
+		\begin{class}[text width=3cm]{ml}{0,-2}
+		\end{class}
+		
+		\begin{class}[text width=3cm]{rl}{4,-2}
+		\end{class}
+		
+		\begin{class}[text width=3cm]{sp}{8,-2}
+		\end{class}
+		
+		
+		\begin{class}[text width=3cm]{gnn}{0,-4}
+		\end{class}
+		
+		\begin{class}[text width=3cm]{visualisation}{4,-4}
+		\end{class}
+		
+		\begin{class}[text width=3cm]{wrapper}{8,-4}
+		\end{class}
+		\end{package}
+	\end{tikzpicture}
+	\caption{\textbf{mpg} library}
+\end{figure}
+\FloatBarrier
+This library contains the following modules:
+\subsubsection{csp}
+This module contains the constraint satisfaction methods used to solve Mean Payoff Games. 
+\newline They are describe in details in the appendix \ref{appendix:CSP}.
+\subsubsection{graphs}
+This modules contains some graph algorithms needed for Mean Payoff Games, such as:
+\begin{itemize}
+	\item Floyd-Warshall method to find negative cycles.
+	\item Methods to generate random graphs as described in section \ref{section:Dataset}. The theoretical details are in the appendix \ref{appendix:RandomGraphs}
+\end{itemize}
+\subsubsection{games}
+This module defines the core functionalities related to mean payoff games.
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\begin{package} {networkx}
+			\begin{class}{DiGraph}{0,2.5cm}
+			\attribute{\dots}
+			\operation{\dots}
+			\end{class}
+		\end{package}
+		\begin{package}{ games }
+			\begin{class}[text width=12cm]{MeanPayoffGraph}{0,0}
+				\inherit{DiGraph}
+				\attribute {+ weights\_matrix: Matrix}
+				\attribute {+ adjacency\_matrix: Matrix}
+				\attribute {+ tensor\_representation: Tensor[3]}
+				\operation{+ closure() : MeanPayoffGraph}
+				\operation{+ dual() : MeanPayoffGraph}
+				\operation {+ as\_bipartite() : MeanPayoffGraph}
+				\operation {+ as\_min\_max\_system() : MinMaxSystem}
+			\end{class}
+			
+			\begin{interface}[text width=8.5cm]{Strategy}{0,-5cm}
+				\operation{+ \_\_init\_\_(G : MeanPayoffGraph, player : bool)}
+				\operation[0]{+ call(vertex : int) : int}
+			\end{interface}
+			
+			\begin{class}[text width=4cm]{PositionalStrategy}{-2cm,-8cm}
+				\inherit{Strategy}
+				\operation[0]{+ call(vertex)}
+			\end{class}
+			
+			\begin{class}[text width=4cm]{GreedyStrategy}{-6.5cm,-8cm}
+								\inherit{Strategy}
+				\operation[0]{+ call(vertex)}
+			\end{class}
+			\begin{class}[text width=4cm]{EpsGreedyStrategy}{2.5cm,-8cm}
+								\inherit{Strategy}
+				\operation[0]{+ call(vertex)}
+			\end{class}
+			
+			\begin{class}[text width=4cm]{FractionalStrategy}{7cm,-8cm}
+								\inherit{Strategy}
+				\operation[0]{+ call(vertex)}
+			\end{class}
+			
+			\begin{class}[text width= 12cm]{Functions}{0,-10cm}
+				\operation {@ winning\_everywhere() : bool}
+				\operation {@ winning\_somewhere() : bool}
+				\operation{@ mpg\_from\_digraph(G : nx.Digraph) : MeanPayoffGraph}
+				\operation{@ optimal\_strategy\_pair(G : MeanPayoffGraph) : Tuple[Strategy,Strategy]}
+				\operation{@ counter\_strategy(G : MeanPayoffGraph, psi: PositionalStrategy, source : int, player : bool) : Strategy}
+				\operation{@ mean\_payoff(G: MeanPayoffGraph, source: int, psi1 : PositionalStrategy, psi2 : PositionalStrategy, turn : bool) : float}
+				\operation{@ mean\_payoffs(G: MeanPayoffGraph, psi1 : PositionalStrategy, psi2 : PositionalStrategy) : Matrix}
+				\operation{@ winner(G: MeanPayoffGraph, source: int, psi1 : PositionalStrategy, psi2 : PositionalStrategy, turn : bool) : bool}
+				\operation{@ winners(G: MeanPayoffGraph, psi1 : PositionalStrategy, psi2 : PositionalStrategy) : Matrix}
+			\end{class}
+		
+		\end{package}
+	\end{tikzpicture}
+	\caption{\textbf{games} module}
+\end{figure}
+\FloatBarrier
+\subsubsection{visualisation}
+This module serves as a front-end for Jupyter Notebook, so we can visualise mean payoff games, and also the strategy of each player.
+% Image figures for proof
+\subsubsection{ml}
+This module defines the required layers, blocks, and model architectures to do machine learning on Mean Payoff Games. This is detailed in chapter \ref{section:ModelDesign}.
+\subsubsection{gnn}
+This module defines the basic functionalities of graph neural networks \cite{GNN} that are required for our models.
+
+\subsubsection{rl}
+This module defines the required functions to do reinforcement learning on Mean Payoff Games\footnote{The current version of this module only supports Mean Payoff Games where at least one player has a fixed strategy.}.
+
+\subsubsection{sp}
+This module defines a basic AlphaZero based agent to learn the game.
+\subsubsection{wrapper}
+This module contains a binding to the C++ implementation of time-critical methods for mean payoff games.
+\newline We will give details about this wrapper in the next section.
+\subsection{mpgcpp}
+This library contains the 
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		
+		\begin{package}{ mpg }
+			\begin{class}[text width=3cm]{csp}{0,0}
+			\end{class}
+			
+			\begin{class}[text width=3cm]{games}{4,0}			
+			\end{class}
+			
+			\begin{class}[text width=3cm]{mpgio}{8,0}
+			\end{class}
+		\end{package}
+	\end{tikzpicture}
+	\caption{\textbf{mpgcpp} library}
+\end{figure}
+\subsubsection{csp}
+This module contains the constraint satisfaction methods used to solve Mean Payoff Games. 
+
+\subsubsection{games}
+This module defines the core functionalities related to mean payoff games.
+\begin{figure}[H]
+	\centering
+	\begin{tikzpicture}
+		\small
+		\begin{package}{ games }
+			\begin{class}[text width=6cm]{MeanPayoffGraphBase}{0,5cm}
+			\attribute{edges}
+			\attribute{dual\_graph}
+			\operation[0]{\# add\_edge\_impl(source, target, weight)}
+			\operation[0]{\# set\_dual(dual)}
+			\operation[0]{+ get\_weight(src, dest)}
+			\operation{+ get\_weights()}
+			\operation{+ count\_nodes() : int}
+			\operation{+ get\_edges() : Edges}
+			\end{class}
+			\begin{class}[text width=3.5cm]{VectorMPG}{-6cm,4cm}
+				\inherit{MeanPayoffGraphBase}
+			\end{class}
+			
+			\begin{class}[text width=3.5cm]{MatrixMPG}{-6cm,0}
+				\inherit{MeanPayoffGraphBase}
+			\end{class}
+			
+			\begin{class}[text width=3.5cm]{HashMapMPG}{6cm,4cm}
+				\inherit{MeanPayoffGraphBase}
+			\end{class}
+			
+			\begin{class}[text width=3.5cm]{TreeMapMPG}{6cm,0}
+				\inherit{MeanPayoffGraphBase}
+			\end{class}
+			
+			\begin{class}[text width=3.5cm]{DualMPG}{0cm,0cm}
+				\inherit{MeanPayoffGraphBase}
+			\end{class}
+			
+			
+			\draw[umlcd style,-diamond,fill opacity=100] (DualMPG) to [bend right=12]  (MeanPayoffGraphBase); 
+			%\draw[umlcd style,triangle,fill opacity=100] (DualMPG) to [bend right=-12]  (MeanPayoffGraphBase); 
+		
+			
+			\begin{interface}[text width=7.5cm]{Strategy}{0,-2cm}
+				\operation{+ \_\_init\_\_(G : MeanPayoffGraph, player : bool)}
+				\operation[0]{+ call(vertex : int) : int}
+			\end{interface}
+			
+			\begin{class}[text width=3.5cm]{PositionalStrategy}{-6cm,-5cm}
+				\inherit{Strategy}
+				\operation[0]{+ call(vertex)}
+			\end{class}
+			
+			\begin{class}[text width=3.5cm]{GreedyStrategy}{-2cm,-5cm}
+				\inherit{Strategy}
+				\operation[0]{+ call(vertex)}
+			\end{class}
+			\begin{class}[text width=3.5cm]{EpsGreedyStrategy}{2cm,-5cm}
+				\inherit{Strategy}
+				\operation[0]{+ call(vertex)}
+			\end{class}
+			
+			\begin{class}[text width=3.5cm]{FractionalStrategy}{6cm,-5cm}
+				\inherit{Strategy}
+				\operation[0]{+ call(vertex)}
+			\end{class}
+			
+			\begin{class}[text width= 12cm]{Functions}{0,-7cm}
+				\operation {@ winning\_everywhere() : bool}
+				\operation {@ winning\_somewhere() : bool}
+				\operation{@ mpg\_from\_digraph(G : nx.Digraph) : MeanPayoffGraph}
+				\operation{@ optimal\_strategy\_pair(G : MeanPayoffGraph) : Tuple[Strategy,Strategy]}
+				\operation{@ counter\_strategy(G : MeanPayoffGraph, psi: PositionalStrategy, source : int, player : bool) : Strategy}
+				\operation{@ mean\_payoff(G: MeanPayoffGraph, source: int, psi1 : PositionalStrategy, psi2 : PositionalStrategy, turn : bool) : float}
+				\operation{@ mean\_payoffs(G: MeanPayoffGraph, psi1 : PositionalStrategy, psi2 : PositionalStrategy) : Matrix}
+				\operation{@ winner(G: MeanPayoffGraph, source: int, psi1 : PositionalStrategy, psi2 : PositionalStrategy, turn : bool) : bool}
+				\operation{@ winners(G: MeanPayoffGraph, psi1 : PositionalStrategy, psi2 : PositionalStrategy) : Matrix}
+			\end{class}
+			
+		\end{package}
+	\end{tikzpicture}
+	\caption{\textbf{games} module}
+\end{figure}
+
+
+\subsection{Environment}
+\subsection{Structure}

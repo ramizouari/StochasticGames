@@ -1,20 +1,25 @@
 \babel@toc {english}{}
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces An example of an execution with non-convergent Mean Payoffs\relax }}{11}{figure.caption.10}%
+\contentsline {figure}{\numberline {2.1}{\ignorespaces An example of an execution with non-convergent Mean Payoffs \relax }}{12}{figure.caption.8}%
+\contentsline {figure}{\numberline {2.2}{\ignorespaces \textbf {mpg} library\relax }}{20}{figure.caption.23}%
+\contentsline {figure}{\numberline {2.3}{\ignorespaces \textbf {games} module\relax }}{22}{figure.caption.27}%
+\contentsline {figure}{\numberline {2.4}{\ignorespaces \textbf {mpgcpp} library\relax }}{23}{figure.caption.34}%
+\contentsline {figure}{\numberline {2.5}{\ignorespaces \textbf {games} module\relax }}{24}{figure.caption.37}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {3.1}{\ignorespaces A counter example of the Linear Bound heuristic\relax }}{27}{figure.caption.30}%
+\contentsline {figure}{\numberline {3.1}{\ignorespaces A counter example of the Linear Bound heuristic\relax }}{35}{figure.caption.49}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {4.1}{\ignorespaces Three isomorphic Mean Payoff Games\relax }}{29}{figure.caption.38}%
-\contentsline {figure}{\numberline {4.2}{\ignorespaces Mean Payoff Game, with a rescaled version using Maximum normalization\relax }}{31}{figure.caption.42}%
-\contentsline {figure}{\numberline {4.3}{\ignorespaces Original Mean Payoff Game with a padded version\relax }}{32}{figure.caption.48}%
-\contentsline {figure}{\numberline {4.4}{\ignorespaces An MPG where the first player always wins.\relax }}{33}{figure.caption.49}%
-\contentsline {figure}{\numberline {4.5}{\ignorespaces Graph Convolutional Network\relax }}{34}{figure.caption.50}%
-\contentsline {figure}{\numberline {4.6}{\ignorespaces Weighted Graph Convolutional Network\relax }}{34}{figure.caption.51}%
-\contentsline {figure}{\numberline {4.7}{\ignorespaces Preprocessing Block\relax }}{35}{figure.caption.52}%
-\contentsline {figure}{\numberline {4.8}{\ignorespaces Graph Convolutional Block\relax }}{35}{figure.caption.53}%
-\contentsline {figure}{\numberline {4.9}{\ignorespaces Graph Convolutional Block\relax }}{36}{figure.caption.54}%
-\contentsline {figure}{\numberline {4.10}{\ignorespaces Model Architecture\relax }}{38}{figure.caption.55}%
+\contentsline {figure}{\numberline {4.1}{\ignorespaces Three isomorphic Mean Payoff Games\relax }}{40}{figure.caption.58}%
+\contentsline {figure}{\numberline {4.2}{\ignorespaces Mean Payoff Game, with a rescaled version using Maximum normalization\relax }}{42}{figure.caption.62}%
+\contentsline {figure}{\numberline {4.3}{\ignorespaces Original Mean Payoff Game with a padded version\relax }}{43}{figure.caption.68}%
+\contentsline {figure}{\numberline {4.4}{\ignorespaces An MPG where the first player always wins.\relax }}{44}{figure.caption.69}%
+\contentsline {figure}{\numberline {4.5}{\ignorespaces Preprocessing Block\relax }}{46}{figure.caption.75}%
+\contentsline {figure}{\numberline {4.6}{\ignorespaces Graph Convolutional Network\relax }}{46}{figure.caption.76}%
+\contentsline {figure}{\numberline {4.7}{\ignorespaces Weighted Graph Convolutional Network \relax }}{47}{figure.caption.77}%
+\contentsline {figure}{\numberline {4.8}{\ignorespaces Graph Convolutional Block\relax }}{47}{figure.caption.78}%
+\contentsline {figure}{\numberline {4.9}{\ignorespaces Graph Convolutional Block\relax }}{48}{figure.caption.79}%
+\contentsline {figure}{\numberline {4.10}{\ignorespaces Model Architecture\relax }}{49}{figure.caption.80}%
+\addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

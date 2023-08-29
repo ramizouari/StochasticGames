@@ -1,156 +1,197 @@
 \babel@toc {english}{}
-\contentsline {chapter}{Liste des Figures}{4}{chapter*.3}%
-\contentsline {chapter}{Liste des Tableaux}{5}{chapter*.4}%
-\contentsline {chapter}{Introduction}{7}{chapter*.6}%
-\contentsline {chapter}{\numberline {1}Cadre du Stage }{8}{chapter.1}%
-\contentsline {chapter}{\numberline {2}Analysis \& Implementation}{9}{chapter.2}%
-\contentsline {section}{\numberline {2.1}Introduction}{9}{section.2.1}%
-\contentsline {section}{\numberline {2.2}Formalisation}{9}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Di-Graph}{9}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Mean Payoff Game}{9}{subsection.2.2.2}%
-\contentsline {subsubsection}{Condition C1}{10}{subsubsection*.7}%
-\contentsline {subsubsection}{Condition C2}{10}{subsubsection*.8}%
-\contentsline {subsubsection}{Condition C3}{10}{subsubsection*.9}%
-\contentsline {subsection}{\numberline {2.2.3}Well Foundness}{10}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Symmetries}{11}{subsection.2.2.4}%
-\contentsline {subsection}{\numberline {2.2.5}Strategy}{12}{subsection.2.2.5}%
-\contentsline {subsubsection}{Deterministic Strategies}{12}{subsubsection*.12}%
-\contentsline {subsubsection}{Probabilistic Strategies}{12}{subsubsection*.13}%
-\contentsline {subsubsection}{Considered Strategies}{12}{subsubsection*.14}%
-\contentsline {subsubsection}{Deterministic Optimal Strategy}{13}{subsubsection*.15}%
-\contentsline {paragraph}{Weak Optimality}{13}{paragraph*.16}%
-\contentsline {paragraph}{Strong Optimality}{13}{paragraph*.17}%
-\contentsline {paragraph}{Payoff Optimality}{13}{paragraph*.18}%
-\contentsline {section}{\numberline {2.3}Evaluating Strategies}{13}{section.2.3}%
-\contentsline {subsection}{\numberline {2.3.1}Monte-Carlo Simulations}{13}{subsection.2.3.1}%
-\contentsline {subsection}{\numberline {2.3.2}Memoryless Deterministic Strategies}{13}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Probabilistic Strategies}{15}{subsection.2.3.3}%
-\contentsline {section}{\numberline {2.4}Countering Strategies}{15}{section.2.4}%
-\contentsline {subsection}{\numberline {2.4.1}Deterministic Counter Strategy}{15}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Probabilistic Counter Strategy}{16}{subsection.2.4.2}%
-\contentsline {section}{\numberline {2.5}Learning Strategies}{16}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Iterative Methods}{16}{subsection.2.5.1}%
-\contentsline {chapter}{\numberline {3}Dataset Generation}{17}{chapter.3}%
-\contentsline {section}{\numberline {3.1}Introduction}{17}{section.3.1}%
-\contentsline {section}{\numberline {3.2}Analysis}{17}{section.3.2}%
-\contentsline {section}{\numberline {3.3}Graph Distributions}{17}{section.3.3}%
-\contentsline {subsection}{\numberline {3.3.1}$\mathcal {G}(n,p)$ Family}{17}{subsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.3.2}$\mathcal {G}(n,m)$ Family}{17}{subsection.3.3.2}%
-\contentsline {subsection}{\numberline {3.3.3}Valid edges}{17}{subsection.3.3.3}%
-\contentsline {subsection}{\numberline {3.3.4}$\mathcal {D}(n,p)$ Graph Construction}{18}{subsection.3.3.4}%
-\contentsline {subsubsection}{Naive Method}{18}{subsubsection*.19}%
-\contentsline {subsubsection}{Optimized Method}{18}{subsubsection*.20}%
-\contentsline {subsection}{\numberline {3.3.5}Choice Function}{19}{subsection.3.3.5}%
-\contentsline {subsubsection}{First Proposition}{19}{subsubsection*.21}%
-\contentsline {subsubsection}{Complexity}{20}{subsubsection*.22}%
-\contentsline {subsubsection}{Refinement}{21}{subsubsection*.23}%
-\contentsline {subsection}{\numberline {3.3.6}Complexity of Optimised $\mathcal {D}(n,p)$ Graph Construction}{21}{subsection.3.3.6}%
-\contentsline {subsection}{\numberline {3.3.7}$\mathcal {D}(n,m)$ Construction}{22}{subsection.3.3.7}%
-\contentsline {section}{\numberline {3.4}Sinkless Conditionning}{22}{section.3.4}%
-\contentsline {subsection}{\numberline {3.4.1}Repeating Construction}{23}{subsection.3.4.1}%
-\contentsline {subsubsection}{Algorithm}{23}{subsubsection*.24}%
-\contentsline {subsubsection}{Analysis}{23}{subsubsection*.25}%
-\contentsline {section}{\numberline {3.5}Weights Distribution}{23}{section.3.5}%
-\contentsline {subsection}{\numberline {3.5.1}Construction}{23}{subsection.3.5.1}%
-\contentsline {section}{\numberline {3.6}Proposed MPG Distribution}{24}{section.3.6}%
-\contentsline {subsection}{\numberline {3.6.1}Desired Properties of Mean Payoff Game Distributions}{24}{subsection.3.6.1}%
-\contentsline {subsubsection}{Fairness in the Limit}{24}{subsubsection*.26}%
-\contentsline {subsubsection}{Symmetric}{24}{subsubsection*.27}%
-\contentsline {subsection}{\numberline {3.6.2}Implemented Distributions}{24}{subsection.3.6.2}%
-\contentsline {section}{\numberline {3.7}MPG Generation}{25}{section.3.7}%
-\contentsline {subsection}{\numberline {3.7.1}Distribution}{25}{subsection.3.7.1}%
-\contentsline {subsection}{\numberline {3.7.2}Dense Graphs}{25}{subsection.3.7.2}%
-\contentsline {section}{\numberline {3.8}Annotation}{25}{section.3.8}%
-\contentsline {subsection}{\numberline {3.8.1}Approach}{25}{subsection.3.8.1}%
-\contentsline {subsection}{\numberline {3.8.2}Target Values}{26}{subsection.3.8.2}%
-\contentsline {subsection}{\numberline {3.8.3}Heuristics}{26}{subsection.3.8.3}%
-\contentsline {subsubsection}{Linear Bound Heuristic}{26}{subsubsection*.29}%
-\contentsline {subsubsection}{Early Stopping}{27}{subsubsection*.31}%
-\contentsline {paragraph}{Proof}{27}{paragraph*.32}%
-\contentsline {subsection}{\numberline {3.8.4}Deployment}{27}{subsection.3.8.4}%
-\contentsline {chapter}{\numberline {4}Model Design}{28}{chapter.4}%
-\contentsline {section}{\numberline {4.1}Introduction}{28}{section.4.1}%
-\contentsline {section}{\numberline {4.2}Objectives}{28}{section.4.2}%
-\contentsline {section}{\numberline {4.3}Properties}{28}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Totality}{28}{subsection.4.3.1}%
-\contentsline {subsubsection}{Definition}{28}{subsubsection*.33}%
-\contentsline {subsubsection}{Importance}{28}{subsubsection*.34}%
-\contentsline {subsection}{\numberline {4.3.2}Node Agnostic}{28}{subsection.4.3.2}%
-\contentsline {subsubsection}{Formalisation}{29}{subsubsection*.35}%
-\contentsline {subsubsection}{Explanation}{29}{subsubsection*.36}%
-\contentsline {subsubsection}{Importance}{29}{subsubsection*.37}%
-\contentsline {subsection}{\numberline {4.3.3}Invariance under Positive Scaling}{30}{subsection.4.3.3}%
-\contentsline {subsubsection}{Standard Scaling}{30}{subsubsection*.39}%
-\contentsline {subsubsection}{Maximum Scaling}{30}{subsubsection*.40}%
-\contentsline {paragraph}{Implementation Notes:}{30}{paragraph*.41}%
-\contentsline {subsection}{\numberline {4.3.4}Permutation Equivariance}{31}{subsection.4.3.4}%
-\contentsline {subsubsection}{Definition}{31}{subsubsection*.43}%
-\contentsline {subsubsection}{Importance}{31}{subsubsection*.44}%
-\contentsline {subsection}{\numberline {4.3.5}Stability under Padding}{31}{subsection.4.3.5}%
-\contentsline {subsubsection}{Definition}{31}{subsubsection*.45}%
-\contentsline {subsubsection}{Importance}{31}{subsubsection*.46}%
-\contentsline {subsubsection}{Removing Unreachable Nodes}{32}{subsubsection*.47}%
-\contentsline {section}{\numberline {4.4}Considered Models}{32}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Value based Model}{32}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4.4.2}Strategy based Model}{33}{subsection.4.4.2}%
-\contentsline {section}{\numberline {4.5}Building the Model}{33}{section.4.5}%
-\contentsline {subsection}{\numberline {4.5.1}Weighted Graph Convolutional Network}{33}{subsection.4.5.1}%
-\contentsline {subsection}{\numberline {4.5.2}Preprocessing Block}{35}{subsection.4.5.2}%
-\contentsline {subsection}{\numberline {4.5.3}Convolutional Block}{35}{subsection.4.5.3}%
-\contentsline {subsection}{\numberline {4.5.4}Prediction Block}{36}{subsection.4.5.4}%
-\contentsline {subsection}{\numberline {4.5.5}Model Architecture}{36}{subsection.4.5.5}%
-\contentsline {chapter}{\numberline {5}Reinforcement Learning Approach}{39}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{39}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Monte Carlo Augmentation}{39}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Monte Carlo Tree Search}{39}{subsection.5.2.1}%
-\contentsline {section}{\numberline {5.3}Pipeline}{39}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Services}{39}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Configuration}{39}{section.5.5}%
-\contentsline {chapter}{\numberline {6}Analyse}{40}{chapter.6}%
-\contentsline {chapter}{Conclusion}{41}{chapter*.56}%
-\contentsline {chapter}{\numberline {A}On Constraint Satistfaction Problems}{42}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Constraint Satisfaction Problem}{42}{section.A.1}%
-\contentsline {subsection}{\numberline {A.1.1}Definition}{42}{subsection.A.1.1}%
-\contentsline {subsection}{\numberline {A.1.2}Assignment}{42}{subsection.A.1.2}%
-\contentsline {subsection}{\numberline {A.1.3}Polymorphism}{42}{subsection.A.1.3}%
-\contentsline {section}{\numberline {A.2}Ternary Max Atom Systems}{42}{section.A.2}%
-\contentsline {subsection}{\numberline {A.2.1}Definition}{42}{subsection.A.2.1}%
-\contentsline {subsection}{\numberline {A.2.2}Example}{43}{subsection.A.2.2}%
-\contentsline {section}{\numberline {A.3}Max Atom Systems}{43}{section.A.3}%
-\contentsline {subsection}{\numberline {A.3.1}Definition}{43}{subsection.A.3.1}%
-\contentsline {subsection}{\numberline {A.3.2}$\text {MA} \le \text {MA}_3$}{43}{subsection.A.3.2}%
-\contentsline {subsubsection}{Recursive Reduction}{43}{subsubsection*.57}%
-\contentsline {paragraph}{Implication}{44}{paragraph*.58}%
-\contentsline {paragraph}{Equivalence}{44}{paragraph*.59}%
-\contentsline {subsubsection}{Induction}{44}{subsubsection*.60}%
-\contentsline {subsection}{\numberline {A.3.3}Polymorphisms}{46}{subsection.A.3.3}%
-\contentsline {section}{\numberline {A.4}Min-Max System}{46}{section.A.4}%
-\contentsline {subsection}{\numberline {A.4.1}Transforming to Max Atom Systems}{46}{subsection.A.4.1}%
-\contentsline {subsubsection}{Transforming $\text {MI}$ constraints}{46}{subsubsection*.61}%
-\contentsline {subsubsection}{Tranforming $\text {MA}$ constraints}{47}{subsubsection*.62}%
-\contentsline {subsubsection}{Building the Max Atom System}{47}{subsubsection*.63}%
-\contentsline {subsubsection}{Equivalence}{47}{subsubsection*.64}%
-\contentsline {chapter}{\numberline {B}On Random Graphs}{51}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Introduction}{51}{section.B.1}%
-\contentsline {section}{\numberline {B.2}Sinkless $\mathcal {D}(n,p)$ Graph}{51}{section.B.2}%
-\contentsline {subsection}{\numberline {B.2.1}Property}{51}{subsection.B.2.1}%
-\contentsline {subsection}{\numberline {B.2.2}Basic Comparison with Normal $\mathcal {D}(n,p)$}{51}{subsection.B.2.2}%
-\contentsline {subsection}{\numberline {B.2.3}Property Probability}{52}{subsection.B.2.3}%
-\contentsline {subsection}{\numberline {B.2.4}Asymptotic Analysis For Dense $\mathcal {D}(n,p)$}{52}{subsection.B.2.4}%
-\contentsline {subsection}{\numberline {B.2.5}Asymptotic Analysis For Sparse $\mathcal {D}(n,p)$}{53}{subsection.B.2.5}%
-\contentsline {section}{\numberline {B.3}Repeating Construction}{54}{section.B.3}%
-\contentsline {subsection}{\numberline {B.3.1}Estimating Complexity}{54}{subsection.B.3.1}%
-\contentsline {subsection}{\numberline {B.3.2}Dense Graph case}{54}{subsection.B.3.2}%
-\contentsline {subsection}{\numberline {B.3.3}Sparse Graph case}{54}{subsection.B.3.3}%
-\contentsline {section}{\numberline {B.4}Binomial Rejection Construction}{55}{section.B.4}%
-\contentsline {section}{\numberline {B.5}Expected Mean Payoff}{55}{section.B.5}%
-\contentsline {subsection}{\numberline {B.5.1}Definition}{55}{subsection.B.5.1}%
-\contentsline {subsection}{\numberline {B.5.2}Matrix Form}{55}{subsection.B.5.2}%
-\contentsline {subsection}{\numberline {B.5.3}Fractional Strategies}{55}{subsection.B.5.3}%
-\contentsline {subsubsection}{Notations}{55}{subsubsection*.65}%
-\contentsline {subsubsection}{Expected Cost of $\frac {1}{2}$-turn}{55}{subsubsection*.66}%
-\contentsline {subsubsection}{Expected Cost of full turn}{56}{subsubsection*.67}%
-\contentsline {subsubsection}{Expected Total Payoff}{56}{subsubsection*.68}%
-\contentsline {subsubsection}{Expected Mean Payoffs}{57}{subsubsection*.69}%
-\contentsline {subsubsection}{Discounted Payoffs}{57}{subsubsection*.70}%
-\contentsline {chapter}{Bibliographie}{59}{appendix*.71}%
+\contentsline {chapter}{Liste des Figures}{5}{chapter*.3}%
+\contentsline {chapter}{Liste des Tableaux}{6}{chapter*.4}%
+\contentsline {chapter}{Introduction}{8}{chapter*.6}%
+\contentsline {chapter}{\numberline {1}Cadre du Stage }{9}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Analysis \& Implementation}{10}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Introduction}{10}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Formalisation}{10}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Di-Graph}{10}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Mean Payoff Game}{10}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Well Foundness}{11}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Properties}{12}{subsection.2.2.4}%
+\contentsline {subsubsection}{Two Player}{12}{subsubsection*.9}%
+\contentsline {subsubsection}{Turn Based}{12}{subsubsection*.10}%
+\contentsline {subsection}{\numberline {2.2.5}Symmetries}{12}{subsection.2.2.5}%
+\contentsline {subsubsection}{Duality}{13}{subsubsection*.11}%
+\contentsline {subsection}{\numberline {2.2.6}Strategy}{13}{subsection.2.2.6}%
+\contentsline {subsubsection}{Deterministic Strategies}{13}{subsubsection*.13}%
+\contentsline {subsubsection}{Probabilistic Strategies}{14}{subsubsection*.14}%
+\contentsline {subsubsection}{Considered Strategies}{14}{subsubsection*.15}%
+\contentsline {subsubsection}{Deterministic Optimal Strategy}{14}{subsubsection*.16}%
+\contentsline {paragraph}{Weak Optimality}{14}{paragraph*.17}%
+\contentsline {paragraph}{Strong Optimality}{14}{paragraph*.18}%
+\contentsline {paragraph}{Payoff Optimality}{14}{paragraph*.19}%
+\contentsline {subsection}{\numberline {2.2.7}Mean Payoff}{15}{subsection.2.2.7}%
+\contentsline {subsubsection}{Mean Payoff}{15}{subsubsection*.20}%
+\contentsline {subsubsection}{Convergence Issues}{15}{subsubsection*.21}%
+\contentsline {subsubsection}{Game Value}{16}{subsubsection*.22}%
+\contentsline {section}{\numberline {2.3}Evaluating Strategies}{16}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Monte-Carlo Simulations}{16}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Positional Strategies}{16}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Probabilistic Strategies}{18}{subsection.2.3.3}%
+\contentsline {section}{\numberline {2.4}Countering Strategies}{19}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Deterministic Counter Strategy}{19}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Probabilistic Counter Strategy}{19}{subsection.2.4.2}%
+\contentsline {section}{\numberline {2.5}Learning Strategies}{19}{section.2.5}%
+\contentsline {section}{\numberline {2.6}State of the Art}{19}{section.2.6}%
+\contentsline {section}{\numberline {2.7}Library Implementation}{20}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}mpg}{20}{subsection.2.7.1}%
+\contentsline {subsubsection}{csp}{20}{subsubsection*.24}%
+\contentsline {subsubsection}{graphs}{21}{subsubsection*.25}%
+\contentsline {subsubsection}{games}{21}{subsubsection*.26}%
+\contentsline {subsubsection}{visualisation}{23}{subsubsection*.28}%
+\contentsline {subsubsection}{ml}{23}{subsubsection*.29}%
+\contentsline {subsubsection}{gnn}{23}{subsubsection*.30}%
+\contentsline {subsubsection}{rl}{23}{subsubsection*.31}%
+\contentsline {subsubsection}{sp}{23}{subsubsection*.32}%
+\contentsline {subsubsection}{wrapper}{23}{subsubsection*.33}%
+\contentsline {subsection}{\numberline {2.7.2}mpgcpp}{23}{subsection.2.7.2}%
+\contentsline {subsubsection}{csp}{23}{subsubsection*.35}%
+\contentsline {subsubsection}{games}{24}{subsubsection*.36}%
+\contentsline {subsection}{\numberline {2.7.3}Environment}{25}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Structure}{25}{subsection.2.7.4}%
+\contentsline {chapter}{\numberline {3}Dataset Generation}{26}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Introduction}{26}{section.3.1}%
+\contentsline {section}{\numberline {3.2}Analysis}{26}{section.3.2}%
+\contentsline {section}{\numberline {3.3}Graph Distributions}{26}{section.3.3}%
+\contentsline {subsection}{\numberline {3.3.1}$\mathcal {G}(n,p)$ Family}{26}{subsection.3.3.1}%
+\contentsline {subsection}{\numberline {3.3.2}$\mathcal {G}(n,m)$ Family}{26}{subsection.3.3.2}%
+\contentsline {subsection}{\numberline {3.3.3}Valid edges}{26}{subsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.3.4}$\mathcal {D}(n,p)$ Graph Construction}{27}{subsection.3.3.4}%
+\contentsline {subsubsection}{Naive Method}{27}{subsubsection*.38}%
+\contentsline {subsubsection}{Optimized Method}{27}{subsubsection*.39}%
+\contentsline {subsection}{\numberline {3.3.5}Choice Function}{28}{subsection.3.3.5}%
+\contentsline {subsubsection}{First Proposition}{28}{subsubsection*.40}%
+\contentsline {subsubsection}{Complexity}{29}{subsubsection*.41}%
+\contentsline {subsubsection}{Refinement}{29}{subsubsection*.42}%
+\contentsline {subsection}{\numberline {3.3.6}Complexity of Optimised $\mathcal {D}(n,p)$ Graph Construction}{30}{subsection.3.3.6}%
+\contentsline {subsection}{\numberline {3.3.7}$\mathcal {D}(n,m)$ Construction}{30}{subsection.3.3.7}%
+\contentsline {section}{\numberline {3.4}Sinkless Conditionning}{31}{section.3.4}%
+\contentsline {subsection}{\numberline {3.4.1}Repeating Construction}{31}{subsection.3.4.1}%
+\contentsline {subsubsection}{Algorithm}{31}{subsubsection*.43}%
+\contentsline {subsubsection}{Analysis}{31}{subsubsection*.44}%
+\contentsline {section}{\numberline {3.5}Weights Distribution}{32}{section.3.5}%
+\contentsline {subsection}{\numberline {3.5.1}Construction}{32}{subsection.3.5.1}%
+\contentsline {section}{\numberline {3.6}Proposed MPG Distribution}{32}{section.3.6}%
+\contentsline {subsection}{\numberline {3.6.1}Desired Properties of Mean Payoff Game Distributions}{32}{subsection.3.6.1}%
+\contentsline {subsubsection}{Fairness in the Limit}{32}{subsubsection*.45}%
+\contentsline {subsubsection}{Symmetric}{32}{subsubsection*.46}%
+\contentsline {subsection}{\numberline {3.6.2}Implemented Distributions}{32}{subsection.3.6.2}%
+\contentsline {section}{\numberline {3.7}MPG Generation}{33}{section.3.7}%
+\contentsline {subsection}{\numberline {3.7.1}Distribution}{33}{subsection.3.7.1}%
+\contentsline {subsection}{\numberline {3.7.2}Dense Graphs}{33}{subsection.3.7.2}%
+\contentsline {section}{\numberline {3.8}Annotation}{34}{section.3.8}%
+\contentsline {subsection}{\numberline {3.8.1}Approach}{34}{subsection.3.8.1}%
+\contentsline {subsection}{\numberline {3.8.2}Target Values}{34}{subsection.3.8.2}%
+\contentsline {subsection}{\numberline {3.8.3}Heuristics}{34}{subsection.3.8.3}%
+\contentsline {subsubsection}{Linear Bound Heuristic}{34}{subsubsection*.48}%
+\contentsline {subsubsection}{Early Stopping}{35}{subsubsection*.50}%
+\contentsline {subsection}{\numberline {3.8.4}Implementation}{36}{subsection.3.8.4}%
+\contentsline {subsubsection}{Algorithm}{36}{subsubsection*.51}%
+\contentsline {subsubsection}{Complexity Analysis}{38}{subsubsection*.52}%
+\contentsline {subsection}{\numberline {3.8.5}Deployment}{38}{subsection.3.8.5}%
+\contentsline {chapter}{\numberline {4}Model Design}{39}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Introduction}{39}{section.4.1}%
+\contentsline {section}{\numberline {4.2}Objectives}{39}{section.4.2}%
+\contentsline {section}{\numberline {4.3}Properties}{39}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Totality}{39}{subsection.4.3.1}%
+\contentsline {subsubsection}{Definition}{39}{subsubsection*.53}%
+\contentsline {subsubsection}{Importance}{39}{subsubsection*.54}%
+\contentsline {subsection}{\numberline {4.3.2}Node Agnostic}{39}{subsection.4.3.2}%
+\contentsline {subsubsection}{Formalisation}{40}{subsubsection*.55}%
+\contentsline {subsubsection}{Explanation}{40}{subsubsection*.56}%
+\contentsline {subsubsection}{Importance}{40}{subsubsection*.57}%
+\contentsline {subsection}{\numberline {4.3.3}Invariance under Positive Scaling}{41}{subsection.4.3.3}%
+\contentsline {subsubsection}{Standard Scaling}{41}{subsubsection*.59}%
+\contentsline {subsubsection}{Maximum Scaling}{41}{subsubsection*.60}%
+\contentsline {paragraph}{Implementation Notes:}{41}{paragraph*.61}%
+\contentsline {subsection}{\numberline {4.3.4}Permutation Equivariance}{42}{subsection.4.3.4}%
+\contentsline {subsubsection}{Definition}{42}{subsubsection*.63}%
+\contentsline {subsubsection}{Importance}{42}{subsubsection*.64}%
+\contentsline {subsection}{\numberline {4.3.5}Stability under Padding}{42}{subsection.4.3.5}%
+\contentsline {subsubsection}{Definition}{42}{subsubsection*.65}%
+\contentsline {subsubsection}{Importance}{42}{subsubsection*.66}%
+\contentsline {subsubsection}{Removing Unreachable Nodes}{43}{subsubsection*.67}%
+\contentsline {section}{\numberline {4.4}Considered Models}{43}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Value based Model}{43}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Strategy based Model}{44}{subsection.4.4.2}%
+\contentsline {section}{\numberline {4.5}Building the Model}{44}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Preprocessing Block}{44}{subsection.4.5.1}%
+\contentsline {subsubsection}{Padding Layer}{45}{subsubsection*.70}%
+\contentsline {subsubsection}{Random Connections}{45}{subsubsection*.71}%
+\contentsline {subsubsection}{Weights Normalisation}{45}{subsubsection*.72}%
+\contentsline {subsubsection}{Weights Noise}{45}{subsubsection*.73}%
+\contentsline {subsubsection}{One Hot Encoding}{45}{subsubsection*.74}%
+\contentsline {subsection}{\numberline {4.5.2}Weighted Graph Convolutional Network}{46}{subsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.5.3}Convolutional Block}{47}{subsection.4.5.3}%
+\contentsline {subsection}{\numberline {4.5.4}Prediction Block}{48}{subsection.4.5.4}%
+\contentsline {subsection}{\numberline {4.5.5}Model Architecture}{48}{subsection.4.5.5}%
+\contentsline {chapter}{\numberline {5}Reinforcement Learning Approach}{50}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{50}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Monte Carlo Augmentation}{50}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Monte Carlo Tree Search}{50}{subsection.5.2.1}%
+\contentsline {section}{\numberline {5.3}Pipeline}{50}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Services}{50}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Configuration}{50}{section.5.5}%
+\contentsline {chapter}{\numberline {6}Analyse}{51}{chapter.6}%
+\contentsline {chapter}{Conclusion}{52}{chapter*.81}%
+\contentsline {chapter}{\numberline {A}On Constraint Satistfaction Problems}{53}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Constraint Satisfaction Problem}{53}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}Definition}{53}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Assignment}{53}{subsection.A.1.2}%
+\contentsline {subsection}{\numberline {A.1.3}Polymorphism}{53}{subsection.A.1.3}%
+\contentsline {section}{\numberline {A.2}Ternary Max Atom Systems}{53}{section.A.2}%
+\contentsline {subsection}{\numberline {A.2.1}Definition}{53}{subsection.A.2.1}%
+\contentsline {subsection}{\numberline {A.2.2}Example}{54}{subsection.A.2.2}%
+\contentsline {section}{\numberline {A.3}Max Atom Systems}{54}{section.A.3}%
+\contentsline {subsection}{\numberline {A.3.1}Definition}{54}{subsection.A.3.1}%
+\contentsline {subsection}{\numberline {A.3.2}$\text {MA} \le \text {MA}_3$}{54}{subsection.A.3.2}%
+\contentsline {subsubsection}{Recursive Reduction}{54}{subsubsection*.82}%
+\contentsline {paragraph}{Implication}{55}{paragraph*.83}%
+\contentsline {paragraph}{Equivalence}{55}{paragraph*.84}%
+\contentsline {subsubsection}{Induction}{55}{subsubsection*.85}%
+\contentsline {subsection}{\numberline {A.3.3}Polymorphisms}{57}{subsection.A.3.3}%
+\contentsline {section}{\numberline {A.4}Min-Max System}{57}{section.A.4}%
+\contentsline {subsection}{\numberline {A.4.1}Transforming to Max Atom Systems}{57}{subsection.A.4.1}%
+\contentsline {subsubsection}{Transforming $\text {MI}$ constraints}{57}{subsubsection*.86}%
+\contentsline {subsubsection}{Tranforming $\text {MA}$ constraints}{58}{subsubsection*.87}%
+\contentsline {subsubsection}{Building the Max Atom System}{58}{subsubsection*.88}%
+\contentsline {subsubsection}{Equivalence}{58}{subsubsection*.89}%
+\contentsline {section}{\numberline {A.5}Solving Mean Payoff}{60}{section.A.5}%
+\contentsline {subsection}{\numberline {A.5.1}Reduction to Min Max System}{60}{subsection.A.5.1}%
+\contentsline {subsection}{\numberline {A.5.2}Arc Consistency}{60}{subsection.A.5.2}%
+\contentsline {subsubsection}{First Implementation}{60}{subsubsection*.90}%
+\contentsline {subsubsection}{Refinement}{62}{subsubsection*.91}%
+\contentsline {chapter}{\numberline {B}On Random Mean Payoff Graphs}{63}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Introduction}{63}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Sinkless $\mathcal {D}(n,p)$ Graph}{63}{section.B.2}%
+\contentsline {subsection}{\numberline {B.2.1}Property}{63}{subsection.B.2.1}%
+\contentsline {subsection}{\numberline {B.2.2}Basic Comparison with Normal $\mathcal {D}(n,p)$}{63}{subsection.B.2.2}%
+\contentsline {subsection}{\numberline {B.2.3}Property Probability}{64}{subsection.B.2.3}%
+\contentsline {subsection}{\numberline {B.2.4}Asymptotic Analysis For Dense $\mathcal {D}(n,p)$}{64}{subsection.B.2.4}%
+\contentsline {subsection}{\numberline {B.2.5}Asymptotic Analysis For Sparse $\mathcal {D}(n,p)$}{65}{subsection.B.2.5}%
+\contentsline {section}{\numberline {B.3}Repeating Construction}{66}{section.B.3}%
+\contentsline {subsection}{\numberline {B.3.1}Estimating Complexity}{66}{subsection.B.3.1}%
+\contentsline {subsection}{\numberline {B.3.2}Dense Graph case}{66}{subsection.B.3.2}%
+\contentsline {subsection}{\numberline {B.3.3}Sparse Graph case}{66}{subsection.B.3.3}%
+\contentsline {section}{\numberline {B.4}Binomial Rejection Construction}{67}{section.B.4}%
+\contentsline {section}{\numberline {B.5}Expected Mean Payoff}{67}{section.B.5}%
+\contentsline {subsection}{\numberline {B.5.1}Definition}{67}{subsection.B.5.1}%
+\contentsline {subsection}{\numberline {B.5.2}Matrix Form}{67}{subsection.B.5.2}%
+\contentsline {chapter}{\numberline {C}On Probabilistic Strategies}{68}{appendix.C}%
+\contentsline {section}{\numberline {C.1}Markovian Nature}{68}{section.C.1}%
+\contentsline {subsection}{\numberline {C.1.1}Fixing $\Pi ^{\Opt }$}{68}{subsection.C.1.1}%
+\contentsline {subsection}{\numberline {C.1.2}Fixing both $\Pi ^{\Max }$ and $\Pi ^{\Min }$}{68}{subsection.C.1.2}%
+\contentsline {section}{\numberline {C.2}Expected Reward of a MRP}{68}{section.C.2}%
+\contentsline {subsection}{\numberline {C.2.1}Markov Reward Process}{68}{subsection.C.2.1}%
+\contentsline {subsubsection}{Definition}{68}{subsubsection*.92}%
+\contentsline {subsubsection}{Execution and Award}{69}{subsubsection*.93}%
+\contentsline {subsection}{\numberline {C.2.2}Expected discounted reward}{69}{subsection.C.2.2}%
+\contentsline {subsection}{\numberline {C.2.3}Expected average-time reward}{70}{subsection.C.2.3}%
+\contentsline {subsubsection}{Deriving Formula}{70}{subsubsection*.94}%
+\contentsline {subsubsection}{Convergence}{70}{subsubsection*.95}%
+\contentsline {section}{\numberline {C.3}Evaluation of probabilistic strategies}{71}{section.C.3}%
+\contentsline {subsection}{\numberline {C.3.1}Definition}{71}{subsection.C.3.1}%
+\contentsline {subsection}{\numberline {C.3.2}Matrix Form}{71}{subsection.C.3.2}%
+\contentsline {chapter}{Bibliographie}{74}{appendix*.96}%

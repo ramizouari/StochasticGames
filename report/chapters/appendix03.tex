@@ -1,0 +1,146 @@
+\chapter{On Probabilistic Strategies}
+\label{appendix:Probabilistic:Strategies}
+In the previous chapters, we gave a rough analysis of graph generation.
+\newline In this chapter, we will dive into a more detailed analysis.
+
+\section{Markovian Nature}
+\subsection{Fixing $\Pi^{\Player}$}
+\subsection{Fixing both $\Pi^{\Max}$ and $\Pi^{\Min}$}
+\label{section:ProbabilisticStrategies:MRP}
+
+
+\section{Expected Reward of a MRP}
+\subsection{Markov Reward Process}
+\subsubsection{Definition}
+Let $\mathcal{R}=(V,E,W,A,\gamma)$ be a discrete markov reward model:
+\begin{itemize}
+	\item $V$ is a finite set of states
+	\item $E\subseteq V\times V$ is a finite set of edges
+	\item $W:E\rightarrow \mathbb{R}$ is the weights function
+	\item  $A:E\rightarrow [0,1]$ is the transition function, satifying:
+	\begin{align}
+		\sum_{v\in\Adj u} A(u,v) &= 1 
+	\end{align}
+	\item $\gamma\in [0,1]$ is the discount factor
+\end{itemize}
+Such process models a markov chain where from a given state $u$, a transition $(u,v)\in E$ occurs with probability $A(u,v),$ and gives a reward of $W(u,v).$
+\newline 
+In this section, we will extend both $A$ and $W$ to $V\times V$ by requiring that:
+$$
+\forall e \notin E, \quad A(e)=W(e)=0
+$$
+\subsubsection{Execution and Award}
+The execution is formalized as follow:
+\begin{itemize}
+	\item Fix $X_0=s\in V$
+	\item For $n\in\mathbb{N}^*$, $X_n$ will be chosen randomly from the discrete set $\Adj X_{n-1}$ using probabilities from $A$
+\end{itemize} 
+The cumulative (discounted) reward\footnote{``reward" and ``payoff" here as synonymous. We use the word ``reward"} $R_\gamma(s)$ is defined as:
+\begin{align}
+	\label{eqn:TotalReward}
+	R_\gamma(s)=\sum_{n\in\mathbb{N}}\gamma^n W(X_n,X_{n+1})
+\end{align}
+This term converges for $\gamma \in\mathopen [0,1\mathclose[.$
+
+
+For undiscounted rewards\footnote{Which means $\gamma=1.$}, such reward may not converge. 
+\newline For that the average time reward $\bar{R}(s)$ starting from $s$, is defined as follow:
+\begin{align}
+	\bar{R}(s)=\lim_{n\rightarrow +\infty} \frac{1}{n} \sum_{k=0}^{n-1} W(X_{k},X_{k+1})
+\end{align}
+
+
+
+\subsection{Expected discounted reward}
+The discounted reward is used to calculate the rewards, where in each step, the weight of that rewards decay by $\gamma.$
+\newline Here we will assume $\gamma \in\mathopen[0,1\mathclose[.$
+\begin{align*}
+	\Expected{R_\gamma(u)}&=
+	\Expected{\ConditionalExpected{R_\gamma(X_0)}{X_1}}\\
+	\Expected{R_\gamma(u)} & =\sum_{v\in \Adj \ u} \mathcal{P}(X_1=v\mid X_0=u)\times (W(u,v)+ \gamma \Expected{R_\gamma(v)}) \\
+	&=\sum_{v\in V}  A(u,v) \times (W(u,v)+\gamma \Expected{R_\gamma(v)})
+\end{align*}
+Now, by considering $S_n,A,W$ as matrices, the equation can be simplified to\footnote{$\gamma$ has to be less then $1,$ as otherwise we cannot generally invert the matrix $I-\gamma A.$} :
+\begin{align*}
+	\Expected{R_\gamma} 
+	&=\gamma A\Expected{R_\gamma}+(A\odot W)\ones
+\end{align*}
+Here: 
+\begin{itemize}
+	\item $\odot$ is the point-wise matrix product, and
+	\item $\ones=(1,\dots,1)^T$ is the vector of ones.
+\end{itemize}
+With that, the discounted reward is calculated as follow:
+\begin{align}
+	\Expected{R_\gamma}&=(I-\gamma A)^{-1}  (A\odot W)\ones
+\end{align}
+\subsection{Expected average-time reward}
+\label{section:ProbabilisticStrategies:AverageTimeReward}
+While the dicounted reward converges for all $\gamma\in\mathopen[0,1\mathclose [.$ It may fail to converge in general for $\gamma=1.$ 
+\newline For that, we will use the average-time reward. Such metric is more informing as it does not prioritize earlier rewards. Instead, all the rewards have the same weight and the mean calculation.
+\newline In the other hand, while the intuition behind such metric is clear, it is more challenging to analyse its convergence, and calculate it directly. And this is exactly what we will do next. 
+\subsubsection{Deriving Formula}
+\begin{align*}
+	\Expected{S_n(u)}&= \Expected{\ConditionalExpected{S_n(X_0)}{X_1}} \\
+	\Expected{S_n(u)} & =\sum_{v\in \Adj \ u} \mathcal{P}(X'=v\mid X=u)\times (W(u,v)+ \Expected{S_{n-1}(v)}) \\
+	&=\sum_{v\in V}  A(u,v) \times (W(u,v)+\Expected{S_{n-1}(v)})
+\end{align*}
+Now, by considering $S_n,A,W$ as matrices, the equation can be simplified to:
+\begin{align*}
+	\Expected{S_n} 
+	&=A\Expected{S_{n-1}}+(A\odot W)\ones\\
+	&=A\Expected{S_{n-1}}+(A\odot W)\ones\\
+	&= \sum_{k=0}^{n-1}A^k(A\odot W)\ones+A^n\Expected{S_0} \\
+	&=\sum_{k=0}^{n-1}A^k(A\odot W)\ones\\
+\end{align*}
+Now, by taking the mean, and then the limit, we have:
+\begin{align}
+	\label{eqn:ExpectedAverageReward}
+	\Expected{\bar{R}}&=\lim_{n\rightarrow +\infty}\frac{1}{n}\sum_{k=0}^{n-1}A^k(A\odot W)\ones
+\end{align}
+\subsubsection{Convergence}
+It is not trivial that the right-hand side of \eqref{eqn:ExpectedAverageReward} converges.
+\newline \citeauthor{AverageTimeRewardStochastic}\cite{AverageTimeRewardStochastic} proved that such limits exists and calculated its value. We will reformulate his results in the following theorem.
+
+\begin{theorem}
+\label{theorem:AverageTimeRewardConvergence}
+For any stochastic matrix $A,$ the limit $\displaystyle \lim_{n\rightarrow +\infty} \frac{1}{n}\sum_{k=0}^{n-1}A^k$ exists, and is equal to the \textbf{projection} matrix $T$ \textbf{uniquely} defined as follow:
+\begin{itemize}
+	\item $\ImageSet  T = \ker (\Id-A)$
+	\item $\ImageSet T^H= \ker(\Id -A^H)$
+\end{itemize}   	
+\end{theorem}
+Now theorem \ref{theorem:AverageTimeRewardConvergence} gives a straightforward construction of $T.$ We only have to build a projection matrix such that:
+\begin{itemize}
+	\item It spans $\ker(\Id -A)$
+	\item It cancels at $\ker T = \ker(\Id -A^H)^\perp = \ImageSet (\Id - A)$
+\end{itemize} 
+Furthermore, \citeauthor{AverageTimeRewardStochastic}\cite{AverageTimeRewardStochastic} gave a closed-form expression that applies to such projection $T$:
+\begin{align}
+T =\lim_{n\rightarrow +\infty}\frac{1}{n}\sum_{k=0}^{n-1}A^k =X(Y^HX)^{-1}Y^H
+\end{align}
+Where:
+\begin{itemize}
+	\item $X$ is the matrix whose column vectors span $\ImageSet T$
+	\item $Y$ is the matrix whose column vectors span $\ImageSet T^H$
+\end{itemize}
+\section{Evaluation of probabilistic strategies}
+\subsection{Definition}
+\begin{itemize}
+	\item Let $\mathcal{G}=(\mathcal{V},\mathcal{E})$ be a mean-payoff game
+	\item For $u\in\mathcal{V},$ Let $\mathscr{P}(u)$ be the set of probability distributions over the set $\text{Adj}(u)$
+	\item We define a fractional strategy as a function $\Phi\in \mathscr{P}$
+	
+\end{itemize}
+
+
+\subsection{Matrix Form}
+\begin{itemize}
+	\item Let $n=\lvert \mathcal{V}\rvert$
+	\item Let $u_1,\dots,u_n$ an enumeration of elements of $\mathcal{V}$
+	A fractional strategy can be represented as a matrix $A$ such that:
+	$$
+	\mathcal{P}(\Phi(u_i)=u_j)=A_{i,j}
+	$$
+\end{itemize}
+

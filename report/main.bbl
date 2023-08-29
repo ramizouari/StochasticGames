@@ -17,6 +17,113 @@
 \endgroup
 
 \datalist[entry]{nty/global//global/global}
+  \entry{LatticeProblemsComplexity}{article}{}
+    \name{author}{2}{}{%
+      {{hash=AD}{%
+         family={Aharonov},
+         familyi={A\bibinitperiod},
+         given={Dorit},
+         giveni={D\bibinitperiod},
+      }}%
+      {{hash=RO}{%
+         family={Regev},
+         familyi={R\bibinitperiod},
+         given={Oded},
+         giveni={O\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{ADRO1}
+    \strng{fullhash}{ADRO1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \verb{doi}
+    \verb 10.1109/FOCS.2004.35
+    \endverb
+    \field{title}{Lattice Problems in NP cap coNP}
+    \field{journaltitle}{Foundations of Computer Science, 1975., 16th Annual
+  Symposium on}
+    \field{month}{05}
+    \field{year}{2004}
+  \endentry
+
+  \entry{SimplexMPG}{article}{}
+    \name{author}{4}{}{%
+      {{hash=AX}{%
+         family={Allamigeon},
+         familyi={A\bibinitperiod},
+         given={Xavier},
+         giveni={X\bibinitperiod},
+      }}%
+      {{hash=BP}{%
+         family={Benchimol},
+         familyi={B\bibinitperiod},
+         given={Pascal},
+         giveni={P\bibinitperiod},
+      }}%
+      {{hash=GS}{%
+         family={Gaubert},
+         familyi={G\bibinitperiod},
+         given={Stéphane},
+         giveni={S\bibinitperiod},
+      }}%
+      {{hash=JM}{%
+         family={Joswig},
+         familyi={J\bibinitperiod},
+         given={Michael},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{AX+1}
+    \strng{fullhash}{AXBPGSJM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \verb{doi}
+    \verb 10.1137/140953800
+    \endverb
+    \verb{eprint}
+    \verb https://doi.org/10.1137/140953800
+    \endverb
+    \field{number}{4}
+    \field{pages}{2096–2117}
+    \field{title}{Combinatorial Simplex Algorithms Can Solve Mean Payoff Games}
+    \verb{url}
+    \verb https://doi.org/10.1137/140953800
+    \endverb
+    \field{volume}{24}
+    \field{journaltitle}{SIAM Journal on Optimization}
+    \field{year}{2014}
+  \endentry
+
+  \entry{MPGMaxAtom}{article}{}
+    \name{author}{2}{}{%
+      {{hash=AA}{%
+         family={Atserias},
+         familyi={A\bibinitperiod},
+         given={Albert},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=ME}{%
+         family={Maneva},
+         familyi={M\bibinitperiod},
+         given={Elitza},
+         giveni={E\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{AAME1}
+    \strng{fullhash}{AAME1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{A}
+    \field{sortinithash}{A}
+    \field{title}{Mean-Payoff Games and the Max-Atom Problem}
+    \field{month}{01}
+    \field{year}{2009}
+  \endentry
+
   \entry{STEPaper}{article}{}
     \name{author}{3}{}{%
       {{hash=BY}{%
@@ -26,7 +133,7 @@
          giveni={Y\bibinitperiod},
       }}%
       {{hash=LN}{%
-         family={L{\'{e}}onard},
+         family={Léonard},
          familyi={L\bibinitperiod},
          given={Nicholas},
          giveni={N\bibinitperiod},
@@ -58,6 +165,36 @@
     \field{year}{2013}
   \endentry
 
+  \entry{TropicalCSP}{misc}{}
+    \name{author}{2}{}{%
+      {{hash=BM}{%
+         family={Bodirsky},
+         familyi={B\bibinitperiod},
+         given={Manuel},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=MM}{%
+         family={Mamino},
+         familyi={M\bibinitperiod},
+         given={Marcello},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{BMMM1}
+    \strng{fullhash}{BMMM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{B}
+    \field{sortinithash}{B}
+    \verb{eprint}
+    \verb 1506.04184
+    \endverb
+    \field{title}{Tropically convex constraint satisfaction}
+    \field{eprinttype}{arXiv}
+    \field{eprintclass}{cs.CC}
+    \field{year}{2017}
+  \endentry
+
   \entry{LeeSedolVsAlphaGo}{misc}{}
     \name{author}{1}{}{%
       {{hash=CM}{%
@@ -78,6 +215,41 @@
     \verb https://time.com/4257406/go-google-alphago-lee-sedol
     \endverb
     \field{year}{14 Mar 2016}
+  \endentry
+
+  \entry{StochasticGamesComplexity}{article}{}
+    \name{author}{1}{}{%
+      {{hash=CA}{%
+         family={Condon},
+         familyi={C\bibinitperiod},
+         given={Anne},
+         giveni={A\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{CA1}
+    \strng{fullhash}{CA1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{C}
+    \field{sortinithash}{C}
+    \field{abstract}{%
+    We consider the complexity of stochastic games—simple games of chance
+  played by two players. We show that the problem of deciding which player has
+  the greatest chance of winning the game is in the class NP ⌢ co-NP.%
+    }
+    \verb{doi}
+    \verb 10.1016/0890-5401(92)90048-K
+    \endverb
+    \field{issn}{0890-5401}
+    \field{number}{2}
+    \field{pages}{203–224}
+    \field{title}{The complexity of stochastic games}
+    \verb{url}
+    \verb https://www.sciencedirect.com/science/article/pii/089054019290048K
+    \endverb
+    \field{volume}{96}
+    \field{journaltitle}{Information and Computation}
+    \field{year}{1992}
   \endentry
 
   \entry{OriginalSVM}{article}{}
@@ -105,7 +277,7 @@
     \field{sortinit}{C}
     \field{sortinithash}{C}
     \field{number}{3}
-    \field{pages}{273\bibrangedash 297}
+    \field{pages}{273–297}
     \field{title}{Support-vector networks}
     \field{volume}{20}
     \field{journaltitle}{Machine learning}
@@ -188,6 +360,57 @@
     \field{year}{2015}
   \endentry
 
+  \entry{PositionalStrategies}{article}{}
+    \name{author}{2}{}{%
+      {{hash=EA}{%
+         family={Ehrenfeucht},
+         familyi={E\bibinitperiod},
+         given={A.},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=MJ}{%
+         family={Mycielski},
+         familyi={M\bibinitperiod},
+         given={J.},
+         giveni={J\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Physica-Verlag GmbH}%
+    }
+    \keyw{Game Theory, Directed Graph, Positional Strategy, Perfect
+  Information, Economic Theory}
+    \strng{namehash}{EAMJ1}
+    \strng{fullhash}{EAMJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{E}
+    \field{sortinithash}{E}
+    \field{abstract}{%
+    We study some games of perfect information in which two players move
+  alternately along the edges of a finite directed graph with weights attached
+  to its edges. One of them wants to maximize and the other to minimize some
+  means of the encountered weights.%
+    }
+    \verb{doi}
+    \verb 10.1007/BF01768705
+    \endverb
+    \field{issn}{0020-7276}
+    \field{number}{2}
+    \field{pages}{109–113}
+    \field{title}{Positional Strategies for Mean Payoff Games}
+    \verb{url}
+    \verb https://doi.org/10.1007/BF01768705
+    \endverb
+    \field{volume}{8}
+    \list{location}{1}{%
+      {DEU}%
+    }
+    \field{journaltitle}{Int. J. Game Theory}
+    \field{year}{1979}
+    \warn{\item Invalid format of field 'month'}
+  \endentry
+
   \entry{AlphaGoZeroCost}{article}{}
     \name{author}{1}{}{%
       {{hash=GE}{%
@@ -227,10 +450,70 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{G}
     \field{sortinithash}{G}
-    \field{title}{{What is the carbon footprint of a house?}}
+    \field{title}{What is the carbon footprint of a house?}
     \verb{url}
     \verb https://citu.co.uk/citu-live/what-is-the-carbon-footprint-of-a-house
     \endverb
+  \endentry
+
+  \entry{OmegaSpecsMPG}{article}{}
+    \name{author}{3}{}{%
+      {{hash=GJ}{%
+         family={Gutierrez},
+         familyi={G\bibinitperiod},
+         given={Julian},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=ST}{%
+         family={Steeples},
+         familyi={S\bibinitperiod},
+         given={Thomas},
+         giveni={T\bibinitperiod},
+      }}%
+      {{hash=WM}{%
+         family={Wooldridge},
+         familyi={W\bibinitperiod},
+         given={Michael},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{GJSTWM1}
+    \strng{fullhash}{GJSTWM1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{G}
+    \field{sortinithash}{G}
+    \field{abstract}{%
+    Multi-player mean-payoff games are a natural formalism for modelling the
+  behaviour of concurrent and multi-agent systems with self-interested players.
+  Players in such a game traverse a graph, while attempting to maximise a
+  (mean-)payoff function that depends on the play generated. As with all games,
+  the equilibria that could arise may have undesirable properties. However, as
+  system designers, we typically wish to ensure that equilibria in such systems
+  correspond to desirable system behaviours, for example, satisfying certain
+  safety or liveness properties. One natural way to do this would be to specify
+  such desirable properties using temporal logic. Unfortunately, the use of
+  temporal logic specifications causes game theoretic verification problems to
+  have very high computational complexity. To address this issue, we consider
+  \&omega;-regular specifications. These offer a concise and intuitive way of
+  specifying system behaviours with a comparatively low computational overhead.
+  The main results of this work are characterisation and complexity bounds for
+  the problem of determining if there are equilibria that satisfy a given
+  \&omega;-regular specification in a multi-player mean-payoff game in a number
+  of computationally relevant game-theoretic settings.%
+    }
+    \verb{doi}
+    \verb 10.3390/g13010019
+    \endverb
+    \field{issn}{2073-4336}
+    \field{number}{1}
+    \field{title}{Mean-Payoff Games with \&omega;-Regular Specifications}
+    \verb{url}
+    \verb https://www.mdpi.com/2073-4336/13/1/19
+    \endverb
+    \field{volume}{13}
+    \field{journaltitle}{Games}
+    \field{year}{2022}
   \endentry
 
   \entry{BopOptimizer}{article}{}
@@ -303,7 +586,7 @@
       {{hash=SJ}{%
          family={Schmidhuber},
          familyi={S\bibinitperiod},
-         given={J{\"u}rgen},
+         given={Jürgen},
          giveni={J\bibinitperiod},
       }}%
     }
@@ -317,7 +600,7 @@
     \field{sortinit}{H}
     \field{sortinithash}{H}
     \field{number}{8}
-    \field{pages}{1735\bibrangedash 1780}
+    \field{pages}{1735–1780}
     \field{title}{Long short-term memory}
     \field{volume}{9}
     \field{journaltitle}{Neural computation}
@@ -338,7 +621,7 @@
     \field{sortinit}{I}
     \field{sortinithash}{I}
   \field{howpublished}{\url{https://www.ibm.com/docs/fr/spss-modeler/saas?topic=dm-crisp-help-overview}}
-    \field{title}{{Présentation générale de CRISP-DM}}
+    \field{title}{Présentation générale de CRISP-DM}
     \field{year}{2017}
   \endentry
 
@@ -404,7 +687,7 @@
     \field{sortinit}{J}
     \field{sortinithash}{J}
   \field{howpublished}{\url{https://github.com/Jakobovski/free-spoken-digit-dataset}}
-    \field{title}{{Free Spoken Digits Dataset}}
+    \field{title}{Free Spoken Digits Dataset}
     \field{year}{2019}
   \endentry
 
@@ -433,6 +716,33 @@
     \field{volume}{abs/1412.6980}
     \field{journaltitle}{CoRR}
     \field{year}{2015}
+  \endentry
+
+  \entry{ArtComputerProgramming}{book}{}
+    \name{author}{1}{}{%
+      {{hash=KDE}{%
+         family={Knuth},
+         familyi={K\bibinitperiod},
+         given={Donald\bibnamedelima E.},
+         giveni={D\bibinitperiod\bibinitdelim E\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Addison Wesley Longman Publishing Co., Inc.}%
+    }
+    \strng{namehash}{KDE1}
+    \strng{fullhash}{KDE1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{K}
+    \field{sortinithash}{K}
+    \field{isbn}{0201896834}
+    \field{title}{The Art of Computer Programming, Volume 1 (3rd Ed.):
+  Fundamental Algorithms}
+    \list{location}{1}{%
+      {USA}%
+    }
+    \field{year}{1997}
   \endentry
 
   \entry{NIPS2012_c399862d}{inproceedings}{}
@@ -539,7 +849,7 @@
     \verb 10.1109/5.726791
     \endverb
     \field{number}{11}
-    \field{pages}{2278\bibrangedash 2324}
+    \field{pages}{2278–2324}
     \field{title}{Gradient-based learning applied to document recognition}
     \field{volume}{86}
     \field{journaltitle}{Proceedings of the IEEE}
@@ -562,7 +872,7 @@
     \field{sortinit}{L}
     \field{sortinithash}{L}
     \field{howpublished}{\url{http://yann.lecun.com/exdb/mnist}}
-    \field{title}{{THE MNIST DATABASE}}
+    \field{title}{THE MNIST DATABASE}
     \field{year}{1998}
   \endentry
 
@@ -728,12 +1038,21 @@
     \field{labeltitlesource}{title}
     \field{sortinit}{M}
     \field{sortinithash}{M}
-    \field{title}{{Shrinking deep learning’s carbon footprint}}
+    \field{title}{Shrinking deep learning’s carbon footprint}
     \verb{url}
     \verb https://news.mit.edu/2020/shrinking-deep-learning-carbon-footprint-08
     \verb 07
     \endverb
     \field{year}{07 Aug 2021}
+  \endentry
+
+  \entry{NPInterCoNP}{misc}{}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{N}
+    \field{sortinithash}{N}
+  \field{howpublished}{\url{https://kintali.wordpress.com/2010/06/06/np-intersect-conp/}}
+    \field{note}{Accessed: 2023-08-28}
+    \field{title}{NP intersect coNP}
   \endentry
 
   \entry{XnorNetPaper}{article}{}
@@ -781,6 +1100,91 @@
     \field{journaltitle}{CoRR}
     \field{eprinttype}{arXiv}
     \field{year}{2016}
+  \endentry
+
+  \entry{AverageTimeRewardStochastic}{inbook}{}
+    \name{author}{1}{}{%
+      {{hash=RG}{%
+         family={Rothblum},
+         familyi={R\bibinitperiod},
+         given={G.},
+         giveni={G\bibinitperiod},
+      }}%
+    }
+    \name{editor}{1}{}{%
+      {{hash=WRJB}{%
+         family={Wets},
+         familyi={W\bibinitperiod},
+         given={Roger J.-B.},
+         giveni={R\bibinitperiod\bibinitdelim J\bibinithyphendelim
+  B\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer Berlin Heidelberg}%
+    }
+    \strng{namehash}{RG1}
+    \strng{fullhash}{RG1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{R}
+    \field{sortinithash}{R}
+    \field{abstract}{%
+    In this paper we give a general representation for a projection in terms of
+  its range and the range of its adjoint projection. By combining this
+  representation with recent results of the author on the structure of the
+  algebraic eigenspace of a nonnegative matrix corresponding to its spectral
+  radius, we develop a computational method to find the cigenprojection of a
+  nonnegative matrix at its spectral radius. The results are illustrated by
+  giving a closed formula for computing the limiting matrix of a stochastic
+  matrix.%
+    }
+    \field{booktitle}{Stochastic Systems: Modeling, Identification and
+  Optimization, II}
+    \verb{doi}
+    \verb 10.1007/BFb0120751
+    \endverb
+    \field{isbn}{978-3-642-00786-6}
+    \field{pages}{188–201}
+    \field{title}{Computation of the eigenprojection of a nonnegative matrix at
+  its spectral radius}
+    \verb{url}
+    \verb https://doi.org/10.1007/BFb0120751
+    \endverb
+    \list{location}{1}{%
+      {Berlin, Heidelberg}%
+    }
+    \field{year}{1976}
+  \endentry
+
+  \entry{AIModernApproach}{book}{}
+    \name{author}{1}{}{%
+      {{hash=RSJ}{%
+         family={Russell},
+         familyi={R\bibinitperiod},
+         given={Stuart\bibnamedelima J.},
+         giveni={S\bibinitperiod\bibinitdelim J\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Third edition. Upper Saddle River, N.J. : Prentice Hall, [2010] ©2010}%
+    }
+    \strng{namehash}{RSJ1}
+    \strng{fullhash}{RSJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{R}
+    \field{sortinithash}{R}
+    \field{abstract}{%
+    xviii, 1132 pages : illustrations ; 26 cm%
+    }
+    \field{note}{Includes bibliographical references (pages 1063-1093) and
+  index.}
+    \field{title}{Artificial intelligence : a modern approach}
+    \verb{url}
+    \verb https://search.library.wisc.edu/catalog/9910082172502121
+    \endverb
+    \field{year}{2010}
   \endentry
 
   \entry{MFCC}{article}{}
@@ -836,11 +1240,11 @@
   computation scheme.%
     }
     \verb{doi}
-    \verb https://doi.org/10.1016/j.specom.2011.11.004
+    \verb 10.1016/j.specom.2011.11.004
     \endverb
     \field{issn}{0167-6393}
     \field{number}{4}
-    \field{pages}{543\bibrangedash 565}
+    \field{pages}{543–565}
     \field{title}{Design, analysis and experimental evaluation of block based
   transformation in MFCC computation for speaker recognition}
     \verb{url}
@@ -849,6 +1253,257 @@
     \field{volume}{54}
     \field{journaltitle}{Speech Communication}
     \field{year}{2012}
+  \endentry
+
+  \entry{GNN}{article}{}
+    \name{author}{4}{}{%
+      {{hash=SLB}{%
+         family={Sanchez-Lengeling},
+         familyi={S\bibinithyphendelim L\bibinitperiod},
+         given={Benjamin},
+         giveni={B\bibinitperiod},
+      }}%
+      {{hash=RE}{%
+         family={Reif},
+         familyi={R\bibinitperiod},
+         given={Emily},
+         giveni={E\bibinitperiod},
+      }}%
+      {{hash=PA}{%
+         family={Pearce},
+         familyi={P\bibinitperiod},
+         given={Adam},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=WAB}{%
+         family={Wiltschko},
+         familyi={W\bibinitperiod},
+         given={Alexander\bibnamedelima B.},
+         giveni={A\bibinitperiod\bibinitdelim B\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{SLB+1}
+    \strng{fullhash}{SLBREPAWAB1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{S}
+    \field{sortinithash}{S}
+    \verb{doi}
+    \verb 10.23915/distill.00033
+    \endverb
+    \field{note}{https://distill.pub/2021/gnn-intro}
+    \field{title}{A Gentle Introduction to Graph Neural Networks}
+    \field{journaltitle}{Distill}
+    \field{year}{2021}
+  \endentry
+
+  \entry{StrategyImprovement}{inproceedings}{}
+    \name{author}{1}{}{%
+      {{hash=SS}{%
+         family={Schewe},
+         familyi={S\bibinitperiod},
+         given={Sven},
+         giveni={S\bibinitperiod},
+      }}%
+    }
+    \name{editor}{2}{}{%
+      {{hash=KM}{%
+         family={Kaminski},
+         familyi={K\bibinitperiod},
+         given={Michael},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=MS}{%
+         family={Martini},
+         familyi={M\bibinitperiod},
+         given={Simone},
+         giveni={S\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer Berlin Heidelberg}%
+    }
+    \strng{namehash}{SS1}
+    \strng{fullhash}{SS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{S}
+    \field{sortinithash}{S}
+    \field{abstract}{%
+    This paper presents a novel strategy improvement algorithm for parity and
+  payoff games, which is guaranteed to select, in each improvement step, an
+  optimal combination of local strategy modifications. Current strategy
+  improvement methods stepwise improve the strategy of one player with respect
+  to some ranking function, using an algorithm with two distinct phases: They
+  first choose a modification to the strategy of one player from a list of
+  locally profitable changes, and subsequently evaluate the modified strategy.
+  This separation is unfortunate, because current strategy improvement
+  algorithms have no effective means to predict the global effect of the
+  individual local modifications beyond classifying them as profitable,
+  adversarial, or stale. Furthermore, they are completely blind towards the
+  cross effect of different modifications: Applying one profitable modification
+  may render all other profitable modifications adversarial. Our new
+  construction overcomes the traditional separation between choosing and
+  evaluating the modification to the strategy. It thus improves over current
+  strategy improvement algorithms by providing the optimal improvement in every
+  step, selecting the best combination of local updates from a superset of all
+  profitable and stale changes.%
+    }
+    \field{booktitle}{Computer Science Logic}
+    \field{isbn}{978-3-540-87531-4}
+    \field{pages}{369–384}
+    \field{title}{An Optimal Strategy Improvement Algorithm for Solving Parity
+  and Payoff Games}
+    \list{location}{1}{%
+      {Berlin, Heidelberg}%
+    }
+    \field{year}{2008}
+  \endentry
+
+  \entry{AlphaZero}{article}{}
+    \name{author}{17}{}{%
+      {{hash=SD}{%
+         family={Silver},
+         familyi={S\bibinitperiod},
+         given={David},
+         giveni={D\bibinitperiod},
+      }}%
+      {{hash=SJ}{%
+         family={Schrittwieser},
+         familyi={S\bibinitperiod},
+         given={Julian},
+         giveni={J\bibinitperiod},
+      }}%
+      {{hash=SK}{%
+         family={Simonyan},
+         familyi={S\bibinitperiod},
+         given={Karen},
+         giveni={K\bibinitperiod},
+      }}%
+      {{hash=AI}{%
+         family={Antonoglou},
+         familyi={A\bibinitperiod},
+         given={Ioannis},
+         giveni={I\bibinitperiod},
+      }}%
+      {{hash=HA}{%
+         family={Huang},
+         familyi={H\bibinitperiod},
+         given={Aja},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=GA}{%
+         family={Guez},
+         familyi={G\bibinitperiod},
+         given={Arthur},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=HT}{%
+         family={Hubert},
+         familyi={H\bibinitperiod},
+         given={Thomas},
+         giveni={T\bibinitperiod},
+      }}%
+      {{hash=BL}{%
+         family={Baker},
+         familyi={B\bibinitperiod},
+         given={Lucas},
+         giveni={L\bibinitperiod},
+      }}%
+      {{hash=LM}{%
+         family={Lai},
+         familyi={L\bibinitperiod},
+         given={Matthew},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=BA}{%
+         family={Bolton},
+         familyi={B\bibinitperiod},
+         given={Adrian},
+         giveni={A\bibinitperiod},
+      }}%
+      {{hash=CY}{%
+         family={Chen},
+         familyi={C\bibinitperiod},
+         given={Yutian},
+         giveni={Y\bibinitperiod},
+      }}%
+      {{hash=LT}{%
+         family={Lillicrap},
+         familyi={L\bibinitperiod},
+         given={Timothy},
+         giveni={T\bibinitperiod},
+      }}%
+      {{hash=HF}{%
+         family={Hui},
+         familyi={H\bibinitperiod},
+         given={Fan},
+         giveni={F\bibinitperiod},
+      }}%
+      {{hash=SL}{%
+         family={Sifre},
+         familyi={S\bibinitperiod},
+         given={Laurent},
+         giveni={L\bibinitperiod},
+      }}%
+      {{hash=vdDG}{%
+         prefix={van\bibnamedelima den},
+         prefixi={v\bibinitperiod\bibinitdelim d\bibinitperiod},
+         family={Driessche},
+         familyi={D\bibinitperiod},
+         given={George},
+         giveni={G\bibinitperiod},
+      }}%
+      {{hash=GT}{%
+         family={Graepel},
+         familyi={G\bibinitperiod},
+         given={Thore},
+         giveni={T\bibinitperiod},
+      }}%
+      {{hash=HD}{%
+         family={Hassabis},
+         familyi={H\bibinitperiod},
+         given={Demis},
+         giveni={D\bibinitperiod},
+      }}%
+    }
+    \strng{namehash}{SD+1}
+    \strng{fullhash}{SDSJSKAIHAGAHTBLLMBACYLTHFSLDGvdGTHD1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{S}
+    \field{sortinithash}{S}
+    \field{abstract}{%
+    A long-standing goal of artificial intelligence is an algorithm that
+  learns, tabula rasa, superhuman proficiency in challenging domains. Recently,
+  AlphaGo became the first program to defeat a world champion in the game of
+  Go. The tree search in AlphaGo evaluated positions and selected moves using
+  deep neural networks. These neural networks were trained by supervised
+  learning from human expert moves, and by reinforcement learning from
+  self-play. Here we introduce an algorithm based solely on reinforcement
+  learning, without human data, guidance or domain knowledge beyond game rules.
+  AlphaGo becomes its own teacher: a neural network is trained to predict
+  AlphaGo's own move selections and also the winner of AlphaGo's games. This
+  neural network improves the strength of the tree search, resulting in higher
+  quality move selection and stronger self-play in the next iteration. Starting
+  tabula rasa, our new program AlphaGo Zero achieved superhuman performance,
+  winning 100–0 against the previously published, champion-defeating
+  AlphaGo.%
+    }
+    \verb{doi}
+    \verb 10.1038/nature24270
+    \endverb
+    \field{issn}{1476-4687}
+    \field{number}{7676}
+    \field{pages}{354–359}
+    \field{title}{Mastering the game of Go without human knowledge}
+    \verb{url}
+    \verb https://doi.org/10.1038/nature24270
+    \endverb
+    \field{volume}{550}
+    \field{journaltitle}{Nature}
+    \field{year}{2017}
+    \warn{\item Invalid format of field 'month'}
   \endentry
 
   \entry{CO2Footprint}{article}{}
@@ -905,7 +1560,7 @@
     \field{sortinit}{T}
     \field{sortinithash}{T}
   \field{howpublished}{\url{https://developer.nvidia.com/blog/deep-learning-nutshell-history-training/}}
-    \field{title}{{Deep Learning in a Nutshell: History and Training}}
+    \field{title}{Deep Learning in a Nutshell: History and Training}
     \field{year}{16 Dec. 2015}
   \endentry
 
@@ -993,7 +1648,7 @@
     \verb{eprint}
     \verb 2110.06804
     \endverb
-    \field{pages}{3\bibrangedash 4}
+    \field{pages}{3–4}
     \field{title}{A comprehensive review of Binary Neural Network}
     \verb{url}
     \verb https://arxiv.org/abs/2110.06804
@@ -1002,6 +1657,117 @@
     \field{journaltitle}{CoRR}
     \field{eprinttype}{arXiv}
     \field{year}{2021}
+  \endentry
+
+  \entry{ComputationalComplexityMPG}{inproceedings}{}
+    \name{author}{2}{}{%
+      {{hash=ZU}{%
+         family={Zwick},
+         familyi={Z\bibinitperiod},
+         given={Uri},
+         giveni={U\bibinitperiod},
+      }}%
+      {{hash=PMS}{%
+         family={Paterson},
+         familyi={P\bibinitperiod},
+         given={Michael\bibnamedelima S.},
+         giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod},
+      }}%
+    }
+    \name{editor}{2}{}{%
+      {{hash=DDZ}{%
+         family={Du},
+         familyi={D\bibinitperiod},
+         given={Ding-Zhu},
+         giveni={D\bibinithyphendelim Z\bibinitperiod},
+      }}%
+      {{hash=LM}{%
+         family={Li},
+         familyi={L\bibinitperiod},
+         given={Ming},
+         giveni={M\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{1}{%
+      {Springer Berlin Heidelberg}%
+    }
+    \strng{namehash}{ZUPMS1}
+    \strng{fullhash}{ZUPMS1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{Z}
+    \field{sortinithash}{Z}
+    \field{abstract}{%
+    We study the complexity of finding the values and optimal strategies of
+  mean payoff games, a family of perfect information games introduced by
+  Ehrenfeucht and Mycielski. We describe a pseudopolynomial time algorithm for
+  the solution of such games, the decision problem for which is in NP ∩
+  co-NP. Finally, we describe a polynomial reduction from mean payoff games to
+  the simple stochastic games studied by Condon. These games are also known to
+  be in NP ∩ co-NP, but no polynomial or pseudo-polynomial time algorithm is
+  known for them.%
+    }
+    \field{booktitle}{Computing and Combinatorics}
+    \field{isbn}{978-3-540-44733-7}
+    \field{pages}{1–10}
+    \field{title}{The complexity of mean payoff games}
+    \list{location}{1}{%
+      {Berlin, Heidelberg}%
+    }
+    \field{year}{1995}
+  \endentry
+
+  \entry{MCTS}{article}{}
+    \name{author}{4}{}{%
+      {{hash=�M}{%
+         family={Świechowski},
+         familyi={�\bibinitperiod},
+         given={Maciej},
+         giveni={M\bibinitperiod},
+      }}%
+      {{hash=GK}{%
+         family={Godlewski},
+         familyi={G\bibinitperiod},
+         given={Konrad},
+         giveni={K\bibinitperiod},
+      }}%
+      {{hash=SB}{%
+         family={Sawicki},
+         familyi={S\bibinitperiod},
+         given={Bartosz},
+         giveni={B\bibinitperiod},
+      }}%
+      {{hash=MJ}{%
+         family={Mańdziuk},
+         familyi={M\bibinitperiod},
+         given={Jacek},
+         giveni={J\bibinitperiod},
+      }}%
+    }
+    \list{publisher}{2}{%
+      {Springer Science}%
+      {Business Media {LLC}}%
+    }
+    \strng{namehash}{�M+1}
+    \strng{fullhash}{�MGKSBMJ1}
+    \field{labelnamesource}{author}
+    \field{labeltitlesource}{title}
+    \field{sortinit}{�}
+    \field{sortinithash}{�}
+    \verb{doi}
+    \verb 10.1007/s10462-022-10228-y
+    \endverb
+    \field{number}{3}
+    \field{pages}{2497–2562}
+    \field{title}{Monte Carlo Tree Search: a review of recent modifications and
+  applications}
+    \verb{url}
+    \verb https://doi.org/10.1007%2Fs10462-022-10228-y
+    \endverb
+    \field{volume}{56}
+    \field{journaltitle}{Artificial Intelligence Review}
+    \field{year}{2022}
+    \warn{\item Invalid format of field 'month'}
   \endentry
 \enddatalist
 \endinput

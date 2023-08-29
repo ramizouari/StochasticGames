@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021/CVE-2023-32700 patched) (preloaded format=pdflatex 2023.7.2)  23 AUG 2023 13:17
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2021/CVE-2023-32700 patched) (preloaded format=pdflatex 2023.7.2)  29 AUG 2023 17:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1207,7 +1207,12 @@ Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty
 Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 )
-LaTeX Info: Redefining \P0 on input line 78.
+(/usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty
+Package: colortbl 2020/01/04 v1.0e Color table columns (DPC)
+\everycr=\toks47
+\minrowclearance=\skip73
+)
+LaTeX Info: Redefining \P0 on input line 80.
 \c@definition=\count333
 \c@remark=\count334
 \c@proof=\count335
@@ -1321,21 +1326,21 @@ Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
 Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 86.
 )
-\Hy@SectionHShift=\skip73
+\Hy@SectionHShift=\skip74
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 129.
+Package hyperref Info: Option `colorlinks' set `true' on input line 143.
 
 
 Package hyperref Warning: Option `backref' has already been used,
-(hyperref)                setting the option has no effect on input line 129.
+(hyperref)                setting the option has no effect on input line 143.
 
 (/usr/share/texlive/texmf-dist/tex/latex/glossaries/base/glossaries.sty
 Package: glossaries 2020/03/19 v4.46 (NLCT)
 
 (/usr/share/texlive/texmf-dist/tex/latex/mfirstuc/mfirstuc.sty
 Package: mfirstuc 2017/11/14 v2.06 (NLCT)
-\@glsmfirst=\toks47
-\@glsmrest=\toks48
+\@glsmfirst=\toks48
+\@glsmrest=\toks49
 )
 (/usr/share/texlive/texmf-dist/tex/latex/textcase/textcase.sty
 Package: textcase 2019/09/14 v1.00 Text only upper/lower case changing (DPC)
@@ -1401,9 +1406,9 @@ Package: fp-upn 1996/10/21
 (/usr/share/texlive/texmf-dist/tex/latex/fp/fp-eval.sty
 Package: fp-eval 1995/04/03
 )))
-\@dtl@toks=\toks49
+\@dtl@toks=\toks50
 \@dtl@tmpcount=\count359
-\dtl@tmplength=\skip74
+\dtl@tmplength=\skip75
 \dtl@sortresult=\count360
 \@dtl@numgrpsepcount=\count361
 \@dtl@datatype=\count362
@@ -1426,28 +1431,28 @@ ldf
 File: glossaries-english.ldf 2014/11/23 v1.0
 )
 \gls@level=\count366
-\@gls@tmpb=\toks50
-\gls@tmplen=\skip75
-\glskeylisttok=\toks51
-\glslabeltok=\toks52
-\glsshorttok=\toks53
-\glslongtok=\toks54
+\@gls@tmpb=\toks51
+\gls@tmplen=\skip76
+\glskeylisttok=\toks52
+\glslabeltok=\toks53
+\glsshorttok=\toks54
+\glslongtok=\toks55
 
 (/usr/share/texlive/texmf-dist/tex/latex/glossaries/styles/glossary-hypernav.st
 y
 Package: glossary-hypernav 2020/03/19 v4.46 (NLCT)
 ) (/usr/share/texlive/texmf-dist/tex/latex/glossaries/styles/glossary-list.sty
 Package: glossary-list 2020/03/19 v4.46 (NLCT)
-\glslistdottedwidth=\skip76
+\glslistdottedwidth=\skip77
 ) (/usr/share/texlive/texmf-dist/tex/latex/glossaries/styles/glossary-long.sty
 Package: glossary-long 2020/03/19 v4.46 (NLCT)
 
 (/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2020/01/07 v4.13 Multi-page Table package (DPC)
-\LTleft=\skip77
-\LTright=\skip78
-\LTpre=\skip79
-\LTpost=\skip80
+\LTleft=\skip78
+\LTright=\skip79
+\LTpre=\skip80
+\LTpost=\skip81
 \LTchunksize=\count367
 \LTcapwidth=\dimen311
 \LT@head=\box97
@@ -1458,10 +1463,10 @@ Package: longtable 2020/01/07 v4.13 Multi-page Table package (DPC)
 \LT@rows=\count369
 \c@LT@tables=\count370
 \c@LT@chunks=\count371
-\LT@p@ftn=\toks55
+\LT@p@ftn=\toks56
 )
-\glsdescwidth=\skip81
-\glspagelistwidth=\skip82
+\glsdescwidth=\skip82
+\glspagelistwidth=\skip83
 )
 (/usr/share/texlive/texmf-dist/tex/latex/glossaries/styles/glossary-super.sty
 Package: glossary-super 2020/03/19 v4.46 (NLCT)
@@ -1470,9 +1475,9 @@ Package: glossary-super 2020/03/19 v4.46 (NLCT)
 Package: supertabular 2020/02/02 v4.1g the supertabular environment
 \c@tracingst=\count372
 \ST@wd=\dimen312
-\ST@rightskip=\skip83
-\ST@leftskip=\skip84
-\ST@parfillskip=\skip85
+\ST@rightskip=\skip84
+\ST@leftskip=\skip85
+\ST@parfillskip=\skip86
 \ST@pageleft=\dimen313
 \ST@headht=\dimen314
 \ST@tailht=\dimen315
@@ -1486,17 +1491,17 @@ Package: supertabular 2020/02/02 v4.1g the supertabular environment
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/glossaries/styles/glossary-tree.sty
 Package: glossary-tree 2020/03/19 v4.46 (NLCT)
-\glstreeindent=\skip86
+\glstreeindent=\skip87
 ))
 \glswrite=\write4
 \glo@main@file=\write5
 \openout5 = `main.glo'.
 
-Package glossaries Info: Writing glossary file main.glo on input line 133.
+Package glossaries Info: Writing glossary file main.glo on input line 147.
 \glo@acronym@file=\write6
 \openout6 = `main.acn'.
 
-Package glossaries Info: Writing glossary file main.acn on input line 133.
+Package glossaries Info: Writing glossary file main.acn on input line 147.
 
 (./acronyms.tex) (./glossary.tex)
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty
@@ -1551,14 +1556,14 @@ File: logreq.def 2010/08/04 v1.0 logreq spec v1.0
 \c@blx@sectionciteorder@0=\count413
 \blx@entrysetcounter=\count414
 \blx@biblioinstance=\count415
-\labelnumberwidth=\skip87
-\labelalphawidth=\skip88
-\biblabelsep=\skip89
-\bibitemsep=\skip90
-\bibnamesep=\skip91
-\bibinitsep=\skip92
-\bibparsep=\skip93
-\bibhang=\skip94
+\labelnumberwidth=\skip88
+\labelalphawidth=\skip89
+\biblabelsep=\skip90
+\bibitemsep=\skip91
+\bibnamesep=\skip92
+\bibinitsep=\skip93
+\bibparsep=\skip94
+\bibhang=\skip95
 \blx@bcfin=\read4
 \blx@bcfout=\write7
 \blx@langwohyphens=\language86
@@ -1641,20 +1646,20 @@ Package biblatex Info: ... file 'biblatex-dm.cfg' not found.
 \c@savedoriglanguage=\count484
 \c@pageref=\count485
 \c@savedpageref=\count486
-\shorthandwidth=\skip95
-\shortjournalwidth=\skip96
-\shortserieswidth=\skip97
-\shorttitlewidth=\skip98
-\shortauthorwidth=\skip99
-\shorteditorwidth=\skip100
-\locallabelnumberwidth=\skip101
-\locallabelalphawidth=\skip102
-\localshorthandwidth=\skip103
-\localshortjournalwidth=\skip104
-\localshortserieswidth=\skip105
-\localshorttitlewidth=\skip106
-\localshortauthorwidth=\skip107
-\localshorteditorwidth=\skip108
+\shorthandwidth=\skip96
+\shortjournalwidth=\skip97
+\shortserieswidth=\skip98
+\shorttitlewidth=\skip99
+\shortauthorwidth=\skip100
+\shorteditorwidth=\skip101
+\locallabelnumberwidth=\skip102
+\locallabelalphawidth=\skip103
+\localshorthandwidth=\skip104
+\localshortjournalwidth=\skip105
+\localshortserieswidth=\skip106
+\localshorttitlewidth=\skip107
+\localshortauthorwidth=\skip108
+\localshorteditorwidth=\skip109
 Package biblatex Info: Trying to load compatibility code...
 Package biblatex Info: ... file 'blx-compat.def' found.
 
@@ -1756,6 +1761,7 @@ Package tocbibind Info: The document has chapter divisions on input line 50.
 Package tocbibind Note: Using chapter style headings, unless overridden.
 
 )
+\c@theorem=\count499
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
@@ -1763,38 +1769,38 @@ Package csquotes Info: Redefining alias 'default' -> 'english'.
  (./main.aux)
 \openout1 = `main.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 159.
-LaTeX Font Info:    ... okay on input line 159.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 159.
-LaTeX Font Info:    ... okay on input line 159.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 159.
-LaTeX Font Info:    ... okay on input line 159.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 159.
-LaTeX Font Info:    ... okay on input line 159.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 159.
-LaTeX Font Info:    ... okay on input line 159.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 159.
-LaTeX Font Info:    ... okay on input line 159.
-LaTeX Font Info:    Checking defaults for U/mathx/m/n on input line 159.
-LaTeX Font Info:    ... okay on input line 159.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 159.
-LaTeX Font Info:    ... okay on input line 159.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 159.
-LaTeX Font Info:    ... okay on input line 159.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 175.
+LaTeX Font Info:    ... okay on input line 175.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 175.
+LaTeX Font Info:    ... okay on input line 175.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 175.
+LaTeX Font Info:    ... okay on input line 175.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 175.
+LaTeX Font Info:    ... okay on input line 175.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 175.
+LaTeX Font Info:    ... okay on input line 175.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 175.
+LaTeX Font Info:    ... okay on input line 175.
+LaTeX Font Info:    Checking defaults for U/mathx/m/n on input line 175.
+LaTeX Font Info:    ... okay on input line 175.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 175.
+LaTeX Font Info:    ... okay on input line 175.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 175.
+LaTeX Font Info:    ... okay on input line 175.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count499
+\scratchcounter=\count500
 \scratchdimen=\dimen322
 \scratchbox=\box103
-\nofMPsegments=\count500
-\nofMParguments=\count501
-\everyMPshowfont=\toks56
-\MPscratchCnt=\count502
+\nofMPsegments=\count501
+\nofMParguments=\count502
+\everyMPshowfont=\toks57
+\MPscratchCnt=\count503
 \MPscratchDim=\dimen323
-\MPnumerator=\count503
-\makeMPintoPDFobject=\count504
-\everyMPtoPDFconversion=\toks57
+\MPnumerator=\count504
+\makeMPintoPDFobject=\count505
+\everyMPtoPDFconversion=\toks58
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 
@@ -1856,20 +1862,20 @@ Package: everysel 2021/01/20 v2.1 EverySelectfont Package (MS)
 ABD: EverySelectfont initializing macros
 LaTeX Info: Redefining \selectfont on input line 123.
 ))
-\CenteringLeftskip=\skip109
-\RaggedLeftLeftskip=\skip110
-\RaggedRightLeftskip=\skip111
-\CenteringRightskip=\skip112
-\RaggedLeftRightskip=\skip113
-\RaggedRightRightskip=\skip114
-\CenteringParfillskip=\skip115
-\RaggedLeftParfillskip=\skip116
-\RaggedRightParfillskip=\skip117
-\JustifyingParfillskip=\skip118
-\CenteringParindent=\skip119
-\RaggedLeftParindent=\skip120
-\RaggedRightParindent=\skip121
-\JustifyingParindent=\skip122
+\CenteringLeftskip=\skip110
+\RaggedLeftLeftskip=\skip111
+\RaggedRightLeftskip=\skip112
+\CenteringRightskip=\skip113
+\RaggedLeftRightskip=\skip114
+\RaggedRightRightskip=\skip115
+\CenteringParfillskip=\skip116
+\RaggedLeftParfillskip=\skip117
+\RaggedRightParfillskip=\skip118
+\JustifyingParfillskip=\skip119
+\CenteringParindent=\skip120
+\RaggedLeftParindent=\skip121
+\RaggedRightParindent=\skip122
+\JustifyingParindent=\skip123
 )
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: hyperref package is loaded.
@@ -1880,7 +1886,7 @@ Package: ltcaption 2020/05/30 v1.4b longtable captions (AR)
 )
 Package caption Info: supertabular package is loaded.
 Package caption Info: End \AtBeginDocument code.
-Package hyperref Info: Link coloring ON on input line 159.
+Package hyperref Info: Link coloring ON on input line 175.
 
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
@@ -1891,11 +1897,11 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 (/usr/share/texlive/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count505
+\c@section@level=\count506
 )
-LaTeX Info: Redefining \ref on input line 159.
-LaTeX Info: Redefining \pageref on input line 159.
-LaTeX Info: Redefining \nameref on input line 159.
+LaTeX Info: Redefining \ref on input line 175.
+LaTeX Info: Redefining \pageref on input line 175.
+LaTeX Info: Redefining \nameref on input line 175.
 
 (./main.out) (./main.out)
 \@outlinefile=\write8
@@ -1921,27 +1927,42 @@ Package biblatex Info: ... file 'main.bbl' found.
  (./main.bbl
 
 Package biblatex Warning: BibTeX reported the following issues
+(biblatex)                with 'PositionalStrategies':
+(biblatex)                - Invalid format of field 'month'.
+
+
+Package biblatex Warning: BibTeX reported the following issues
 (biblatex)                with 'OriginalBackPropagation':
 (biblatex)                - Invalid format of field 'month'.
 
+
+Package biblatex Warning: BibTeX reported the following issues
+(biblatex)                with 'AlphaZero':
+(biblatex)                - Invalid format of field 'month'.
+
+
+Package biblatex Warning: BibTeX reported the following issues
+(biblatex)                with 'MCTS':
+(biblatex)                - Invalid format of field 'month'.
+
 )
-Package biblatex Info: Reference section=0 on input line 159.
-Package biblatex Info: Reference segment=0 on input line 159.
-Package scrbase Info: activating english \listfigurename on input line 159.
-Package scrbase Info: activating english \listtablename on input line 159.
-Package scrbase Info: activating english \contentsname on input line 159.
+Package biblatex Info: Reference section=0 on input line 175.
+Package biblatex Info: Reference segment=0 on input line 175.
+Package scrbase Info: activating english \listfigurename on input line 175.
+Package scrbase Info: activating english \listtablename on input line 175.
+Package scrbase Info: activating english \contentsname on input line 175.
  (./chapters/titlepage.tex
-<Figures/dBSense-logo.png, id=433, 669.702pt x 249.8133pt>
+<Figures/dBSense-logo.png, id=517, 669.702pt x 249.8133pt>
 File: Figures/dBSense-logo.png Graphic file (type png)
 <use Figures/dBSense-logo.png>
 Package pdftex.def Info: Figures/dBSense-logo.png  used on input line 9.
 (pdftex.def)             Requested size: 112.74277pt x 42.0522pt.
-<images/insat.png, id=435, 2001.4775pt x 2001.4775pt>
+<images/insat.png, id=519, 2001.4775pt x 2001.4775pt>
 File: images/insat.png Graphic file (type png)
 <use images/insat.png>
 Package pdftex.def Info: images/insat.png  used on input line 10.
 (pdftex.def)             Requested size: 75.15993pt x 75.15906pt.
-<Figures/UniversityCarthage-logo.png, id=436, 852.18375pt x 1027.84pt>
+<Figures/UniversityCarthage-logo.png, id=520, 852.18375pt x 1027.84pt>
 File: Figures/UniversityCarthage-logo.png Graphic file (type png)
 <use Figures/UniversityCarthage-logo.png>
 Package pdftex.def Info: Figures/UniversityCarthage-logo.png  used on input lin
@@ -1991,7 +2012,7 @@ l.17 \end{abstract}
  same identifier (name{page.1}) has been already used, duplicate ignored
 <to be read again> 
                    \relax 
-l.53 ...3.5}Weights Distribution}{23}{section.3.5}
+l.60 ... {3.3.3}Valid edges}{26}{subsection.3.3.3}
                                                   % [1
 
 ]
@@ -2003,7 +2024,16 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[2])
+[2]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[3])
 \tf@toc=\write9
 \openout9 = `main.toc'.
 
@@ -2016,23 +2046,23 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[3] (./main.lof)
+[4] (./main.lof)
 \tf@lof=\write10
 \openout10 = `main.lof'.
 
- [4
+ [5
 
 ] (./main.lot)
 \tf@lot=\write11
 \openout11 = `main.lot'.
 
- [5
+ [6
 
 ] (./main.loa)
 \tf@loa=\write12
 \openout12 = `main.loa'.
 
- (./chapters/Introduction.tex [6
+ (./chapters/Introduction.tex [7
 
 ]) (./chapters/chapter00.tex
 Underfull \hbox (badness 10000) in paragraph at lines 5--1
@@ -2074,26 +2104,20 @@ Underfull \hbox (badness 10000) in paragraph at lines 5--1
 
  []
 
-[7
+[8
 
 ]
 Chapter 1.
-) (./chapters/chapter01.tex [8
+) (./chapters/chapter01.tex [9
 
 ]
 Chapter 2.
-[9
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[10
 
 ]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[10]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2112,13 +2136,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [12]
-Overfull \hbox (14.9571pt too wide) detected at line 180
-\U/matha/m/n/10.95 @[] \OML/cmm/m/it/10.95 G; \U/matha/m/n/10.95 @\OML/cmm/m/it
-/10.95 p \U/matha/m/n/10.95 P \OML/cmm/m/it/10.95 P;  []\U/matha/m/n/10.95 p\OM
-L/cmm/m/it/10.95 G; p\U/matha/m/n/10.95 q „ []p\OML/cmm/m/it/10.95 G; p\U/matha
-/m/n/10.95 q „ []p\OML/cmm/m/it/10.95 G; p\U/matha/m/n/10.95 q
- []
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2128,8 +2145,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [13]
-Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
-put line 237.
+Overfull \hbox (14.9571pt too wide) detected at line 219
+\U/matha/m/n/10.95 @[] \OML/cmm/m/it/10.95 G; \U/matha/m/n/10.95 @\OML/cmm/m/it
+/10.95 p \U/matha/m/n/10.95 P \OML/cmm/m/it/10.95 P;  []\U/matha/m/n/10.95 p\OM
+L/cmm/m/it/10.95 G; p\U/matha/m/n/10.95 q „ []p\OML/cmm/m/it/10.95 G; p\U/matha
+/m/n/10.95 q „ []p\OML/cmm/m/it/10.95 G; p\U/matha/m/n/10.95 q
+ []
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2148,7 +2169,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[15]) (./chapters/chapter02.tex
+[15]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2158,34 +2179,18 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [16]
-Chapter 3.
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 15.
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 317.
 
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 15.
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
 
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 22.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 22.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 32.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 32.
-
-[17
-
-]
+[17]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2213,13 +2218,14 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [20]
+Underfull \hbox (badness 5696) in paragraph at lines 524--524
+\OT1/cmr/m/n/10.95 @ op-ti-mal[]strategy[]pair(G : Mean-Pay-of-f-Graph) : Tu- 
+ []
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 177.
 
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 177.
+Overfull \hbox (64.72011pt too wide) in paragraph at lines 527--528
+ [][] 
+ []
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2230,13 +2236,8 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [21]
+Overfull \vbox (4.73738pt too high) has occurred while \output is active []
 
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 209.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 209.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2247,6 +2248,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [22]
+Overfull \hbox (7.18132pt too wide) in paragraph at lines 648--649
+ [][] 
+ []
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2255,10 +2260,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[23]
-
-LaTeX Warning: `h' float specifier changed to `ht'.
-
+[23]) (./chapters/chapter02.tex
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2277,26 +2279,32 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [25]
+Chapter 3.
 
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 16.
 
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[26]) (./chapters/chapter03.tex
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 16.
 
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
 
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 23.
 
-[27]
-Chapter 4.
-[28
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 23.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 33.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 33.
+
+[26
 
 ]
 
@@ -2307,7 +2315,41 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
+[27]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[28]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
 [29]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 173.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 173.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 181.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 181.
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2327,6 +2369,9 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [31]
 
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
 (fancyhdr)                \setlength{\headheight}{13.59999pt}.
@@ -2335,12 +2380,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [32]
-<Figures/GCN.png, id=875, 931.32317pt x 340.74176pt>
-File: Figures/GCN.png Graphic file (type png)
-<use Figures/GCN.png>
-Package pdftex.def Info: Figures/GCN.png  used on input line 318.
-(pdftex.def)             Requested size: 563.70459pt x 206.24039pt.
-
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2350,15 +2389,110 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
 [33]
-<Figures/WGCN.png, id=880, 931.32317pt x 340.74176pt>
-File: Figures/WGCN.png Graphic file (type png)
-<use Figures/WGCN.png>
-Package pdftex.def Info: Figures/WGCN.png  used on input line 329.
-(pdftex.def)             Requested size: 563.70459pt x 206.24039pt.
-<Figures/PreprocessingBlock.png, id=883, 1353.36867pt x 508.71304pt>
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[34]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[35]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[36]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[37]) (./chapters/chapter03.tex
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[38]
+Chapter 4.
+[39
+
+]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[40]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[41]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[42]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[43]
+Overfull \hbox (44.5639pt too wide) in paragraph at lines 324--325
+[]\OT1/cmr/m/n/10.95 It adds some ran-dom edges to each graph, with some low pr
+ob-a-bil-ity \OT1/cmtt/m/n/10.95 random[]connection[]probability\OT1/cmr/m/n/10
+.95 . 
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[44]
+<Figures/PreprocessingBlock.png, id=1154, 1353.36867pt x 508.71304pt>
 File: Figures/PreprocessingBlock.png Graphic file (type png)
 <use Figures/PreprocessingBlock.png>
-Package pdftex.def Info: Figures/PreprocessingBlock.png  used on input line 339
+Package pdftex.def Info: Figures/PreprocessingBlock.png  used on input line 362
 .
 (pdftex.def)             Requested size: 563.70459pt x 211.89597pt.
 
@@ -2370,17 +2504,37 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[34 <./Figures/GCN.png> <./Figures/WGCN.png>]
-<Figures/ConvolutionalBlock.png, id=891, 949.39067pt x 271.0125pt>
+[45]
+<Figures/GCN.png, id=1164, 931.32317pt x 340.74176pt>
+File: Figures/GCN.png Graphic file (type png)
+<use Figures/GCN.png>
+Package pdftex.def Info: Figures/GCN.png  used on input line 373.
+(pdftex.def)             Requested size: 563.70459pt x 206.24039pt.
+<Figures/WGCN.png, id=1165, 931.32317pt x 340.74176pt>
+File: Figures/WGCN.png Graphic file (type png)
+<use Figures/WGCN.png>
+Package pdftex.def Info: Figures/WGCN.png  used on input line 386.
+(pdftex.def)             Requested size: 563.70459pt x 206.24039pt.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[46 <./Figures/PreprocessingBlock.png> <./Figures/GCN.png>]
+<Figures/ConvolutionalBlock.png, id=1175, 949.39067pt x 271.0125pt>
 File: Figures/ConvolutionalBlock.png Graphic file (type png)
 <use Figures/ConvolutionalBlock.png>
-Package pdftex.def Info: Figures/ConvolutionalBlock.png  used on input line 348
+Package pdftex.def Info: Figures/ConvolutionalBlock.png  used on input line 399
 .
 (pdftex.def)             Requested size: 563.70459pt x 160.91327pt.
-<Figures/PredictionBlock.png, id=892, 1353.36867pt x 843.2441pt>
+<Figures/PredictionBlock.png, id=1176, 1353.36867pt x 843.2441pt>
 File: Figures/PredictionBlock.png Graphic file (type png)
 <use Figures/PredictionBlock.png>
-Package pdftex.def Info: Figures/PredictionBlock.png  used on input line 356.
+Package pdftex.def Info: Figures/PredictionBlock.png  used on input line 409.
 (pdftex.def)             Requested size: 563.70459pt x 351.23933pt.
 
 
@@ -2391,7 +2545,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[35 <./Figures/PreprocessingBlock.png> <./Figures/ConvolutionalBlock.png>]
+[47 <./Figures/WGCN.png> <./Figures/ConvolutionalBlock.png>]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2400,12 +2554,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[36 <./Figures/PredictionBlock.png>]
-<Figures/Architecture.png, id=904, 1095.3422pt x 802.02762pt>
+[48 <./Figures/PredictionBlock.png>]
+<Figures/Architecture.png, id=1189, 1095.3422pt x 802.02762pt>
 File: Figures/Architecture.png Graphic file (type png)
 <use Figures/Architecture.png>
-Package pdftex.def Info: Figures/Architecture.png  used on input line 369.
-(pdftex.def)             Requested size: 609.47649pt x 446.26582pt.
+Package pdftex.def Info: Figures/Architecture.png  used on input line 424.
+(pdftex.def)             Requested size: 596.65718pt x 436.86871pt.
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2415,28 +2569,16 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[37
+[49
 
-]
-Overfull \vbox (0.1108pt too high) has occurred while \output is active []
-
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[38 <./Figures/Architecture.png>]) (./chapters/chapter04.tex
+ <./Figures/Architecture.png>]) (./chapters/chapter04.tex
 Chapter 5.
-) (./chapters/chapter05.tex [39
+) (./chapters/chapter05.tex [50
 
 
 ]
 Chapter 6.
-) (./chapters/conclusion.tex [40
+) (./chapters/conclusion.tex [51
 
 ]
 Underfull \hbox (badness 10000) in paragraph at lines 4--19
@@ -2474,159 +2616,33 @@ Underfull \hbox (badness 10000) in paragraph at lines 4--19
  []
 
 )
-Underfull \hbox (badness 10000) in paragraph at lines 25--191
+Underfull \hbox (badness 10000) in paragraph at lines 25--207
 
  []
 
-(./chapters/appendix01.tex [41
+(./chapters/appendix01.tex [52
 
 ]
 Appendix A.
-[42
+[53
 
 ]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 61.
+(hyperref)                removing `math shift' on input line 62.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\le' on input line 61.
+(hyperref)                removing `\le' on input line 62.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `subscript' on input line 61.
+(hyperref)                removing `subscript' on input line 62.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 61.
+(hyperref)                removing `math shift' on input line 62.
 
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[43]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[44]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[45]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[46]) (./chapters/appendix02.tex
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[47]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[48]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[49]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[50]
-Appendix B.
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 6.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 6.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 25.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 25.
-
-[51
-
-]
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 58.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 58.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 75.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 75.
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[52]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 13.59999pt, for example:
-(fancyhdr)                \setlength{\headheight}{13.59999pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
-
-[53]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2653,7 +2669,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[56])
+[56]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 13.59999pt, for example:
@@ -2662,9 +2678,411 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[57] [58
+[57]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[58]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[59]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[60]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[61]) (./chapters/appendix02.tex
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[62]
+Appendix B.
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 26.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 26.
+
+[63
 
 ]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 59.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 59.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 76.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 76.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[64]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[65]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[66]) (./chapters/appendix03.tex
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[67]
+Appendix C.
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\Pi' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `superscript' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathop' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathchardef' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\std@minus' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\leavevmode@ifvmode' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                \kern 2.43307pt
+(hyperref)                removed on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathgroup' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\symoperators' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\@ifnextchar' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 7.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\Pi' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `superscript' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathop' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathchardef' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\std@minus' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\leavevmode@ifvmode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                \kern 2.43307pt
+(hyperref)                removed on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathgroup' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\symoperators' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\@ifnextchar' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\Pi' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `superscript' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathop' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathchardef' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\std@minus' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathcode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\leavevmode@ifvmode' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                \kern 2.43307pt
+(hyperref)                removed on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\mathgroup' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\symoperators' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\@ifnextchar' on input line 8.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 8.
+
+[68
+
+]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[69]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[70])
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[71]
+Overfull \hbox (0.59871pt too wide) in paragraph at lines 213--213
+[]\OT1/cmr/m/n/10.95 Manuel Bodirsky and Mar-cello Mamino. \OT1/cmr/m/it/10.95 
+Trop-i-cally con-vex con-straint sat-is-fac-tion\OT1/cmr/m/n/10.95 . 2017. arXi
+v:
+ []
+
+[72
+
+]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 13.59999pt, for example:
+(fancyhdr)                \setlength{\headheight}{13.59999pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
+
+[73]
+Overfull \hbox (4.87952pt too wide) in paragraph at lines 213--213
+\OT1/cmr/m/n/10.95 [2010] \TS1/cmr/m/n/10.95 ©\OT1/cmr/m/n/10.95 2010, 2010. \O
+T1/cmr/m/sc/10.95 url\OT1/cmr/m/n/10.95 : [][]$\OT1/cmtt/m/n/10.95 https : / / 
+search . library . wisc . edu / catalog / 9910082172502121$[][]\OT1/cmr/m/n/10.
+95 . 
+ []
+
 No file main.acr.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -2674,21 +3092,21 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-1.59999pt}.
 
-[59] (./main.aux)
+[74] (./main.aux)
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 6B7EF9F8A71FB0819582B26CDBF85C48;16149.
+(rerunfilecheck)             Checksum: FED952C66BA96380042765AA68C83499;19724.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 42634 strings out of 478862
- 796107 string characters out of 5858946
- 1563412 words of memory out of 6000000
- 59110 multiletter control sequences out of 15000+600000
- 433054 words of font info for 136 fonts, out of 8000000 for 9000
+ 43242 strings out of 478862
+ 809161 string characters out of 5858946
+ 1559527 words of memory out of 6000000
+ 59603 multiletter control sequences out of 15000+600000
+ 432845 words of font info for 135 fonts, out of 8000000 for 9000
  1137 hyphenation exceptions out of 8191
- 99i,16n,131p,1855b,2173s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 99i,20n,131p,1855b,2173s stack positions out of 5000i,500n,10000p,200000b,80000s
 pdfTeX warning (dest): name{glo:ny} has been referenced but does not exist, r
 eplaced by a fixed one
 
@@ -2696,41 +3114,44 @@ eplaced by a fixed one
 share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/share/
 texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/share/texliv
 e/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx8.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts
-/type1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1
-/public/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfo
-nts/cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/
-cmmi8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.p
-fb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></us
-r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share
-/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive
-/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-d
-ist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/font
-s/type1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public
-/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
-mti10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb
-></usr/share/texlive/texmf-dist/fonts/type1/public/mathabx-type1/matha12.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/mathabx-type1/matha6.pfb></usr/
-share/texlive/texmf-dist/fonts/type1/public/mathabx-type1/matha7.pfb></usr/shar
-e/texlive/texmf-dist/fonts/type1/public/mathabx-type1/matha8.pfb></usr/share/te
-xlive/texmf-dist/fonts/type1/public/mathabx-type1/matha9.pfb></usr/share/texliv
-e/texmf-dist/fonts/type1/public/mathabx-type1/mathb10.pfb></usr/share/texlive/t
-exmf-dist/fonts/type1/public/mathabx-type1/mathb8.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/mathabx-type1/mathx10.pfb></usr/share/texlive/texmf-di
-st/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive/texmf-dis
-t/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist
-/fonts/type1/public/rsfs/rsfs10.pfb></usr/share/texlive/texmf-dist/fonts/type1/
-public/cm-super/sfrm1000.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/
-cm-super/sfrm1095.pfb>
-Output written on main.pdf (62 pages, 3671381 bytes).
+-dist/fonts/type1/public/amsfonts/cm/cmbxti10.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/amsfonts/cm/cmcsc10.pfb></usr/share/texlive/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
+lic/amsfonts/cm/cmmi12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmmi6.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/
+cm/cmmi7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
+8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb><
+/usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/share/tex
+live/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/
+fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/ty
+pe1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
+fonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/c
+m/cmsy9.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti1
+0.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/mathabx-type1/matha10.pfb></u
+sr/share/texlive/texmf-dist/fonts/type1/public/mathabx-type1/matha12.pfb></usr/
+share/texlive/texmf-dist/fonts/type1/public/mathabx-type1/matha5.pfb></usr/shar
+e/texlive/texmf-dist/fonts/type1/public/mathabx-type1/matha6.pfb></usr/share/te
+xlive/texmf-dist/fonts/type1/public/mathabx-type1/matha7.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/public/mathabx-type1/matha8.pfb></usr/share/texlive/te
+xmf-dist/fonts/type1/public/mathabx-type1/matha9.pfb></usr/share/texlive/texmf-
+dist/fonts/type1/public/mathabx-type1/mathb10.pfb></usr/share/texlive/texmf-dis
+t/fonts/type1/public/mathabx-type1/mathb8.pfb></usr/share/texlive/texmf-dist/fo
+nts/type1/public/mathabx-type1/mathx10.pfb></usr/share/texlive/texmf-dist/fonts
+/type1/public/amsfonts/symbols/msam10.pfb></usr/share/texlive/texmf-dist/fonts/
+type1/public/amsfonts/symbols/msbm10.pfb></usr/share/texlive/texmf-dist/fonts/t
+ype1/public/amsfonts/symbols/msbm7.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/rsfs/rsfs10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/cm-
+super/sfrm1000.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/cm-super/s
+frm1095.pfb>
+Output written on main.pdf (77 pages, 3745987 bytes).
 PDF statistics:
- 1296 PDF objects out of 1440 (max. 8388607)
- 1167 compressed objects within 12 object streams
- 313 named destinations out of 1000 (max. 500000)
- 906 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1677 PDF objects out of 1728 (max. 8388607)
+ 1526 compressed objects within 16 object streams
+ 424 named destinations out of 1000 (max. 500000)
+ 1074 words of extra memory for PDF output out of 10000 (max. 10000000)
 

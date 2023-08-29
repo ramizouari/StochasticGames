@@ -60,6 +60,7 @@
 \usepackage{dirtytalk}
 \usepackage{tikz} 
 \usepackage{lscape}
+\usepackage{colortbl}
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
 
@@ -75,8 +76,11 @@
 \DeclareMathOperator{\End}{End}
 \DeclareMathOperator{\Max}{Max}
 \DeclareMathOperator{\Min}{Min}
+\DeclareMathOperator{\Opt}{Opt}
 \DeclareMathOperator{\P0} {\Min}
 \DeclareMathOperator{\choice}{choice}
+\DeclareMathOperator{\Id}{Id}
+\DeclareMathOperator{\ImageSet}{Im}
 \DeclareMathOperator{\zip}{zip}
 \DeclareMathOperator{\domain}{domain}
 \DeclareMathOperator{\pop}{pop}
@@ -90,6 +94,7 @@
 \DeclareMathOperator{\WeakOptimal}{\mathtt{WeakOptimal}}
 \DeclareMathOperator{\StrongOptimal}{\mathtt{StrongOptimal}}
 \DeclareMathOperator{\PayoffOptimal}{\mathtt{PayoffOptimal}}
+\DeclareMathOperator{\ones}{\mathbf{1}}
 \newtheorem{definition}{Définition}
 \newtheorem{remark}{Remarque}
 \newtheorem{proof}{Preuve}
@@ -98,6 +103,8 @@
 \newcommand{\VertexSet}{V}
 \newcommand{\EdgeSet}{E}
 \newcommand{\PlayerSet}{P}
+\newcommand{\IndefinitePlayer}{\Opt}
+\newcommand{\Player}{\IndefinitePlayer}
 \newcommand{\Dnp}[2]{\mathcal{D}(#1,#2)}
 \newcommand{\Dnm}[2]{\mathcal{D}(#1,#2)}
 \newcommand{\Dsnp}[2]{\mathcal{D}^S(#1,#2)}
@@ -105,9 +112,15 @@
 \newcommand{\PowerSet}[1]{\mathscr{P}(#1)}
 \newcommand{\Probability}[1]{\mathscr{P}\left(#1\right)}
 \newcommand{\ConditionalProbability}[2]{\mathscr{P}\left(#1 \mid #2\right)}
+\newcommand{\Expected}[1]{\mathbb{E}\left[#1\right]}
+\newcommand{\ConditionalExpected}[2]{\mathbb{E}\left[#1 \mid #2\right]}
 \newcommand{\ComRing}{\mathcal{R}}
 \newcommand{\Enclose}[1]{\left(#1\right)}
 \newcommand{\Distribution}[1]{\mathscr{D}(#1)}
+
+
+%Middle Align
+
 
 % header and footer
 \pagestyle{fancy}
@@ -115,6 +128,7 @@
 \chead{RN quantifié pour un contexte deep learning embarqué}
 \renewcommand{\footrulewidth}{0.4pt}
 \cfoot{\thepage \\ \small{Rami ZOUARI}  \\ \scriptsize{INSAT, Tunisia} }
+
 
 
 % linked table of contents
@@ -155,6 +169,8 @@
 \renewcaptionname{english}{\contentsname}{Contenu}
 
 
+\newtheorem{theorem}{Theorem}
+
 
 \begin{document}
 
@@ -191,6 +207,7 @@
 \appendix
 \input{chapters/appendix01}
 \input{chapters/appendix02}
+\input{chapters/appendix03}
 \nocite{*}
 
 \printbibliography[title=Bibliographie]

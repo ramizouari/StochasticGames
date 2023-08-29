@@ -1,4 +1,5 @@
 \chapter{Dataset Generation}
+\label{section:Dataset}
 
 \section{Introduction}
 \section{Analysis}
@@ -77,10 +78,12 @@ The following algorithm implements the optimized method:
 	\end{algorithmic}
 \end{algorithm}
 \FloatBarrier
-Now, Let $C(n,m)$ be the cost of choice function. The expected complexity of this algorithm will be:
-$$
-\tilde{\mathcal{O}}\left(n\mathbb{E}_d[C(n,d)]\right) \quad \text{where}\ d\sim \mathcal{B}(n,p)
-$$
+Now, let $C(a,b)$ be the cost of choice function. 
+\newline The expected complexity of this algorithm as a function of $n=\lvert \VertexSet \rvert$ and the degrees $d_1,\dots,d_n$ is:
+\begin{align}
+	\label{eqn:DnpBigO}
+	\tilde{\mathcal{O}}\left(\sum_{i=1}^n1+\mathbb{E}[C(n,d_i)]\right) &= 	\tilde{\mathcal{O}}\left(n+\sum_{i=1}^n\mathbb{E}[C(n,d_i)]\right) 
+\end{align}
 We will show on the next section what choice function should we use.
 \subsection{Choice Function}
 \subsubsection{First Proposition}
@@ -127,29 +130,22 @@ Here $(H)_{n\in\mathbb{N}^*}$ is the harmonic series, and we define $H_0=0.$
 %Prooof!!!
 The expected complexity of algorithm \ref{alg:Choice} depends on both $n$ and $m$:
 \begin{itemize}
-	\item If $m=o(n),$ then it is $\tilde{\mathcal{O}}(m).$
 	\item If $m=kn+o(n)$ with $k\in\mathopen]0,1\mathclose[$, then it is $\tilde{\mathcal{O}}(m).$
 	\item If $m=n-o(n)$, It is\footnote{Here we use the minus sign to emphasize that $m\le n$} $\tilde{\mathcal{O}}(m\log m).$ 
 \end{itemize}
-To prove this result, we use a well known asymptotic approximation of the Harmonic series\footnote{This asymptotic approximation can be proven using the Euler–Maclaurin formula}:
+To prove this result, we use a well-known asymptotic approximation of the Harmonic series\footnote{This asymptotic approximation can be proven using the Euler–Maclaurin formula} \cite[Section~1.2.11.2]{ArtComputerProgramming}:
 $$
 H_n=\ln n+\gamma -\frac{1}{2n}+\mathcal{O}\left(\frac{1}{n^2}\right)
 $$
-We can prove this claim as follow:
-\begin{align*}
-	m=o(n),\quad \mathbb{E}[C(n,m)]&=-n\ln \left(1-\frac{m}{n}\right) -\frac{1}{2}\left(1-\frac{n}{n-m}\right)+\mathcal{O}\left(\frac{1}{n}\right) \\
-	&=m+o(m)\\
-	&=\mathcal{O}(m)\\
-	m=km+o(m),k\in \mathopen]0,1\mathclose[,\quad \mathbb{E}[C(n,m)]&=-n\ln \left(1-\frac{m}{n}\right) -\frac{1}{2}\left(1-\frac{n}{n-m}\right)+\mathcal{O}\left(\frac{1}{n}\right) \\
-&=-n\ln (1-k+o(1))+\frac{1}{n}(1-\tfrac{1}{1-k+o(1)})+\mathcal{O}(\tfrac{1}{n})\\
-&=\mathcal{O}(m)\\
-\end{align*}
+We can prove this claim as follow for $m=km+o(m),k\in \mathopen[0,1\mathclose[$:
+\begin{align}
+	\mathbb{E}[C(n,m)]&=-n\ln \left(1-\frac{m}{n}\right) -\frac{1}{2}\left(1-\frac{n}{n-m}\right)+\mathcal{O}\left(\frac{1}{n}\right) \nonumber \\
+&=-n\ln (1-k+o(1))+\frac{1}{n}(1-\tfrac{1}{1-k+o(1)})+\mathcal{O}(\tfrac{1}{n}) \label{eqn:ChoiceBigO} \\
+&=\mathcal{O}(m) \nonumber
+\end{align}
 For $m=n-o(n),$ we prove it by noting that:
 \begin{align*}
-\mathbb{E}[C(n,m)]&\le\mathbb{E}[C(n,n)] \\
- &\le nH_n \\
-&\le n\ln n +\gamma n +\frac{1}{2}+\mathcal{O}\left(\frac{1}{n}\right) \\
-&= \mathcal{O}(m\log m)
+\mathbb{E}[C(n,m)]&\le\mathbb{E}[C(n,n)]= \mathcal{O} (nH_n) =\mathcal{O}(m\log m)
 \end{align*}
 
 \subsubsection{Refinement}
@@ -173,38 +169,14 @@ If $m$ tends to $n,$ it is more hard to select $m$ elements from a set of size $
 	\end{algorithmic}
 \end{algorithm}
 \FloatBarrier
-Also, an important point is that by combining the analysis of all possible cases, we can extract a constant factor that is independent of $n.$ So that the Big-O notation is only a function of $m$.
+Also, an important point is that by combining the analysis of all possible cases, we can extract a constant factor that is independent\footnote{The independence can be proven by taking the supremum of the right-hand side of equation \eqref{eqn:ChoiceBigO} over $[0,\tau]$, and the fact that $\tau$ is fixed.} of $n.$ So that the Big-O bound is only a dependent on $m$.
 \subsection{Complexity of Optimised $\mathcal{D}(n,p)$ Graph Construction}
-We return to evaluate the asymptotic behaviour of $\mathbb{E}_d[C(n,d)].$
-\newline Let $\delta \in \mathbb{R}_+^*$
-\newline The Chebychev Inequality implies that:
-$$
-\mathscr{P}\left(\left \lvert \frac{1}{n}\sum_{i=1}^nX_i -p \right \rvert \ge \frac{\delta}{\sqrt{n}}\sqrt{p(1-p)}  \right) \le \frac{1}{\delta^2}
-$$
-By setting: $\delta=\frac{1}{\sqrt{p}},$ we have:
-$$\mathscr{P}\left(\left \lvert \frac{1}{n}\sum_{i=1}^nX_i -p \right \rvert \ge \frac{\sqrt{1-p}}{\sqrt{n}}  \right) \le p 
-$$
-Let $I=[np-\sqrt{n(1-p)},np+\sqrt{n(1-p)}].$
-\newline 
-We have:
+Now, using algorithm \ref{alg:ChoiceFineTuned} as the choice algorithm, we can further simplify equation \eqref{eqn:DnpBigO} as a function of only $n=\lvert \VertexSet\rvert$ and $m=\lvert \EdgeSet\rvert.$
+\newline This proves that $\Dnp{n}{p}$ construction can be achieved in expected linear time:
 \begin{align*}
-\mathbb{E}\left[C(n,d)\right]  &\le \mathbb{E}\left[C(n,d) \mid d\in I\right] + p^2\mathbb{E}\left[C(n,d) \mid d\notin I\right] \\
-&\le \max_{m\in \mathbb{N} \cap I}C(n,m) + \max_{m\in\{0,\dots,n\}}p^2C(n,m) 
- \end{align*}
-To further simplify this, we need two key observations:
-\begin{itemize}
-	\item The interval $m\in \mathbb{N} \cap [np-1+p,np+1-p]$ contains at most $3$ integers, all of which are within a distance of $1$ to $np$
-	\item The complexity of $\mathbb{E}[C(n,m)]$ does only depend on $m.$
-\end{itemize}
-Thus, we have the following:
-\begin{align*}
-	\max_{m\in \mathbb{N} \cap [np-1+p,np+1-p]}C(n,m) &= \mathcal{O}(np) \\
-	\max_{m\in\{0,\dots,n\}}p^2C(n,m) &= \mathcal{O}(np^2)
+	\tilde{\mathcal{O}}\left(n+\sum_{i=1}^n\mathbb{E}[C(n,d_i)]\right)  &= \tilde{\mathcal{O}}\left(n+\sum_{i=1}^nd_i\right) \\
+	&=\tilde{\mathcal{O}}\left(n+m\right)
 \end{align*}
-Now, by combining both estimations, we get:
-$$
-\tilde{\mathcal{O}}(n\mathbb{E}_d[C(n,d)])=\tilde{\mathcal{O}}(n^2p) \quad \blacksquare
-$$
 
 \subsection{$\mathcal{D}(n,m)$ Construction}
 To construct a random $\mathcal{D}(n,m)$ graph, we only have to select $m$ uniformly random elements from the set $V\times V.$
@@ -340,12 +312,19 @@ The following table resumes the implemented distributions:
 		\hline 
 		
 	\end{tabularx}
-	\caption{Le tableau d'avancement des BNNs}
+	\caption{Le tableau d'avancement des BNNs
+	\label{table:Distributions}}
 \end{table}
 \FloatBarrier
-
+Also, to generate the initial state, we have defaulted to:
+\begin{itemize}
+	\item The uniform distribution over the vertices to generate the starting vertex
+	\item The bernoulli distribution to generate the starting player.
+\end{itemize}
+With all that said, distributions are fair in the limit and are symmetric, provided that the underlying graph distribution and weight distribution are chosen from the table \ref{table:Distributions}.
 
 \section{MPG Generation}
+\label{section:MPG:Generation}
 \subsection{Distribution}
 \begin{itemize}
 	\item Each generated graph will follow a distribution $\mathcal{G}(n,p(n))$  for some $n\in\mathbb{N}^*$
@@ -437,7 +416,8 @@ $$
 \subsubsection{Early Stopping}
 If after any iteration of arc consistency, $\max_{x\in V}\nu(x) < \sup D.$ Then, $\nu(t)$ will converge to $-\infty$ for all $t.$ 
 \newline Thus, we stop the algorithm and sets $\nu(t)\leftarrow -\infty,\quad \forall t$
-\paragraph{Proof} suppose that in fact there is an assignment with: 
+\begin{proof} 
+suppose that in fact there is an assignment with: 
 $$
 -\infty < \max_{u\in V}\nu(u) < \sup D$$
 We will take the $u$ with the biggest such $\nu(u).$  
@@ -446,16 +426,77 @@ We will take the $u$ with the biggest such $\nu(u).$
 \forall s\in V,\quad \nu(s)+\sup D-\nu(u) \in D
 $$
 Which is a contradiction, as it violates the consistency of arc consistency, and the maximality of the solution with respect to the domain $D$
-
+\end{proof}
   
-The efficiency of the Early Stopping heuristic depends on the density of the graph. Empirically, for dense graphs. the analoguous ternary max atom system has two kind of assignments:
+The efficiency of the Early Stopping heuristic depends on the density of the graph. Empirically, for dense graphs. the analoguous ternary max atom system usually has two kind of assignments:
 \begin{enumerate}
 	\item Either all variables are finite
 	\item Either all variables are $-\infty$
 \end{enumerate}
-This translates back in a dense Mean Payoff setting, that the winner of the game does not depend in the starting position and the starting turn. 
-\newline With that, the Early Stopping heuristic will quickly detect the second case, which is the usually hurdle of the algorithm.
+This translates back in a dense Mean Payoff setting, that the winner of the game usually does not depend in the starting position and the starting turn. 
+\newline With that, the Early Stopping heuristic will quickly detect the second case, which we believe as the hurdle of the algorithm.
 \newline On the other hand, for sparse graphs, we do not have this nice distinction between finite and infinite assignments, and they can overlap, and so will make this heuristic useless in practice.
+
+\subsection{Implementation}
+\subsubsection{Algorithm}
+We implemented a Mean Payoff Graph solver. It calculates the optimal move for each player in each position. Thus, our implementation gives an exact solution to the optimization problem\footnote{In its current version, It gives a weak optimal strategy for both players $\Max,$ and $\Min.$ The winning condition is $C_2$ }  for Mean Payoff Games.
+\newline It works by a transforming a mean payoff game to an equivalent min-max system, then applying two subsequent reductions to a $n$-ary max atom system, then to a ternary max atom system. The solution of the latter is propagated back to mean payoff game to induce an optimal strategy.
+\begin{algorithm}
+	\caption{Solving a Mean Payoff Graph for all states}\label{alg:MPGSolver}
+	\begin{algorithmic}
+		\Require $G$ a Mean Payoff Graph
+		\Require $D$ the domain of the variables. Can be chosen by heuristics.
+		\Ensure $\Phi:V\times P\rightarrow V$ The optimal strategy of each player
+		\State $\Phi\leftarrow \varnothing$
+		\For {$p\in P$}
+		\If {$p$ is Max}
+		\State $G'\leftarrow G$
+		\Else
+		\State $G'\leftarrow \bar{G}$
+		\EndIf
+		\State $S \leftarrow \displaystyle \transform_{\text{MPG}\rightarrow \text{Min-Max}}(G',D)$ 
+		\State $S' \leftarrow \displaystyle \transform_{\text{Min-Max}\rightarrow \text{Max}}(S)$ 
+		\State $S'' \leftarrow \displaystyle \transform_{\text{Max}\rightarrow \text{Max}_3}(S')$
+		\State $L\leftarrow \inf D$
+		\State $R\leftarrow \sup D$
+		\State $Q\leftarrow \emptyset$
+		\State $\mathcal{V} \leftarrow \text{Variables}(S'')$
+		\For {$u\in \mathcal{V}$}
+			\State $X(u)\leftarrow R$
+			\State $\text{append}(Q,u)$
+		\EndFor
+		\While {$Q\neq \varnothing}$ 
+			\State $X\leftarrow \arcconsistency(S'',X,Q,L)$
+		\EndWhile
+		\For {$\mathcal{C}\in S''$} \Comment{Iterate over constraints of $S''$}
+		\State $\text{OP}\leftarrow \text{Operator}(\mathcal{C})$
+		\Comment{Get the operator of $\mathcal{C}.$ Either Max or Min }
+		\State $Y$ the right-hand side variables of $\mathcal{C}$
+		\State $C$ the right-hand side constants of $\mathcal{C}$
+		\State $x$ the left-hand side variable of $\mathcal{C}$
+		\State $u\leftarrow \displaystyle \projection_{V\times P\rightarrow V}(x)$ \Comment{Extract the vertex}
+		
+		\If {$\text{OP}$ is Max}
+		\State $y^*,c^*\leftarrow  \displaystyle\argmax_{(y,c)\in \zip(Y,C)}\{X(y)+c\}$ \Comment{Extracts the maximum assignment}
+		\State $\Phi(u,p)\leftarrow \displaystyle \projection_{V\times P\rightarrow V}(y^*)$ \Comment{The Strategy is the vertex of the maximum assignment}
+		\EndIf
+		\EndFor
+		\EndFor
+		\State \Return $\Phi$
+	\end{algorithmic}
+\end{algorithm}
+\FloatBarrier
+Here $\zip(Y,C)$ of lists $Y$ and $C$ is the list $L=[(y_1,c_1),\dots,(y_n,c_n)]$
+
+These transformations were not trivial to find, we had to improve the reductions offered by \cite{MPGMaxAtom}, we also proposed a refinement to arc consistency that works for a ternary max-atom system, that takes advantage of polymorphisms, as well as the symmetries.
+\newline This is very technical, and for that, the details are listed in the appendix \ref{appendix:CSP}.
+\subsubsection{Complexity Analysis}
+For simplicity will suppose that the domain $D$ is finite\footnote{In particular, a finite subset of $\mathbb{Z}$}, our algorithm runs in:
+\begin{equation*}
+	\mathcal{O}\left((\lvert V\rvert +\lvert E\rvert)^2 \cdot \lvert D\right\rvert)
+\end{equation*}
+Otherwise, if $D$ is a real domain, the algorithm still converges if $D$ is bounded\footnote{$D\subseteq [a,b]$ for some interval $[a,b]$}, since arc consistency takes a function and produces a smaller one. With that said, we did not produce a complexity estimation, as our work directly relies to the generated graphs that we have discussed in section \ref{section:MPG:Generation}, we recall that their weights are finite.
+
 
 \subsection{Deployment}
 After some experiments, it was very clear that vertical scaling with the number of threads is not sufficient. By analysing the running time of some samples, we estimated the total running time solving both datasets to exceed $30$ days.
