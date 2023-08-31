@@ -90,16 +90,26 @@ We have:
 \begin{align*}
 	\ln g(k,x,c)&=x\ln\left(1-\frac{k\ln x+c}{x}\right)\\
 	&=-k\ln x-c -\frac{(k(\ln x)+c)^2}{2x}+o\left(\frac{(\ln x)^3}{x^2}\right)\\
-	\implies g(x,k,c)&=\exp\left(-k\ln x-c -\frac{(k\ln x+c)^2}{2x}+o\left(\frac{(\ln x)^3}{x^2}\right)\right) \\
+\end{align*}
+By applying the exponential function to both sides:
+\begin{align*}
+	g(x,k,c)&=\exp\left(-k\ln x-c -\frac{(k\ln x+c)^2}{2x}+o\left(\frac{(\ln x)^3}{x^2}\right)\right) \\
 	&=\frac{e^{-c}}{x^k}\times e^{\frac{-(k\ln x+c)^2}{2x}+o\left(\frac{(\ln x)^3}{x^2}\right)}\\
 	&=\frac{e^{-c}}{x^k}\left(1-\frac{(k \ln x+c)^2}{2x}+o\left(\frac{(\ln x)^3}{x^2}\right)\right)  \\
 	&=\frac{e^{-c}}{x^k}-e^{-c}\frac{k^2(\ln x)^2}{2x^{k+1}}+o\left(\frac{(\ln x)^3}{x^{k+2}}\right)\\
 	&=\frac{e^{-c}}{x^k}+o\left(\frac{1}{x^k}\right)\\
-	\implies 1- g(x,k,c)&=1-\frac{e^{-c}}{x^{k}} +o\left(\frac{1}{x^k}\right)\\
-	\implies x\ln(1-g(x,k,c))&= -\frac{e^{-c}}{x^{k-1}}+o\left(\frac{1}{x^{k-1}}\right) \\
-	&\sim -\frac{e^{-c}}{x^{k-1}}  \\
-	\implies f(x,k,x) &= e^{-\frac{e^{-c}}{x^{k-1}}+o(\frac{1}{x^{k-1}})}
+	\implies 1- g(x,k,c)&=1-\frac{e^{-c}}{x^{k}} +o\left(\frac{1}{x^k}\right)
 \end{align*}
+Now, we appy $\ln$ to both sides, and multiply by $x:$ 
+\begin{align*}
+	x\ln(1-g(x,k,c))&= -\frac{e^{-c}}{x^{k-1}}+o\left(\frac{1}{x^{k-1}}\right) \\
+	&\sim -\frac{e^{-c}}{x^{k-1}}  \\
+\end{align*}
+Finally, we apply the exponential function to both sides, to get the desired estimation of $f:$
+\begin{equation}
+	\label{eqn:SinklessAsymptotic}
+	 f(x,k,x) = e^{-\frac{e^{-c}}{x^{k-1}}+o(\frac{1}{x^{k-1}})}
+\end{equation}
 
 Now with that:
 $$
@@ -110,14 +120,15 @@ $$
 \end{cases}
 $$
 Finally, we can conclude that:
-$$
-\lim_{x\rightarrow +\infty} f(x,k)\begin{cases}
-	0  & \text{if} \space k\in[0,1[ \\
-	e^{-e^{-c}} & \text{if}\space k=1  \\
-	1 & \text{otherwise if}\space k\in ]1,+\infty[ 
-\end{cases}
-$$
-\section{Repeating Construction}
+\begin{equation}
+	\label{eqn:SinklessProbabilityLimit}
+	\lim_{x\rightarrow +\infty} f(x,k)\begin{cases}
+		0  & \text{if} \space k\in[0,1[ \\
+		e^{-e^{-c}} & \text{if}\space k=1  \\
+		1 & \text{otherwise if}\space k\in ]1,+\infty[ 
+	\end{cases}
+\end{equation}
+\section{Graph Rejection Construction}
 \subsection{Estimating Complexity}
 Now the method of rejecting graphs that have sinks and retrying give us a natural question about how many times will the algorithm reject graph until finding a desirable one.\newline
 The number of such rejections will follow a geometric law $\mathcal{G}(h(n,p))$ where: $$
@@ -129,7 +140,8 @@ $$
 $$
 With $C(n,p)$ the cost of building the graph, depending on the algorithm\footnote{The two algorithms that we have discussed are the naive $\mathcal{O}(n^2)$ algorithm and the more optimized $\mathcal{O}(pn^2+n)$ algorithm.}.
 \subsection{Dense Graph case}
-Now it is clear for dense enough graphs, in particular with $p(n) \ge \frac{k\ln (n)}{n}$ for large enough $n$, the expected complexity will reduce to $\mathcal{O}(C(n,p))$. And thus, we consider the rejection method to be efficient.
+Now it is clear for dense enough graphs, in particular with $p(n) \ge \frac{\ln (n)}{n}$ for large enough $n$, the expected complexity will reduce to $\mathcal{O}(C(n,p))$. This is a result of equation \eqref{eqn:SinklessProbabilityLimit}.
+\newline In the dense case, we consider the rejection method to be efficient.
 \subsection{Sparse Graph case}
 If $p(n)=\frac{k\ln n}{n}+c$ with $k<1.$ We have:
 $$
@@ -142,7 +154,7 @@ $$
 which is an exponential algorithm, and thus inefficient for large graphs.
 Since property $\mathtt{P}$ is increasing, this argument generalises to $p(n) \le \frac{k\ln n}{n}+c$ for large enough $n$
 %Show that the repeating construction is slow for sparse graphs.
-\section{Binomial Rejection Construction}
+\section{Degree Rejection Construction}
 Instead of throwing the whole graph at once. For every vertex $u\in V,$ we try to construct the adjacenty vertices of $u,$ and repeat if the procedure gives $\Adj u =\varnothing$
 \newline With this trick, the expected complexity will reduce for both algorithms to:
 $$

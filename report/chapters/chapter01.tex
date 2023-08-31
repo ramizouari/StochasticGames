@@ -410,7 +410,7 @@ While we did not find a machine learning approach on mean payoff games in the li
 \section{Library Implementation}
 We have two implementations of our mean payoff game library:
 \begin{itemize}
-	\item The first is called \textbf{mpg}. It is implemented in Python, and it contains the core functionalities of mean payoff games, as well as visualisation and support for machine learning methods.
+	\item The first is called \textbf{mpg}. It is implemented in Python, and it contains the core functionalities of mean payoff games, as well as serialization, visualisation and support for machine learning methods.
 	\item The second one is called \textbf{mpgcpp}. It is implemented in C++ to maximimize effeciency.
 \end{itemize}
 Also, the time-critical C++ functions are exported to Python. In they can be used via the \textbf{wrapper} module.
@@ -466,9 +466,11 @@ This modules contains some graph algorithms needed for Mean Payoff Games, such a
 \end{itemize}
 \subsubsection{games}
 This module defines the core functionalities related to mean payoff games.
+\newline It also defines the methods to read/write Mean Payoff Graphs. It uses the weighted edgelist format, and supports compression.  
 \begin{figure}[H]
 	\centering
 	\begin{tikzpicture}
+		\small
 		\begin{package} {networkx}
 			\begin{class}{DiGraph}{0,2.5cm}
 			\attribute{\dots}
@@ -492,21 +494,21 @@ This module defines the core functionalities related to mean payoff games.
 				\operation[0]{+ call(vertex : int) : int}
 			\end{interface}
 			
-			\begin{class}[text width=4cm]{PositionalStrategy}{-2cm,-8cm}
+			\begin{class}[text width=3.5cm]{PositionalStrategy}{-2cm,-8cm}
 				\inherit{Strategy}
 				\operation[0]{+ call(vertex)}
 			\end{class}
 			
-			\begin{class}[text width=4cm]{GreedyStrategy}{-6.5cm,-8cm}
+			\begin{class}[text width=3.5cm]{GreedyStrategy}{-6cm,-8cm}
 								\inherit{Strategy}
 				\operation[0]{+ call(vertex)}
 			\end{class}
-			\begin{class}[text width=4cm]{EpsGreedyStrategy}{2.5cm,-8cm}
+			\begin{class}[text width=3.5cm]{EpsGreedyStrategy}{2cm,-8cm}
 								\inherit{Strategy}
 				\operation[0]{+ call(vertex)}
 			\end{class}
 			
-			\begin{class}[text width=4cm]{FractionalStrategy}{7cm,-8cm}
+			\begin{class}[text width=3.5cm]{FractionalStrategy}{6cm,-8cm}
 								\inherit{Strategy}
 				\operation[0]{+ call(vertex)}
 			\end{class}
@@ -572,8 +574,8 @@ This module defines the core functionalities related to mean payoff games.
 	\centering
 	\begin{tikzpicture}
 		\small
-		\begin{package}{ games }
-			\begin{class}[text width=6cm]{MeanPayoffGraphBase}{0,5cm}
+		\begin{package}{games}
+			\begin{abstractclass}[text width=6cm]{MeanPayoffGraphBase}{0,5.5cm}
 			\attribute{edges}
 			\attribute{dual\_graph}
 			\operation[0]{\# add\_edge\_impl(source, target, weight)}
@@ -582,7 +584,7 @@ This module defines the core functionalities related to mean payoff games.
 			\operation{+ get\_weights()}
 			\operation{+ count\_nodes() : int}
 			\operation{+ get\_edges() : Edges}
-			\end{class}
+			\end{abstractclass}
 			\begin{class}[text width=3.5cm]{VectorMPG}{-6cm,4cm}
 				\inherit{MeanPayoffGraphBase}
 			\end{class}
@@ -649,6 +651,8 @@ This module defines the core functionalities related to mean payoff games.
 	\caption{\textbf{games} module}
 \end{figure}
 
-
+\subsubsection{mpgio}
+Unlike \textbf{mpg}, which has support for mean payoff graph I/O from files via \textbf{NetworkX}. In the C++ library, we have to implement this functionalities from scratch. We used standard I/O utilities with \textbf{boost} to interact with compressed streams conforming to the format used by \textbf{mpg}.
 \subsection{Environment}
+\subsection{Testing}
 \subsection{Structure}

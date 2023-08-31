@@ -1,14 +1,14 @@
 \contentsline {algorithm}{\numberline {1}{\ignorespaces Deterministic strategies evaluation\relax }}{18}{algorithm.1}%
 \contentsline {algorithm}{\numberline {2}{\ignorespaces Probabilistic strategies evaluation\relax }}{18}{algorithm.2}%
-\contentsline {algorithm}{\numberline {3}{\ignorespaces $\mathcal {D}(n,p)$ Graph Generation\relax }}{27}{algorithm.3}%
-\contentsline {algorithm}{\numberline {4}{\ignorespaces $\mathcal {D}(n,p)$ Graph Generation Optimisation\relax }}{27}{algorithm.4}%
-\contentsline {algorithm}{\numberline {5}{\ignorespaces $\mathcal {D}(n,p)$ Choice without replacement\relax }}{28}{algorithm.5}%
-\contentsline {algorithm}{\numberline {6}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{30}{algorithm.6}%
-\contentsline {algorithm}{\numberline {7}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{30}{algorithm.7}%
-\contentsline {algorithm}{\numberline {8}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{31}{algorithm.8}%
-\contentsline {algorithm}{\numberline {9}{\ignorespaces Solving a Mean Payoff Graph for all states\relax }}{37}{algorithm.9}%
-\contentsline {algorithm}{\numberline {10}{\ignorespaces Converting a Max Atom System to Ternary Max Atom System\relax }}{56}{algorithm.10}%
-\contentsline {algorithm}{\numberline {11}{\ignorespaces Converting a Min-Max System to Max Atom\relax }}{59}{algorithm.11}%
-\contentsline {algorithm}{\numberline {12}{\ignorespaces Converting a Mean Payoff Game to a Min Max system\relax }}{60}{algorithm.12}%
-\contentsline {algorithm}{\numberline {13}{\ignorespaces AC3 for Ternary Max Atom systems\relax }}{61}{algorithm.13}%
-\contentsline {algorithm}{\numberline {14}{\ignorespaces AC3 Optimized for Ternary Max Atom systems\relax }}{62}{algorithm.14}%
+\contentsline {algorithm}{\numberline {3}{\ignorespaces $\mathcal {D}(n,p)$ Graph Generation\relax }}{28}{algorithm.3}%
+\contentsline {algorithm}{\numberline {4}{\ignorespaces $\mathcal {D}(n,p)$ Graph Generation Optimisation\relax }}{28}{algorithm.4}%
+\contentsline {algorithm}{\numberline {5}{\ignorespaces $\mathcal {D}(n,p)$ Choice without replacement\relax }}{29}{algorithm.5}%
+\contentsline {algorithm}{\numberline {6}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{31}{algorithm.6}%
+\contentsline {algorithm}{\numberline {7}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{31}{algorithm.7}%
+\contentsline {algorithm}{\numberline {8}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{32}{algorithm.8}%
+\contentsline {algorithm}{\numberline {9}{\ignorespaces Solving a Mean Payoff Graph for all states\relax }}{38}{algorithm.9}%
+\contentsline {algorithm}{\numberline {10}{\ignorespaces Converting a Max Atom System to Ternary Max Atom System\relax }}{61}{algorithm.10}%
+\contentsline {algorithm}{\numberline {11}{\ignorespaces Converting a Min-Max System to Max Atom\relax }}{64}{algorithm.11}%
+\contentsline {algorithm}{\numberline {12}{\ignorespaces Converting a Mean Payoff Game to a Min Max system\relax }}{65}{algorithm.12}%
+\contentsline {algorithm}{\numberline {13}{\ignorespaces AC3 for Ternary Max Atom systems\relax }}{66}{algorithm.13}%
+\contentsline {algorithm}{\numberline {14}{\ignorespaces AC3 Optimized for Ternary Max Atom systems\relax }}{67}{algorithm.14}%

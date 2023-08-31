@@ -1,4 +1,4 @@
-\chapter{Dataset Generation}
+\chapter{Dataset Generation \& Annotation}
 \label{section:Dataset}
 
 \section{Introduction}
@@ -243,7 +243,7 @@ Here $W_{u,v}$ will be a sequence of real random variables. \newline
 In our case, we set $(W_{u,v})_{(u,v)\in E}$ to be independent and identically distributed over a real distribution $\mathcal{W}.$ 
 
 
-\section{Proposed MPG Distribution}
+\section{Proposed MPG Distributions}
 \subsection{Desired Properties of Mean Payoff Game Distributions}
 \subsubsection{Fairness in the Limit}
 This is essential, as we intend to generate a sequence of Mean Payoff Games that do not favour statistically a certain player, in the sense that, if we generate sufficient independent and identically distributed Mean Payoff Games $G_1,\dots,G_n$, we expect the following:
@@ -334,7 +334,7 @@ With all that said, distributions are fair in the limit and are symmetric, provi
 
 We will generate two kinds of datasets, depending on the nature of the graph
 
-\subsection{Dense Graphs}
+\subsubsection{Dense Graphs}
 \begin{itemize}
 	\item Let $\mathcal{P}=\{0.1,0.2,0.3,0.5,0.7,0.8,0.9,1\}$
 	\item $\mathcal{N}=\{10,20,30,40,50,60,70,80,90,100,110,120,130,140,150,200,250,300,400,500\}$
@@ -345,11 +345,22 @@ The total number of examples is:
 $$
 K\times\lvert \mathcal{N} \rvert \times \lvert \mathcal{P}\rvert=160000
 $$
+\subsubsection{Sparse Graphs}
+\subsection{Implementation}
+We have implemented a python application called 
+\subsection{Deployment}
+We have deployed the pipeline in the HPC system. We have launched the following command.
+\newline The figure below shows the pipeline:
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\textwidth]{Figures/DatasetGeneration.png}
+	\caption{HPC pipeline to generate mean payoff graphs}
+\end{figure}
 The generation was done on a `haswell64` partition with 24 cores. and it took 02:12:38 hours.
 
 \section{Annotation}
 \subsection{Approach}
-We used the CSP algorithm $\ref{alg:AC3Optimized}$ to annotate the dataset, potentially augmented with some heuristics. 
+We used the CSP algorithm $\ref{alg:AC3Optimized}$ to annotate the dataset, potentially augmentedw with some heuristics. 
 \newline We implemented a program that takes the path of the dataset, and solves the Mean Payoff Games one by one.
 \newline To maximize efficiency, the program launches many solver threads, with each one independently working on a single file, and the results are accumulated using a ConcurrentQueue.
 \subsection{Target Values}
@@ -498,6 +509,28 @@ For simplicity will suppose that the domain $D$ is finite\footnote{In particular
 Otherwise, if $D$ is a real domain, the algorithm still converges if $D$ is bounded\footnote{$D\subseteq [a,b]$ for some interval $[a,b]$}, since arc consistency takes a function and produces a smaller one. With that said, we did not produce a complexity estimation, as our work directly relies to the generated graphs that we have discussed in section \ref{section:MPG:Generation}, we recall that their weights are finite.
 
 
-\subsection{Deployment}
+\section{Deployment}
 After some experiments, it was very clear that vertical scaling with the number of threads is not sufficient. By analysing the running time of some samples, we estimated the total running time solving both datasets to exceed $30$ days.
 \newline As a result of this, we deployed a pipeline of $24$ nodes, each with $24$ threadss working simultaneously on a partition of the dataset.
+\begin{figure}
+	\centering
+	\includegraphics[width=0.95\textwidth]{Figures/DatasetAnnotation.png}
+	\caption{HPC pipeline to annotate mean payoff graphs
+	\label{fig:HPCAnnotation}}
+\end{figure}
+\FloatBarrier
+The figure \ref{fig:HPCAnnotation} above highlights the pipeline used to annotate mean payoff graphs.
+\newline For illustrative purposes, we omitted the following details:
+\begin{itemize}
+	\item The SLURM manager splits the graph files and partition them along the computing nodes.
+	\item Each node produces its own annotation file, which is \textbf{unique} per computing node. So we do not have any race condition.\footnote{Processes that access the same file.} 
+	\item Each of the standard output and error streams is transfered to a file, which is \textbf{unique} per computing node.
+	\item Once all jobs terminate, we have a helper script that concatenate all the results into a single file.
+\end{itemize} 
+
+\begin{figure}
+	\centering
+	\includegraphics[width=0.85\textwidth]{Figures/AnnotationThreads.png}
+	\caption{Activity diagram describing the behaviour of a node
+		\label{fig:HPCAnnotationProcess}}
+\end{figure}

@@ -267,6 +267,8 @@ With that, $X_{\mid \mathcal{X}}$ is an assignment of $\CSP(D,\Gamma)$
 \subsection{Reduction to Min Max System}
 In this section, we will solve the mean payoff by converting it to a equivalent min max system.
 \newline The method we use is formalised in \cite{MPGMaxAtom}, and the equivalence is also proven in \cite{MPGMaxAtom}.
+\newline We have made a slight modification, as the original equivalence solves the problem ``Does $\Max$ wins\footnote{Winning here is defined as condition $C_1$ in table \ref{table:WinningConditions}} at all starting vertices?", our version instead solves the problem ``In which starting states $\Max$ wins at all vertices?" 
+\newline Furthermore, the solution is constructive, in the sense that if the answer is positive, we can build an optimal\footnote{Weakly-optimal with the $C_1$ winning condition.} strategy.
 \begin{algorithm}
 	\caption{Converting a Mean Payoff Game to a Min Max system}\label{alg:MPGToMinMax}
 	\begin{algorithmic}
