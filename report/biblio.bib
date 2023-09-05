@@ -540,3 +540,100 @@
 	year = {2014}
 }
 
+@book{RandomGraphs,
+	author = {Alan Frieze and Michał Karoński},
+	doi = {10.1017/CBO9781316339831},
+	place = {Cambridge},
+	publisher = {Cambridge University Press},
+	title = {Introduction to Random Graphs},
+	year = {2015}
+}
+
+@inbook{GameTheory,
+	abstract = {A new group of contributions to the development of this theory by leading experts in the field. The contributors include L. D. Berkovitz, L. E. Dubins, H. Everett, W. H. Fleming, D. Gale, D. Gillette, S. Karlin, J. G. Kemeny, R. Restrepo, H. E. Scarf, M. Sion, G. L. Thompson, P. Wolfe, and others.},
+	author = {C. BERGE and L. D. BERKOVITZ and L. E. DUBINS and H. EVERETT and W. H. FLEMING and D. GALE and D. GILLETTE and O. GROSS and J. F. HANNAN and J. C. HOLLADAY and J. R. ISBELL and S. KARLIN and J. G. KEMENY and J. MILNOR and J. C. OXTOBY and M. O. RABIN and R. RESTREPO and H. E. SCARF and L. S. SHAPLEY and M. SION and G. L. THOMPSON and W. WALDEN and P. WOLFE},
+	isbn = {9780691079363},
+	pages = {{179–187}},
+	publisher = {Princeton University Press},
+	title = {Contributions to the Theory of Games (AM-39), Volume III},
+	url = {http://www.jstor.org/stable/j.ctt1b9x26z},
+	urldate = {2023-09-03},
+	year = {1957}
+}
+
+@article{AlphaGo,
+	abstract = {The game of Go has long been viewed as the most challenging of classic games for artificial intelligence owing to its enormous search space and the difficulty of evaluating board positions and moves. Here we introduce a new approach to computer Go that uses `value networks' to evaluate board positions and `policy networks' to select moves. These deep neural networks are trained by a novel combination of supervised learning from human expert games, and reinforcement learning from games of self-play. Without any lookahead search, the neural networks play Go at the level of state-of-the-art Monte Carlo tree search programs that simulate thousands of random games of self-play. We also introduce a new search algorithm that combines Monte Carlo simulation with value and policy networks. Using this search algorithm, our program AlphaGo achieved a 99.8{\%} winning rate against other Go programs, and defeated the human European Go champion by 5 games to 0. This is the first time that a computer program has defeated a human professional player in the full-sized game of Go, a feat previously thought to be at least a decade away.},
+	author = {David Silver and Aja Huang and Chris J. Maddison and Arthur Guez and Laurent Sifre and George van den Driessche and Julian Schrittwieser and Ioannis Antonoglou and Veda Panneershelvam and Marc Lanctot and Sander Dieleman and Dominik Grewe and John Nham and Nal Kalchbrenner and Ilya Sutskever and Timothy Lillicrap and Madeleine Leach and Koray Kavukcuoglu and Thore Graepel and Demis Hassabis},
+	day = {01},
+	doi = {10.1038/nature16961},
+	issn = {1476-4687},
+	journal = {Nature},
+	month = {Jan},
+	number = {7587},
+	pages = {484–489},
+	title = {Mastering the game of Go with deep neural networks and tree search},
+	url = {https://doi.org/10.1038/nature16961},
+	volume = {529},
+	year = {2016}
+}
+
+@misc{ModelFreeParityGame,
+	archiveprefix = {arXiv},
+	author = {Alper Kamil Bozkurt and Yu Wang and Michael Zavlanos and Miroslav Pajic},
+	eprint = {2010.01050},
+	primaryclass = {cs.RO},
+	title = {Model-Free Reinforcement Learning for Stochastic Games with Linear Temporal Logic Objectives},
+	year = {2020}
+}
+
+@book{MachineLearning,
+	added-at = {2022-09-08T09:41:39.000+0200},
+	author = {Tom M Mitchell},
+	biburl = {https://www.bibsonomy.org/bibtex/2ea9f893d9d19c182bcf2822eb590fe4f/msteininger},
+	interhash = {479a66c32badb3a455fbdcf8e6633a5d},
+	intrahash = {ea9f893d9d19c182bcf2822eb590fe4f},
+	keywords = {book ml},
+	number = 9,
+	publisher = {McGraw-hill New York},
+	timestamp = {2022-09-08T17:32:10.000+0200},
+	title = {Machine learning},
+	volume = 1,
+	year = 1997
+}
+
+@article{GoMaster,
+	author = {Markus Enzenberger and Martin Müller and Broderick Arneson and Richard B. Segal},
+	journal = {IEEE Transactions on Computational Intelligence and AI in Games},
+	pages = {259–270},
+	title = {Fuego—An Open-Source Framework for Board Games and Go Engine Based on Monte Carlo Tree Search},
+	url = {https://api.semanticscholar.org/CorpusID:8323579},
+	volume = {2},
+	year = {2010}
+}
+
+@inproceedings{MCTSOriginal,
+	abstract = {A Monte-Carlo evaluation consists in estimating a position by averaging the outcome of several random continuations. The method can serve as an evaluation function at the leaves of a min-max tree. This paper presents a new framework to combine tree search with Monte-Carlo evaluation, that does not separate between a min-max phase and a Monte-Carlo phase. Instead of backing-up the min-max value close to the root, and the average value at some depth, a more general backup operator is defined that progressively changes from averaging to min-max as the number of simulations grows. This approach provides a fine-grained control of the tree growth, at the level of individual simulations, and allows efficient selectivity. The resulting algorithm was implemented in a 9\ensuremath{\times}9 Go-playing program, Crazy Stone, that won the 10th KGS computer-Go tournament.},
+	address = {Berlin, Heidelberg},
+	author = {Rémi Coulom},
+	booktitle = {Computers and Games},
+	editor = {H. Jaap van den Herik and Paolo Ciancarini and H. H. L. M. (Jeroen) Donkers},
+	isbn = {978-3-540-75538-8},
+	pages = {72–83},
+	publisher = {Springer Berlin Heidelberg},
+	title = {Efficient Selectivity and Backup Operators in Monte-Carlo Tree Search},
+	year = {2007}
+}
+
+@inproceedings{UCT,
+	abstract = {For large state-space Markovian Decision Problems Monte-Carlo planning is one of the few viable approaches to find near-optimal solutions. In this paper we introduce a new algorithm, UCT, that applies bandit ideas to guide Monte-Carlo planning. In finite-horizon or discounted MDPs the algorithm is shown to be consistent and finite sample bounds are derived on the estimation error due to sampling. Experimental results show that in several domains, UCT is significantly more efficient than its alternatives.},
+	address = {Berlin, Heidelberg},
+	author = {Levente Kocsis and Csaba Szepesvári},
+	booktitle = {Machine Learning: ECML 2006},
+	editor = {Johannes Fürnkranz and Tobias Scheffer and Myra Spiliopoulou},
+	isbn = {978-3-540-46056-5},
+	pages = {282–293},
+	publisher = {Springer Berlin Heidelberg},
+	title = {Bandit Based Monte-Carlo Planning},
+	year = {2006}
+}
+

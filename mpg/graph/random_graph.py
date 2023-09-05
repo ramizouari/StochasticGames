@@ -22,7 +22,7 @@ GraphType = TypeVar("GraphType", bound=Union[nx.DiGraph, nx.Graph, mpg.MeanPayof
 
 
 def gnp_random_graph_sinkless(n: int, p: float, create_using: Type[GraphType] = nx.DiGraph, directed=None, seed=None,
-                              method="fast", loops=True) -> GraphType:
+                              method="fast", loops=True,threshold=1) -> GraphType:
     """
     Generate a random graph with n nodes and edge probability p
     The graph is guaranteed to be sinkless
@@ -68,7 +68,11 @@ def gnp_random_graph_sinkless(n: int, p: float, create_using: Type[GraphType] = 
                     # The degree of the node u is m
                     m = generator.binomial(n, p)
                     # Choose m nodes from the set {0,1,...,n-1} uniformly at random
-                    A = generator.choice(n, m, replace=False)
+                    if m/n < threshold:
+                        A = generator.choice(n, m, replace=False)
+                    else:
+                        V = set(generator.choice(n, n-m, replace=False))
+                        A = [ v for v in range(n) if v not in V]
                     for v in A:
                         # TODO: Check if this is correct. It should give the correct distribution
                         if not loops and u == v:
@@ -169,7 +173,7 @@ def set_weights(G: nx.DiGraph, distribution="normal", seed=None, **kwargs):
     return G
 
 
-def gnp_random_mpg(n, p, seed=None, method="fast", loops=True, distribution="normal", **kwargs) -> mpg.MeanPayoffGraph:
+def gnp_random_mpg(n, p, seed=None, method="fast", loops=True, distribution="normal",threshold=1, **kwargs) -> mpg.MeanPayoffGraph:
     """
     Generate a mean-payoff game with n nodes and edge probability p. The weights are generated according to the distribution
     The underlying graph is guaranteed to be sinkless
@@ -182,7 +186,7 @@ def gnp_random_mpg(n, p, seed=None, method="fast", loops=True, distribution="nor
     :param kwargs: The parameters of the distribution
     :return: The generated mean-payoff game
     """
-    G = gnp_random_graph_sinkless(n, p, method=method, loops=loops, seed=seed, create_using=mpg.MeanPayoffGraph)
+    G = gnp_random_graph_sinkless(n, p, method=method, loops=loops, seed=seed,threshold=threshold, create_using=mpg.MeanPayoffGraph)
     set_weights(G, distribution=distribution, seed=seed, **kwargs)
     return G
 

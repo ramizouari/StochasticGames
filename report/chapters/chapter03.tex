@@ -225,13 +225,22 @@ Another major point for this property, is it gives the possibility to remove unr
 			\node[main node] (2) [right of =1] {$3$}; 
 			\node[main node] (3) [above right of =1] {$0$}; 
 			\node[main node] (4) [right of =2] {$1$}; 
-			\path (1) edge [bend left] node {0.2} (3)
-			edge [bend right] node [below] {-0.2} (2)
-			(2) edge [bend right] node [above] {0.2} (1)
-			edge [loop below] node {-0.2} (2)
-			(3) edge [bend left] node {-1} (2)
-			edge [bend left] node {-0.4} (4)
-			(4) edge node {0.6} (2);
+			
+			\node[main node, fill=red!50] (7) [below of =2] {$6$}; 
+			\node[main node, fill=red!50] (5) [below left of =7] {$4$}; 
+			\node[main node, fill=red!50] (6) [below right of =7] {$5$}; 
+			\path (1) edge [bend left] node {1} (3)
+			edge [bend right] node [below] {-1} (2)
+			(2) edge [bend right] node [above] {1} (1)
+			edge [loop below] node {-1} (2)
+			(3) edge [bend left] node {-5} (2)
+			edge [bend left] node {-2} (4)
+			(4) edge node {3} (2)
+			(5) edge node {-3} (7)
+			edge node {-2} (1)
+			(6) edge node {5} (5)
+			(7) edge node {0} (6)
+			edge node {-5} (4);
 		\end{tikzpicture} 
 	\end{subfigure}
 	\hfill
@@ -243,27 +252,21 @@ Another major point for this property, is it gives the possibility to remove unr
 			\node[main node] (2) [right of =1] {$3$}; 
 			\node[main node] (3) [above right of =1] {$0$}; 
 			\node[main node] (4) [right of =2] {$1$}; 
-			
-			\node[main node] (7) [below of =2] {$7$}; 
-			\node[main node] (5) [below left of =7] {$4$}; 
-			\node[main node] (6) [below right of =7] {$5$}; 
-			\path (1) edge [bend left] node {1} (3)
-			edge [bend right] node [below] {-1} (2)
-			(2) edge [bend right] node [above] {1} (1)
-			edge [loop below] node {-1} (2)
-			(3) edge [bend left] node {-5} (2)
-			edge [bend left] node {-2} (4)
-			(4) edge node {3} (2)
-			(5) edge node {-3} (7)
-			(6) edge node {5} (5)
-			(7) edge node {0} (6);
+			\path (1) edge [bend left] node {0.2} (3)
+			edge [bend right] node [below] {-0.2} (2)
+			(2) edge [bend right] node [above] {0.2} (1)
+			edge [loop below] node {-0.2} (2)
+			(3) edge [bend left] node {-1} (2)
+			edge [bend left] node {-0.4} (4)
+			(4) edge node {0.6} (2);
 		\end{tikzpicture} 
 	\end{subfigure}
-	\caption{Original Mean Payoff Game with a padded version}
+	\caption{Mean Payoff Game before and after removing unreachable nodes}
 	\label{fig:StableUnderPadding}
 \end{figure}
 \FloatBarrier
-Following the example under figure \ref{fig:StableUnderPadding}, if the model $\mathcal{M}$ is stable under padding, then the triangular subgraph should not be accounted in the output.
+Following the example under figure \ref{fig:StableUnderPadding}, if the model $\mathcal{M}$ is stable under padding, then the vertices $\{4,5,6\}$ can be removed without affecting the results.
+\newline In fact, this is true as the original mean payoff game can be constructed from the reduced one with a suitable padding.
 \section{Considered Models}
 While there are many possible predictive models. We considered mainly two families of predictive models.
 \subsection{Value based Model}
@@ -352,6 +355,37 @@ Where $N^{(i)}$ is the noise matrix. We implemented two kinds of noise:
 	\item Uniform noise, where each element of $N^{(i)}$ follows $\mathcal{U}(-r,r)$
 	\item Gaussian noise, where each element of $N^{(i)}$ follows $\mathcal{N}(0,\sigma)$
 \end{itemize}
+Now, we should choose the noise small enough so that we do not change the winner of the mean payoff game, nor the optimal strategies.
+\begin{theorem}
+	For a Mean Payoff Game $G=(V,E,W,s,p),$ with integer weights. 
+	\newline If $\lVert N\rVert_{\infty} < \frac{1}{2\lvert V \rvert}$, then $G$ and $G'=(V,E,W+N,s,p)$ have the same sets of $C_3$-optimal strategies for each player.
+\end{theorem}
+\begin{proof}
+	Without loss of generality, we assume that $\Max$ wins.
+	\newline Let $\Phi^{\Max}\in \mathtt{Optimal}(G,\Max)$ and $\Phi^{\Min}\in \mathtt{Optimal}(G,\Min)$ \newline Without a loss of generality, we assume that both $\Phi^{\Max},\Phi^{\Min}$ are positional.
+	\newline Let $\mathcal{C}=(u_0,\dots,u_{m})$ the cycle of vertices induced by both strategies in $G.$ 
+	\newline As $\Max$ wins, we have:
+	\begin{equation*}
+		v(G,\Phi^{\Max},\Phi^{\Min}) = \frac{1}{2m}\sum_{k=1}^{m}W(u_{k-1},u_{k}) > 0
+	\end{equation*}
+	As all the weights are integers, we have:
+	\begin{equation*}
+		\sum_{k=1}^{m}W(u_{k-1},u_{k}) \ge 1
+	\end{equation*}
+	With that, we conclude the follwing lower bound of the mean payoff:
+	\begin{equation*}
+		v(G,\Phi^{\Max},\Phi^{\Min}) \ge \frac{1}{m} \ge \frac{1}{2\lvert V \rvert} 
+	\end{equation*}
+	Finally, we show that $\Max$ is also winning in $G'$:
+	\begin{align*}
+		 v(G',\Phi^{\Max},\Phi^{\Min})  & \ge \frac{1}{2m}\sum_{k=1}^{m}W(u_{k-1},u_{k}) + N(u_{k-1},u_{k}) \\
+		 &\ge v(G,\Phi^{\Max},\Phi^{\Min}) - \lVert N \rVert_{\infty} \\
+		 & > 0
+	\end{align*}
+\end{proof}
+This result gives the theoretical interval in which the noise will not change the optimal strategies in an integer Mean Payoff Game.
+\newline In practice, as $N$ follows a symmetric distribution, the noise will tend to cancel itself, and the mean of the noise will tend to zero. 
+\newline For that reason, we do believe that a noise $N\sim \mathcal{U}(-0.1,0.1)$ or $N\sim \mathcal{N}(0,0.1)$ will keep the winners and strategies intact for most generated mean payoff games\footnote{Even for mean payoff games with real weights, we do believe that the same applies for weights following the distribution $\mathcal{U}(-1,1)$.}.
 \subsubsection{One Hot Encoding}
 The one hot encoding layer, as its name suggests, applies one hot encoding to the position $s.$
 
@@ -363,6 +397,7 @@ The one hot encoding layer, as its name suggests, applies one hot encoding to th
 	\caption{Preprocessing Block}
 	\label{fig:PreprocessingBlock}
 \end{figure}
+\newpage
 
 \subsection{Weighted Graph Convolutional Network}
 The weighted graph convolutional network \textbf{WGCN}, as its name suggests, is a convolutional operator acting on graphs, with many desirable properties such as ``Permutation Equivariance" and ``Stability under Padding".

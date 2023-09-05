@@ -38,6 +38,7 @@ This shows that the conditional distribution does inflict a small multiplicative
 \newline This serves as an evidence that $\mathcal{D}^S(n,p)$ is similar enough to $\mathcal{D}(n,p)$
 
 \subsection{Property Probability}
+\label{section:RandomGraphs:PropertyProbability}
 \begin{itemize}
 \item Let $G\sim \mathcal{D}(n,p)$
 \item Let $v$ a vertex of $G$
@@ -50,12 +51,12 @@ The probability that $\text{NoSink}(v)$ occurs is:
 \end{align*}
 Now, it is clear that the sequence of events $(\text{NoSink}(v))_{v\in V}$ is independent.
 \newline With that, the probability that the whole graph is sinkless is:
-\begin{align*}
-	\mathcal{P}(\text{Sinkless}(G))&=\mathcal{P}(\Adj v\ne \varnothing\quad\forall v \in V)\\
-	&=\mathcal{P}\left(\bigwedge_{v\in V} \text{NoSink}(v)\right)\\
-	&=\prod_{v\in V}\mathcal{P}(\text{NoSink}(v)) \\
-	&=\left(1-(1-p)^n\right)^n
-\end{align*}
+\begin{align}
+	\mathcal{P}(\text{Sinkless}(G))&=\mathcal{P}(\Adj v\ne \varnothing\quad\forall v \in V) \nonumber\\
+	&=\mathcal{P}\left(\bigwedge_{v\in V} \text{NoSink}(v)\right) \nonumber\\
+	&=\prod_{v\in V}\mathcal{P}(\text{NoSink}(v)) \nonumber \\
+	&=\left(1-(1-p)^n\right)^n \label{eqn:SinklessProbability}
+\end{align}
 \subsection{Asymptotic Analysis For Dense $\mathcal{D}(n,p)$}
 Let $c>0.$ We have for large enough $n$:
 $$
@@ -128,47 +129,8 @@ Finally, we can conclude that:
 		1 & \text{otherwise if}\space k\in ]1,+\infty[ 
 	\end{cases}
 \end{equation}
-\section{Graph Rejection Construction}
-\subsection{Estimating Complexity}
-Now the method of rejecting graphs that have sinks and retrying give us a natural question about how many times will the algorithm reject graph until finding a desirable one.\newline
-The number of such rejections will follow a geometric law $\mathcal{G}(h(n,p))$ where: $$
-h(n,p)=\mathscr{P}\left(\text{Sinkless}(\mathcal{D}(n,p))\right)=(1-(1-p)^n)^n
-$$
-\newline With that, the expected complexity of the algorithm will be:
-$$
-\tilde{\mathcal{O}}\left(\frac{C(n,p)}{h(n,p)}\right)=\tilde{\mathcal{O}}\left(\frac{C(n,p)}{(1-(1-p)^n)^n}\right)
-$$
-With $C(n,p)$ the cost of building the graph, depending on the algorithm\footnote{The two algorithms that we have discussed are the naive $\mathcal{O}(n^2)$ algorithm and the more optimized $\mathcal{O}(pn^2+n)$ algorithm.}.
-\subsection{Dense Graph case}
-Now it is clear for dense enough graphs, in particular with $p(n) \ge \frac{\ln (n)}{n}$ for large enough $n$, the expected complexity will reduce to $\mathcal{O}(C(n,p))$. This is a result of equation \eqref{eqn:SinklessProbabilityLimit}.
-\newline In the dense case, we consider the rejection method to be efficient.
-\subsection{Sparse Graph case}
-If $p(n)=\frac{k\ln n}{n}+c$ with $k<1.$ We have:
-$$
-(1-(1-p)^n)^n=e^{-e^{-c}x^{1-k}+o(x^{1-k})}
-$$
-With that, the expected complexity of the rejection method will be:
-$$
-\tilde{\mathcal{O}}\left(C(n,p)\times \exp\left(e^{-c}x^{1-k}+o(x^{1-k})\right)\right)
-$$
-which is an exponential algorithm, and thus inefficient for large graphs.
-Since property $\mathtt{P}$ is increasing, this argument generalises to $p(n) \le \frac{k\ln n}{n}+c$ for large enough $n$
-%Show that the repeating construction is slow for sparse graphs.
-\section{Degree Rejection Construction}
-Instead of throwing the whole graph at once. For every vertex $u\in V,$ we try to construct the adjacenty vertices of $u,$ and repeat if the procedure gives $\Adj u =\varnothing$
-\newline With this trick, the expected complexity will reduce for both algorithms to:
-$$
-\tilde{\mathcal{O}}\left(\frac{C(n,p)}{1-(1-p)^n}\right)
-$$
-Now for our case, it is natural to assume that $p(n) \ge \frac{1}{n},$ as a Mean Payoff Graph does not have a sink. With that: 
-$$
-1-(1-p)^n \ge 1-(1-\tfrac{1}{n})^n \ge 1-e^{-1}
-$$
-Therefore, the expected complexity will simplify to:
-$$
-\tilde{\mathcal{O}}\left(C(n,p)\right)
-$$
-Moreover, the cost of the conditionning makes only a constant $\frac{1}{1-e^{-1}}\approx 1.582$ factor slowdown, which is effectively neligible.
+
+
 
 \section{Expected Mean Payoff}
 \subsection{Definition}

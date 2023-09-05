@@ -1,0 +1,82 @@
+```mermaid
+gantt
+    dateFormat  YYYY-MM-DD
+    axisFormat %b %d
+    tickInterval 1week
+    title       GANTT Diagram
+    excludes    weekends
+    %% (`excludes` accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".)
+
+    section Research
+    Formalising Mean Payoff Games            :done,    MPG, 2023-02-01,3d
+    State of the Art in Mean Payoff Games :done, Art, after MPG, 2w 
+    Understanding Max Atom Systems	:done, MA, 2023-02-08, 1w
+    Understanding Min Max Systems :done, MMS, after MA, 1w
+    Theory of Random Graphs :done, 2023-02-15, 3w
+    Learning HPC			:done, HPC, 2023-03-07, 2w
+    Theory of Reinforcement Learning				:done, RL, 2023-04-01, 17d
+    State of the art in Self-Learning              :done,         SL, after RL, 5d
+    Understanding Alpha Zero               :done,         AZ, after SL, 3w
+    Theory of Graph Neural Network               :done,  GNN, 2023-05-05,10d
+    Theory of Markov Decision Process :done, MDP, 2023-07-10,2023-07-31
+
+    
+    section Crucial Results
+    Proof of Fast Graph Generation Method	:milestone, 2023-03-10, 0d
+    Proof of MPG <-> MMS Equivalence 	:milestone, 2023-03-18, 3d
+    Formula of Mean Payoff :milestone, MP, 2023-03-25, 0d
+    Formula of Expected Mean Payoff	:milestone, EMP, 2023-04-28,0d
+    Formula of WGCN Operator :milestone, WGCNFormula, after GNN, 0d
+    Proof of GNN Model verifying desired properties :milestone, 2023-06-10, 0d 
+    Unconditional Convergence of Expected Mean Payoff :milestone, UCMP, 2023-07-24,0d
+    
+    section Implementation
+    Writing Mean Payoff Game Logic :crit, Logic, 2023-02-08,3w
+    Writing Visualisation Functionalities :done , Visualisation, after Logic, 1w
+    Writing Unit Tests :done, Tests, after Logic, 1w
+    Implement Mean Payoff Strategy Solver :crit, Solver, 2023-03-01, 3w
+    Implementing Unit Tests for Strategy Solver :done, SolverTests, after Solver, 1w
+    Project Deployment :crit, Deployment, after HPC, 2w
+    Dockerization :active, Docker, after HPC, 1w
+    Preparing GitHub Actions :active, GitActions, after Docker, 2w
+    
+ 	section Analysis
+    Implementing Mean Payoff for Positional Strategies :crit, MPODeterministic, after MP, 2d
+    Dataset Generation          :crit, Generation, after HPC, 2w
+    Dataset Annotation             :crit, Annotation, after Generation, 3w
+    Preliminary Analysis        :done, Preliminary , after Annotation, 3d
+    Analysis of Calculated Strategies           :crit, AnnotationAnalysis, after Preliminary, 10d 
+	Implementing Mean Payoff for Fractional Strategies :crit, MPOFractional, after EMP, 5d
+    Analysis of Alpha Zero Results                      :active, AZResults, 2023-07-20, 2023-07-31
+
+    section Modeling
+    Writing Preprocessing Layers :crit, Preprocessing,  2023-04-01, 5d
+    Writing Augmentation Layers :crit, Augmentation, after Preprocessing, 5d
+    Preparing Data Pipeline               :crit, DataPipeline, after Preprocessing, 10d
+    Single Agent Modeling      :done, SAM, after DataPipeline  , 2w
+    Basic Self Playing :done, BSP, after SAM, 2w
+    Writing WGCN Operator    :crit, WGCN, after GNN  , 3d
+    Testing WGCN Operator :done, WGCNTest, after WGCN, 1d
+    Preparing MLP Model :done, MLP, after WGCNTest, 15d
+    Writing Convolutional Block :crit, GNNConv, after WGCNTest, 5d
+    Writing Preprocessing Block :crit, PrepBlock, after GNNConv, 5d
+    Building GNN Model :crit, GNNModel, after PrepBlock, 10d
+    
+    section SelfLearning
+    Forking open_spiel               :done, FOS, 2023-05-24, 3d
+    Preparing MPG Environment 		 :done, MPGEnv, after FOS,5d
+    Generating Random MPGs			 :done, RandomMPG, after MPGEnv, 5d
+    Linking with TF Model			 :done, LinkingTF, after RandomMPG, 5d
+    Upgrading Alpha Zero to Tensorflow 2 :crit, TF, 2023-06-10, 10d
+    C++ support for Alpha Zero       :active, CPPTF, after TF,18d
+    Setting up gRPC Server, :crit, gRPC, after TF, 7d
+    Setting up FastAPI Server :crit, FastAPI, after TF, 14d
+    Setting Configuration :crit, Config, after TF, 9d
+    Writing Actor Service   :crit, Actor, after TF, 5d
+    Writing Evaluator Service	:crit, Evaluator, after Actor, 5d
+    Writing Learner Service :crit, Learner, after Evaluator, 3d
+    Deploying Alpha Zero Pipeline :crit, AZDeployment, after Learner, 4d 
+    Execution & Fine-tuning :active, AZExecution, after AZDeployment, 2023-07-31 
+    
+
+```

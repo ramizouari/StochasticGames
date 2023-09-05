@@ -35,6 +35,8 @@
     \addtocounter{page}{-1}%
     \newpage}
     
+\usepackage{parskip}
+    
 % insert packages here --
 
 \usepackage{graphicx} %for handling images
@@ -61,6 +63,12 @@
 \usepackage{tikz} 
 \usepackage{lscape}
 \usepackage{colortbl}
+
+%Tick & Cross
+\usepackage{pifont}
+\newcommand{\cmark}{\ding{51}}%
+\newcommand{\xmark}{\ding{55}}%
+
 \newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
 
 
@@ -95,6 +103,8 @@
 \DeclareMathOperator{\StrongOptimal}{\mathtt{StrongOptimal}}
 \DeclareMathOperator{\PayoffOptimal}{\mathtt{PayoffOptimal}}
 \DeclareMathOperator{\ones}{\mathbf{1}}
+\DeclareMathOperator{\UCT}{UCT}
+\DeclareMathOperator{\PUCT}{PUCT}
 \newtheorem{definition}{Définition}
 \newtheorem{remark}{Remarque}
 \newtheorem{proof}{Preuve}
@@ -119,7 +129,7 @@
 \newcommand{\Distribution}[1]{\mathscr{D}(#1)}
 
 
-\newcommand{\ProjectTitle}{Implementation, Analysis and Predictive modeling of Mean Payoff Games}
+\newcommand{\ProjectTitle}{Implementation, Analysis and Predictive modeling of Mean Payoff Games using a Self Learning approach}
 \newcommand{\AuthorName}{Rami ZOUARI}
 
 
@@ -129,7 +139,7 @@
 % header and footer
 \pagestyle{fancy}
 \fancyhf{}
-\chead{\ProjectTitle}
+\chead{\small\ProjectTitle}
 \renewcommand{\footrulewidth}{0.4pt}
 \cfoot{\thepage \\ \small{\AuthorName}  \\ \scriptsize{INSAT, Tunisia} }
 
@@ -174,6 +184,9 @@
 
 
 \newtheorem{theorem}{Theorem}
+
+%Chapter numbering
+%\renewcommand{\thechapter}{\Roman{chapter}}
 
 
 \begin{document}

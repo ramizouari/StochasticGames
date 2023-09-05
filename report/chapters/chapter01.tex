@@ -5,20 +5,20 @@
 To define a Mean Payoff Game, we will start by formalising a weighted di-graph\footnote{Directed Graph}.
 
 \subsection{Di-Graph}
-A Weighted Di-Graph $\mathcal{G}$ is a tuple $(\mathcal{V},\mathcal{E},\mathcal{W})$ where:
+A Weighted Di-Graph $G$ is a tuple $(\VertexSet,\EdgeSet,W)$ where:
 
 \begin{itemize}
-		\item $\mathcal{V}$ is the set of vertices.
-		\item $\mathcal{E} \subseteq V\times V$ is the set of edges.
-		\item $\mathcal{W}:\mathcal{E}\rightarrow \mathbb{G}$ is the weight function, assigning a weight for every edge, with $\mathbb{G}$ some ordered abelian group\footnote{This definition is too general. We will only consider $\mathbb{G}\in \{\mathbb{Z},\mathbb{Q},\mathbb{R}\}.$ Also, $\mathbb{G}$ itself should be clear from the context.}. 
+		\item $\VertexSet$ is the set of vertices.
+		\item $\EdgeSet \subseteq \VertexSet\times \VertexSet$ is the set of edges.
+		\item $W:\EdgeSet\rightarrow \mathbb{G}$ is the weight function, assigning a weight for every edge, with $\mathbb{G}$ some ordered abelian group\footnote{This definition is too general. We will only consider $\mathbb{G}\in \{\mathbb{Z},\mathbb{Q},\mathbb{R}\}.$ Also, $\mathbb{G}$ itself should be clear from the context.}. 
 \end{itemize}
 \subsection{Mean Payoff Game}
-Formally, a \textbf{Mean Payoff Graph} is a tuple $(\mathcal{V},\mathcal{E},\mathcal{W},\mathcal{P},s,p)$ where:
+Formally, a \textbf{Mean Payoff Graph} is a tuple $(\VertexSet,\EdgeSet,W,\PlayerSet,s,p)$ where:
 \begin{itemize}
-	\item $\mathcal{G}=(\mathcal{V},\mathcal{E},\mathcal{W})$ is a di-graph.
-		\item $s\in \mathcal{V}$ denotes the starting position.
-	\item $\mathcal{P}=\{\text{Max},\text{Min}\}$ is the set of players.
-	\item $p\in \mathcal{P}$ the starting player
+	\item $\mathcal{G}=(\VertexSet,\EdgeSet,W)$ is a di-graph.
+		\item $s\in \VertexSet$ denotes the starting position.
+	\item $\PlayerSet=\{\text{Max},\text{Min}\}$ is the set of players.
+	\item $p\in \PlayerSet$ the starting player
 \end{itemize}
 
 
@@ -37,7 +37,7 @@ A  \textbf{Mean Payoff Game} is a perfect information, zero-sum, turn based game
 		Name & $\Max$ winning criteria & $\Min$ winning criteria & Draw criteria  \\
 		\hline
 		$C_1$ & \begin{equation*}
-			\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k >\ge 0
+			\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k \ge 0
 		\end{equation*} & \begin{equation*}
 		\liminf_{n\in\mathbb{N}^*} \frac{1}{n}\sum_{k=0}^{n-1} w_k < 0
 		\end{equation*} & \cellcolor{gray!75} \\
@@ -62,15 +62,19 @@ A  \textbf{Mean Payoff Game} is a perfect information, zero-sum, turn based game
 		 \end{equation*}\\
 		\hline
 	\end{tabularx}
-	\caption{Winning conditions for Mean Payoff Games}
-	\label{table:WinningConditions}
+	\caption{Winning conditions for Mean Payoff Games
+		\label{table:WinningConditions}}
 \end{table}
 Here, table \ref{table:WinningConditions} gives the different winning criteria that we have considered:
 \begin{itemize}
 	\item $C_1$ was used in \cite{MPGMaxAtom} to calculate the optimal strategy for player $\Max$
-	\item $C_2$ is the dual of $C_1.$
-	\item $C_3$ is symmetric\footnote{It does not give an advantage towards any player.}, and will be used for our machine learning model.
+	\item $C_2$ is modification of $C_1$ that introduces the possibility of drawing.
+	\item $C_3$ is symmetric\footnote{It does not give an advantage towards any player.}, and will be used for our machine learning. It was referenced in \cite{TropicalCSP}.
 \end{itemize}
+Now, there is a slight difference between the three winning conditions.
+\newline For example, an optimal strategy with respect to $C_1$ may not be optimal with respect to $C_2$. While this can happen, it is unlikely.
+\newline What about $C_2$ and $C_3$? As different as they appear, they are equivalent in the scope of this report\footnote{They are still different conditions in general.}.
+This is demonstrated in \ref{section:Formalisation:MeanPayoff}.
 \subsection{Well Foundness}
 It is not very clear from the definition that the game is well founded. \newline
 In fact, there are choices for which the mean payoff does not converge. That is the sequence $\left(\frac{1}{n}\sum_{k=0}^{n-1} w_k \right)_{n\in\mathbb{N}^*}$ does not converge. \newline One such example is the sequence defined by:
@@ -86,7 +90,7 @@ For that sequence, the $(2^r-1)$-step mean payoff is equal to:
 \end{align*}
 That sequence has two accumulation points $\pm \frac{1}{3},$ and thus, it does not converge.
 
-On the other hand, the introduction of the supremum and infimum operators will solve the convergence problem, as the resulting sequences will become monotone.
+On the other hand, the introduction of the supremum and infimum operators in the table \ref{table:WinningConditions} will solve the convergence problem, as the resulting sequences will become monotone.
 
 An example of an execution that gives a rise to such payoffs is the following Meab Payoff Game instance\footnote{Note that the proposed pair of strategies is odd in the sense that it appears that both players cooperated on the construction of non-convergent mean payoffs instead of trying ot win the game.}:
 \begin{figure}[H]
@@ -218,6 +222,7 @@ $$
 \forall \text{Mean Payoff Game}\ G,\forall p\in \PlayerSet,\quad \PayoffOptimal(G,p) \subseteq \StrongOptimal(G,p) \subseteq \WeakOptimal(G,p)
 $$
 \subsection{Mean Payoff}
+\label{section:Formalisation:MeanPayoff}
 We have used the word ``Mean Payoff" extensively, and they are the central entity in mean payoff games\footnote{This explains the name ``mean payoff game".} but we still did not define it.
 \newline We had to delay the definition as it requires the knowledge of the mechanics of the game, and how strategies work. This section will define and formalize the mean payoff, and highlights its relevance.
 \subsubsection{Mean Payoff}
@@ -464,6 +469,13 @@ This modules contains some graph algorithms needed for Mean Payoff Games, such a
 	\item Floyd-Warshall method to find negative cycles.
 	\item Methods to generate random graphs as described in section \ref{section:Dataset}. The theoretical details are in the appendix \ref{appendix:RandomGraphs}
 \end{itemize}
+\subsubsection{visualisation}
+This module serves as a front-end for Jupyter Notebook, so we can visualise mean payoff games, and also the strategy of each player.
+\begin{figure}[H]
+	\includegraphics[width= \textwidth]{Figures/OptimalPlayNetworkx.png}
+	\caption{Generated visualisation for a Mean Payoff Game with the optimal strategies}
+\end{figure}
+\FloatBarrier
 \subsubsection{games}
 This module defines the core functionalities related to mean payoff games.
 \newline It also defines the methods to read/write Mean Payoff Graphs. It uses the weighted edgelist format, and supports compression.  
@@ -530,9 +542,6 @@ This module defines the core functionalities related to mean payoff games.
 	\caption{\textbf{games} module}
 \end{figure}
 \FloatBarrier
-\subsubsection{visualisation}
-This module serves as a front-end for Jupyter Notebook, so we can visualise mean payoff games, and also the strategy of each player.
-% Image figures for proof
 \subsubsection{ml}
 This module defines the required layers, blocks, and model architectures to do machine learning on Mean Payoff Games. This is detailed in chapter \ref{section:ModelDesign}.
 \subsubsection{gnn}
@@ -567,7 +576,6 @@ This library contains the
 \end{figure}
 \subsubsection{csp}
 This module contains the constraint satisfaction methods used to solve Mean Payoff Games. 
-
 \subsubsection{games}
 This module defines the core functionalities related to mean payoff games.
 \begin{figure}[H]
