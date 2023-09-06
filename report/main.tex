@@ -58,6 +58,7 @@
 \usepackage{footnote}
 \usepackage[bottom]{footmisc}
 
+
 \usepackage[notransparent]{svg}
 \usepackage{mathrsfs}
 \usepackage{pgf-umlcd}
@@ -113,10 +114,10 @@
 \newtheorem{proof}{Preuve}
 \newtheorem{lemma}{Lemme}
 %Used for encapsulation
-\newcommand{\VertexSet}{V}
-\newcommand{\EdgeSet}{E}
-\newcommand{\PlayerSet}{P}
-\newcommand{\IndefinitePlayer}{\Opt}
+\newcommand{\VertexSet}{\ensuremath{V}}
+\newcommand{\EdgeSet}{\ensuremath{E}}
+\newcommand{\PlayerSet}{\ensuremath{P}}
+\newcommand{\IndefinitePlayer}{\ensuremath{\Opt}}
 \newcommand{\Player}{\IndefinitePlayer}
 \newcommand{\Dnp}[2]{\mathcal{D}(#1,#2)}
 \newcommand{\Dnm}[2]{\mathcal{D}(#1,#2)}
@@ -181,10 +182,11 @@
 % End of preamble
 %----------------------------- Document -----------------------------
 
-\renewcaptionname{english}{\listfigurename}{Liste des Figures}
-\renewcaptionname{english}{\listtablename}{Liste des Tableaux}
-\renewcaptionname{english}{\contentsname}{Contenu}
+%\renewcaptionname{english}{\listfigurename}{Liste des Figures}
+%\renewcaptionname{english}{\listtablename}{Liste des Tableaux}
+%\renewcaptionname{english}{\contentsname}{Contenu}
 
+\renewcommand\multicitedelim{\addsemicolon\space}
 
 \newtheorem{theorem}{Theorem}
 
@@ -235,7 +237,6 @@
 
 \printglossary[type=\acronymtype]
 
-\addcontentsline{toc}{chapter}{Acronymes}
 
 
 

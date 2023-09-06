@@ -6,16 +6,16 @@
 \contentsline {algorithm}{\numberline {6}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{41}{algorithm.6}%
 \contentsline {algorithm}{\numberline {7}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{42}{algorithm.7}%
 \contentsline {algorithm}{\numberline {8}{\ignorespaces Solving a Mean Payoff Graph for all states\relax }}{51}{algorithm.8}%
-\contentsline {algorithm}{\numberline {9}{\ignorespaces Selection algorithm for \acrshort {mcts}\relax }}{73}{algorithm.9}%
-\contentsline {algorithm}{\numberline {10}{\ignorespaces Expansion algorithm for \acrshort {mcts}\relax }}{73}{algorithm.10}%
-\contentsline {algorithm}{\numberline {11}{\ignorespaces Simulation algorithm for \acrshort {mcts}\relax }}{74}{algorithm.11}%
-\contentsline {algorithm}{\numberline {12}{\ignorespaces Backpropagation algorithm for \acrshort {mcts}\relax }}{74}{algorithm.12}%
-\contentsline {algorithm}{\numberline {13}{\ignorespaces \acrshort {mcts} Algorithm\relax }}{75}{algorithm.13}%
-\contentsline {algorithm}{\numberline {14}{\ignorespaces Create children\relax }}{76}{algorithm.14}%
-\contentsline {algorithm}{\numberline {15}{\ignorespaces Alpha Zero \acrshort {mcts} Simulation\relax }}{77}{algorithm.15}%
-\contentsline {algorithm}{\numberline {16}{\ignorespaces model-based \acrshort {mcts} playout policy\relax }}{77}{algorithm.16}%
-\contentsline {algorithm}{\numberline {17}{\ignorespaces Converting a Max Atom System to Ternary Max Atom System\relax }}{91}{algorithm.17}%
-\contentsline {algorithm}{\numberline {18}{\ignorespaces Converting a Min-Max System to Max Atom\relax }}{94}{algorithm.18}%
-\contentsline {algorithm}{\numberline {19}{\ignorespaces Converting a Mean Payoff Game to a Min Max system\relax }}{95}{algorithm.19}%
-\contentsline {algorithm}{\numberline {20}{\ignorespaces AC3 for Ternary Max Atom systems\relax }}{96}{algorithm.20}%
-\contentsline {algorithm}{\numberline {21}{\ignorespaces AC3 Optimized for Ternary Max Atom systems\relax }}{97}{algorithm.21}%
+\contentsline {algorithm}{\numberline {9}{\ignorespaces Selection algorithm for \acrshort {mcts}\relax }}{76}{algorithm.9}%
+\contentsline {algorithm}{\numberline {10}{\ignorespaces Expansion algorithm for \acrshort {mcts}\relax }}{77}{algorithm.10}%
+\contentsline {algorithm}{\numberline {11}{\ignorespaces Simulation algorithm for \acrshort {mcts}\relax }}{77}{algorithm.11}%
+\contentsline {algorithm}{\numberline {12}{\ignorespaces Backpropagation algorithm for \acrshort {mcts}\relax }}{78}{algorithm.12}%
+\contentsline {algorithm}{\numberline {13}{\ignorespaces \acrshort {mcts} Algorithm\relax }}{78}{algorithm.13}%
+\contentsline {algorithm}{\numberline {14}{\ignorespaces Create children\relax }}{80}{algorithm.14}%
+\contentsline {algorithm}{\numberline {15}{\ignorespaces Alpha Zero \acrshort {mcts} Simulation\relax }}{80}{algorithm.15}%
+\contentsline {algorithm}{\numberline {16}{\ignorespaces model-based \acrshort {mcts} playout policy\relax }}{81}{algorithm.16}%
+\contentsline {algorithm}{\numberline {17}{\ignorespaces Converting a Max Atom System to Ternary Max Atom System\relax }}{97}{algorithm.17}%
+\contentsline {algorithm}{\numberline {18}{\ignorespaces Converting a Min-Max System to Max Atom\relax }}{100}{algorithm.18}%
+\contentsline {algorithm}{\numberline {19}{\ignorespaces Converting a Mean Payoff Game to a Min Max system\relax }}{101}{algorithm.19}%
+\contentsline {algorithm}{\numberline {20}{\ignorespaces AC3 for Ternary Max Atom systems\relax }}{102}{algorithm.20}%
+\contentsline {algorithm}{\numberline {21}{\ignorespaces AC3 Optimized for Ternary Max Atom systems\relax }}{103}{algorithm.21}%

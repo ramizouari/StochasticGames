@@ -489,24 +489,43 @@ This is the sum of three terms:
 \begin{itemize}
 	\item $\displaystyle \mathcal{H}(\boldsymbol{\Pi},\boldsymbol{\Pi}_\Theta(\boldsymbol{G})):$ This term encodes the error between the predicted strategy $\boldsymbol{\Pi}_\Theta(\boldsymbol{G})$ and the actual strategy $\boldsymbol{\Pi}$.
 	\item $\displaystyle \lVert \boldsymbol{v}_{\Theta}(\boldsymbol{G})- \boldsymbol{v} \rVert_2^2:$ This term encodes the euclidean distance between the predicted evaluation $\boldsymbol{v}_{\Theta}(\boldsymbol{G})$ and the actual evaluation $\boldsymbol{v}$.
-	\item $\displaystyle C \lVert \Theta \rVert_2^2$ This term adds $L_2$ regularization to the model, with $C$ serving as the strength of the regularization.
+	\item $\displaystyle C \lVert \Theta \rVert_2^2$ This term adds $\mathscr{L}^2$ regularization to the model, with $C$ serving as the strength of the regularization.
 \end{itemize}
 Also, each error term in the loss function is applied to each game individually. In fact, equation \eqref{eqn:LossFunction} is in a compact representation that reduces\footnote{Up to some normalization factor, this is an implementation detail.} to the mean of individual errors in the batch.
 \subsection{Optimizer}
-We used the Adam optimizer \cite{AdamOptimizer} to minimize the objective function $\mathcal{L}$ with respect to $\Theta$
+We used the Adam\footnote{Adam optimization is a stochastic gradient descent method that is based on adaptive estimation of first-order and second-order moments.} optimizer \cite{AdamOptimizer} to minimize the objective function $\mathcal{L}$ with respect to $\Theta$
 
 \subsection{Hyper-parameters}
 Our choice of optimizer and loss function induced more hyper-parameters. We will list them in the following table:
-
+\begin{table}[h]
+	\begin{tabularx}{\textwidth}{| X | X | X | X |}
+		\hline
+		Hyper-parameter & Symbol & Default value &  Description \\ 
+		\hline
+		\texttt{learning\_rate} & $\mu$ & $10^{-3}$ & The step size of the gradient descent method \\ 
+		\hline
+		\texttt{beta\_1} & $\beta_1$ & $0.9$ & The exponential decay rate for the $1^\text{st}$ moment estimates. \\ 
+		\hline
+		\texttt{beta\_2} & $\beta_2$ & $0.999$ & The exponential decay rate for the $2^\text{nd}$ moment estimates. \\ 
+		\hline
+		\texttt{epsilon} & $\hat{\varepsilon}$ & $10^{-7}$ & A small additive constant used for numerical stability. \\
+		\hline
+		\texttt{weight\_decay} & $C$ & $10^{-4}$ & The strength of the $\mathscr{L}^2$ regularization. \\
+		\hline
+	\end{tabularx}
+	\caption{Le tableau d'avancement des BNNs
+		\label{table:OptimizerHyperparameters}}
+\end{table}
 
 \section{Configuration}
-we externalized our configuration so that we can change hyperparameters and other non-learnable parameters at will, without modifying the source code. This was beneficial as it seperated between the model implementation phase and the model fine-tuning phase.
+\label{section:ModelDesign:Configuration}
+we externalized our configuration so that we can change hyper-parameters and other non-learnable parameters at will, without modifying the source code. This was beneficial as it seperated between the model implementation phase and the model fine-tuning phase.
 \subsection{Model configuration}
-We setup a configuration YAML configuration file containing the entries for tweaking the model.
-\begin{figure}[H]
+We setup a configuration \acrshort{yaml} configuration file containing the entries for tweaking the model.
+\begin{figure}[ht]
 	\centering
 	\includegraphics[width=0.95\textwidth]{Figures/ModelConfiguration.png}
-	\caption{Model section of the configuration file}
+	\caption{Model section of the configuration file \label{fig:ModelConfiguration}}
 	\small{Note: while a recent version of the configuration file, we may tweak it further for fine-tuning purposes.}
 \end{figure}
 \FloatBarrier
@@ -515,6 +534,6 @@ The configuration file also has a section for training hyper-parameters. We will
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.75\textwidth]{Figures/TrainingConfiguration.png}
-	\caption{Training section of the configuration file}
+	\caption{Training section of the configuration file\label{fig:TrainingConfiguration}}
 	\small{Note: while a recent version of the configuration file, we may tweak it further for fine-tuning purposes.}
 \end{figure}

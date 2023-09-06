@@ -24,6 +24,7 @@ Reallocated singl_function (elt_size=4) to 100 items from 50.
 Database file #1: main-blx.bib
 Database file #2: biblio.bib
 Reallocated field_info (elt_size=4) to 10040 items from 5000.
+Warning--I didn't find a database entry for "~"
 Biblatex version: 3.17
 Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
 Reallocated singl_function (elt_size=4) to 100 items from 50.

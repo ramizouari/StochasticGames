@@ -34,15 +34,17 @@
 \contentsline {figure}{\numberline {4.8}{\ignorespaces Graph Convolutional Block\relax }}{66}{figure.caption.101}%
 \contentsline {figure}{\numberline {4.9}{\ignorespaces Graph Convolutional Block\relax }}{67}{figure.caption.102}%
 \contentsline {figure}{\numberline {4.10}{\ignorespaces Model Architecture\relax }}{68}{figure.caption.103}%
-\contentsline {figure}{\numberline {4.11}{\ignorespaces Model section of the configuration file\relax }}{70}{figure.caption.104}%
-\contentsline {figure}{\numberline {4.12}{\ignorespaces Training section of the configuration file\relax }}{70}{figure.caption.105}%
+\contentsline {figure}{\numberline {4.11}{\ignorespaces Model section of the configuration file \relax }}{71}{figure.caption.105}%
+\contentsline {figure}{\numberline {4.12}{\ignorespaces Training section of the configuration file\relax }}{71}{figure.caption.106}%
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {5.1}{\ignorespaces A Reinforcement Learning system\relax }}{71}{figure.caption.106}%
-\contentsline {figure}{\numberline {5.2}{\ignorespaces One iteration of a \acrshort {mcts} algorithm\relax }}{75}{figure.caption.112}%
-\contentsline {figure}{\numberline {5.3}{\ignorespaces Relation between different services\relax }}{80}{figure.caption.116}%
-\contentsline {figure}{\numberline {5.4}{\ignorespaces Class diagram of the services\relax }}{81}{figure.caption.117}%
-\contentsline {figure}{\numberline {5.5}{\ignorespaces Illustration of how Reverb works\relax }}{83}{figure.caption.119}%
-\contentsline {figure}{\numberline {5.6}{\ignorespaces Pipeline Architecture\relax }}{84}{figure.caption.120}%
+\contentsline {figure}{\numberline {5.1}{\ignorespaces A Reinforcement Learning system\relax }}{72}{figure.caption.107}%
+\contentsline {figure}{\numberline {5.2}{\ignorespaces One iteration of a \acrshort {mcts} algorithm\relax }}{79}{figure.caption.114}%
+\contentsline {figure}{\numberline {5.3}{\ignorespaces Relation between different services\relax }}{84}{figure.caption.118}%
+\contentsline {figure}{\numberline {5.4}{\ignorespaces Class diagram of the services\relax }}{85}{figure.caption.119}%
+\contentsline {figure}{\numberline {5.5}{\ignorespaces Illustration of how Reverb works\relax }}{87}{figure.caption.121}%
+\contentsline {figure}{\numberline {5.6}{\ignorespaces Pipeline Architecture\relax }}{88}{figure.caption.122}%
+\contentsline {figure}{\numberline {5.7}{\ignorespaces Replay buffer section of the configuration file \relax }}{89}{figure.caption.123}%
+\contentsline {figure}{\numberline {5.8}{\ignorespaces Replay buffer section of the configuration file \relax }}{90}{figure.caption.124}%
 \addvspace {10\p@ }
 \addvspace {10\p@ }
 \addvspace {10\p@ }

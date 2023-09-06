@@ -1,6 +1,6 @@
 \babel@toc {english}{}
-\contentsline {chapter}{Liste des Figures}{6}{chapter*.3}%
-\contentsline {chapter}{Liste des Tableaux}{8}{chapter*.4}%
+\contentsline {chapter}{List of Figures}{6}{chapter*.3}%
+\contentsline {chapter}{List of Tables}{8}{chapter*.4}%
 \contentsline {chapter}{Introduction}{10}{chapter*.6}%
 \contentsline {chapter}{\numberline {1}Project context}{11}{chapter.1}%
 \contentsline {section}{\numberline {1.1}Presentation of the host institute}{11}{section.1.1}%
@@ -156,105 +156,111 @@
 \contentsline {section}{\numberline {4.6}Optimization}{69}{section.4.6}%
 \contentsline {subsection}{\numberline {4.6.1}Loss function}{69}{subsection.4.6.1}%
 \contentsline {subsection}{\numberline {4.6.2}Optimizer}{69}{subsection.4.6.2}%
-\contentsline {subsection}{\numberline {4.6.3}Hyper-parameters}{69}{subsection.4.6.3}%
+\contentsline {subsection}{\numberline {4.6.3}Hyper-parameters}{70}{subsection.4.6.3}%
 \contentsline {section}{\numberline {4.7}Configuration}{70}{section.4.7}%
 \contentsline {subsection}{\numberline {4.7.1}Model configuration}{70}{subsection.4.7.1}%
-\contentsline {subsection}{\numberline {4.7.2}Training configuration}{70}{subsection.4.7.2}%
-\contentsline {chapter}{\numberline {5}Reinforcement learning and Self play approach}{71}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Introduction}{71}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Reinforcement Learning}{71}{section.5.2}%
-\contentsline {subsection}{\numberline {5.2.1}Definition}{71}{subsection.5.2.1}%
-\contentsline {subsection}{\numberline {5.2.2}Theory}{72}{subsection.5.2.2}%
-\contentsline {subsubsection}{Single Agent}{72}{subsubsection*.107}%
-\contentsline {subsubsection}{Multi Agent}{72}{subsubsection*.108}%
-\contentsline {subsubsection}{Markov Chains}{72}{subsubsection*.109}%
-\contentsline {subsubsection}{Markov Reward Process}{72}{subsubsection*.110}%
-\contentsline {subsection}{\numberline {5.2.3}\acrshort {rl} formalization of a \acrshort {mpg}}{72}{subsection.5.2.3}%
-\contentsline {subsubsection}{State abstraction}{72}{subsubsection*.111}%
-\contentsline {section}{\numberline {5.3}Monte Carlo Tree Search}{72}{section.5.3}%
-\contentsline {subsection}{\numberline {5.3.1}Selection}{72}{subsection.5.3.1}%
-\contentsline {subsection}{\numberline {5.3.2}Expansion}{73}{subsection.5.3.2}%
-\contentsline {subsection}{\numberline {5.3.3}Simulation}{73}{subsection.5.3.3}%
-\contentsline {subsection}{\numberline {5.3.4}Backpropagation}{73}{subsection.5.3.4}%
-\contentsline {subsection}{\numberline {5.3.5}Wrapping up}{74}{subsection.5.3.5}%
-\contentsline {section}{\numberline {5.4}Model based \acrshort {mcts}}{76}{section.5.4}%
-\contentsline {subsection}{\numberline {5.4.1}Create children}{76}{subsection.5.4.1}%
-\contentsline {subsection}{\numberline {5.4.2}Playout Policy}{77}{subsection.5.4.2}%
-\contentsline {subsection}{\numberline {5.4.3}Selection Policy}{77}{subsection.5.4.3}%
-\contentsline {subsection}{\numberline {5.4.4}Wrapping up}{78}{subsection.5.4.4}%
-\contentsline {subsection}{\numberline {5.4.5}Updating model}{78}{subsection.5.4.5}%
-\contentsline {subsubsection}{Evaluation estimate}{78}{subsubsection*.113}%
-\contentsline {subsubsection}{Strategy estimate}{78}{subsubsection*.114}%
-\contentsline {subsubsection}{Refitting}{79}{subsubsection*.115}%
-\contentsline {section}{\numberline {5.5}Services}{79}{section.5.5}%
-\contentsline {subsection}{\numberline {5.5.1}Rationale}{79}{subsection.5.5.1}%
-\contentsline {subsection}{\numberline {5.5.2}Learner}{79}{subsection.5.5.2}%
-\contentsline {subsection}{\numberline {5.5.3}Actor}{79}{subsection.5.5.3}%
-\contentsline {subsection}{\numberline {5.5.4}Evaluator}{80}{subsection.5.5.4}%
-\contentsline {section}{\numberline {5.6}Pipeline}{80}{section.5.6}%
-\contentsline {subsection}{\numberline {5.6.1}Decoupling service communication}{80}{subsection.5.6.1}%
-\contentsline {subsection}{\numberline {5.6.2}Distributing the pipeline}{81}{subsection.5.6.2}%
-\contentsline {subsection}{\numberline {5.6.3}\acrshort {rest} servers}{82}{subsection.5.6.3}%
-\contentsline {subsection}{\numberline {5.6.4}\acrshort {grpc} server}{82}{subsection.5.6.4}%
-\contentsline {subsection}{\numberline {5.6.5}Tensorboard server}{83}{subsection.5.6.5}%
-\contentsline {section}{\numberline {5.7}Implementation}{83}{section.5.7}%
-\contentsline {section}{\numberline {5.8}Deployment}{83}{section.5.8}%
-\contentsline {section}{\numberline {5.9}Configuration}{84}{section.5.9}%
-\contentsline {chapter}{\numberline {6}Analyse}{85}{chapter.6}%
-\contentsline {chapter}{Conclusion}{86}{chapter*.121}%
-\contentsline {chapter}{\numberline {A}On Constraint Satistfaction Problems}{88}{appendix.A}%
-\contentsline {section}{\numberline {A.1}Constraint Satisfaction Problem}{88}{section.A.1}%
-\contentsline {subsection}{\numberline {A.1.1}Definition}{88}{subsection.A.1.1}%
-\contentsline {subsection}{\numberline {A.1.2}Assignment}{88}{subsection.A.1.2}%
-\contentsline {subsection}{\numberline {A.1.3}Polymorphism}{88}{subsection.A.1.3}%
-\contentsline {section}{\numberline {A.2}Ternary Max Atom Systems}{88}{section.A.2}%
-\contentsline {subsection}{\numberline {A.2.1}Definition}{88}{subsection.A.2.1}%
-\contentsline {subsection}{\numberline {A.2.2}Example}{89}{subsection.A.2.2}%
-\contentsline {section}{\numberline {A.3}Max Atom Systems}{89}{section.A.3}%
-\contentsline {subsection}{\numberline {A.3.1}Definition}{89}{subsection.A.3.1}%
-\contentsline {subsection}{\numberline {A.3.2}$\text {MA} \le \text {MA}_3$}{89}{subsection.A.3.2}%
-\contentsline {subsubsection}{Recursive Reduction}{89}{subsubsection*.122}%
-\contentsline {paragraph}{Implication}{90}{paragraph*.123}%
-\contentsline {paragraph}{Equivalence}{90}{paragraph*.124}%
-\contentsline {subsubsection}{Induction}{90}{subsubsection*.125}%
-\contentsline {subsection}{\numberline {A.3.3}Polymorphisms}{92}{subsection.A.3.3}%
-\contentsline {section}{\numberline {A.4}Min-Max System}{92}{section.A.4}%
-\contentsline {subsection}{\numberline {A.4.1}Transforming to Max Atom Systems}{92}{subsection.A.4.1}%
-\contentsline {subsubsection}{Transforming $\text {MI}$ constraints}{92}{subsubsection*.126}%
-\contentsline {subsubsection}{Tranforming $\text {MA}$ constraints}{93}{subsubsection*.127}%
-\contentsline {subsubsection}{Building the Max Atom System}{93}{subsubsection*.128}%
-\contentsline {subsubsection}{Equivalence}{93}{subsubsection*.129}%
-\contentsline {section}{\numberline {A.5}Solving Mean Payoff}{95}{section.A.5}%
-\contentsline {subsection}{\numberline {A.5.1}Reduction to Min Max System}{95}{subsection.A.5.1}%
-\contentsline {subsection}{\numberline {A.5.2}Arc Consistency}{95}{subsection.A.5.2}%
-\contentsline {subsubsection}{First Implementation}{95}{subsubsection*.130}%
-\contentsline {subsubsection}{Refinement}{97}{subsubsection*.131}%
-\contentsline {chapter}{\numberline {B}On Random Mean Payoff Graphs}{98}{appendix.B}%
-\contentsline {section}{\numberline {B.1}Introduction}{98}{section.B.1}%
-\contentsline {section}{\numberline {B.2}Sinkless $\mathcal {D}(n,p)$ Graph}{98}{section.B.2}%
-\contentsline {subsection}{\numberline {B.2.1}Property}{98}{subsection.B.2.1}%
-\contentsline {subsection}{\numberline {B.2.2}Basic Comparison with Normal $\mathcal {D}(n,p)$}{98}{subsection.B.2.2}%
-\contentsline {subsection}{\numberline {B.2.3}Property Probability}{99}{subsection.B.2.3}%
-\contentsline {subsection}{\numberline {B.2.4}Asymptotic Analysis For Dense $\mathcal {D}(n,p)$}{99}{subsection.B.2.4}%
-\contentsline {subsection}{\numberline {B.2.5}Asymptotic Analysis For Sparse $\mathcal {D}(n,p)$}{100}{subsection.B.2.5}%
-\contentsline {section}{\numberline {B.3}Expected Mean Payoff}{101}{section.B.3}%
-\contentsline {subsection}{\numberline {B.3.1}Definition}{101}{subsection.B.3.1}%
-\contentsline {subsection}{\numberline {B.3.2}Matrix Form}{101}{subsection.B.3.2}%
-\contentsline {chapter}{\numberline {C}On Probabilistic Strategies}{102}{appendix.C}%
-\contentsline {section}{\numberline {C.1}Markovian Nature}{102}{section.C.1}%
-\contentsline {subsection}{\numberline {C.1.1}Fixing $\Pi ^{\Opt }$}{102}{subsection.C.1.1}%
-\contentsline {subsection}{\numberline {C.1.2}Fixing both $\Pi ^{\Max }$ and $\Pi ^{\Min }$}{102}{subsection.C.1.2}%
-\contentsline {section}{\numberline {C.2}Expected Reward of a MRP}{102}{section.C.2}%
-\contentsline {subsection}{\numberline {C.2.1}Markov Reward Process}{102}{subsection.C.2.1}%
-\contentsline {subsubsection}{Definition}{102}{subsubsection*.132}%
-\contentsline {subsubsection}{Execution and Award}{103}{subsubsection*.133}%
-\contentsline {subsection}{\numberline {C.2.2}Expected discounted reward}{103}{subsection.C.2.2}%
-\contentsline {subsection}{\numberline {C.2.3}Expected average-time reward}{104}{subsection.C.2.3}%
-\contentsline {subsubsection}{Deriving Formula}{104}{subsubsection*.134}%
-\contentsline {subsubsection}{Convergence}{104}{subsubsection*.135}%
-\contentsline {section}{\numberline {C.3}Evaluation of probabilistic strategies}{105}{section.C.3}%
-\contentsline {subsection}{\numberline {C.3.1}Definition}{105}{subsection.C.3.1}%
-\contentsline {subsection}{\numberline {C.3.2}Matrix Form}{105}{subsection.C.3.2}%
-\contentsline {chapter}{Bibliographie}{109}{appendix*.136}%
-\contentsline {chapter}{Acronyms}{110}{section*.137}%
-\contentsline {chapter}{Acronymes}{110}{appendix*.138}%
+\contentsline {subsection}{\numberline {4.7.2}Training configuration}{71}{subsection.4.7.2}%
+\contentsline {chapter}{\numberline {5}Reinforcement learning and Self play approach}{72}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Introduction}{72}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Reinforcement Learning}{72}{section.5.2}%
+\contentsline {subsection}{\numberline {5.2.1}Definition}{72}{subsection.5.2.1}%
+\contentsline {subsection}{\numberline {5.2.2}Theory}{73}{subsection.5.2.2}%
+\contentsline {subsubsection}{Single Agent}{73}{subsubsection*.108}%
+\contentsline {subsubsection}{Multi Agent}{73}{subsubsection*.109}%
+\contentsline {subsection}{\numberline {5.2.3}\acrshort {rl} formalisation of a \acrshort {mpg}}{73}{subsection.5.2.3}%
+\contentsline {subsubsection}{Instance based formalism}{73}{subsubsection*.110}%
+\contentsline {subsubsection}{Global formalism}{74}{subsubsection*.111}%
+\contentsline {subsection}{\numberline {5.2.4}Benefits of global formalism}{74}{subsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.2.5}Generating random \acrshortpl {mpg}}{75}{subsection.5.2.5}%
+\contentsline {subsubsection}{$\mathcal {D}^\bullet _{p,\text {US}}$ distribution}{75}{subsubsection*.112}%
+\contentsline {subsubsection}{$\mathcal {D}^\bullet _{c,\text {US}}$ distribution}{75}{subsubsection*.113}%
+\contentsline {subsection}{\numberline {5.2.6}Considered \acrshort {rl} algorithm}{75}{subsection.5.2.6}%
+\contentsline {section}{\numberline {5.3}Monte Carlo Tree Search}{76}{section.5.3}%
+\contentsline {subsection}{\numberline {5.3.1}Selection}{76}{subsection.5.3.1}%
+\contentsline {subsection}{\numberline {5.3.2}Expansion}{77}{subsection.5.3.2}%
+\contentsline {subsection}{\numberline {5.3.3}Simulation}{77}{subsection.5.3.3}%
+\contentsline {subsection}{\numberline {5.3.4}Backpropagation}{77}{subsection.5.3.4}%
+\contentsline {subsection}{\numberline {5.3.5}Wrapping up}{78}{subsection.5.3.5}%
+\contentsline {section}{\numberline {5.4}Model based \acrshort {mcts}}{79}{section.5.4}%
+\contentsline {subsection}{\numberline {5.4.1}Create children}{79}{subsection.5.4.1}%
+\contentsline {subsection}{\numberline {5.4.2}Playout Policy}{80}{subsection.5.4.2}%
+\contentsline {subsection}{\numberline {5.4.3}Selection Policy}{81}{subsection.5.4.3}%
+\contentsline {subsection}{\numberline {5.4.4}Wrapping up}{81}{subsection.5.4.4}%
+\contentsline {subsection}{\numberline {5.4.5}Updating model}{81}{subsection.5.4.5}%
+\contentsline {subsubsection}{Evaluation estimate}{82}{subsubsection*.115}%
+\contentsline {subsubsection}{Strategy estimate}{82}{subsubsection*.116}%
+\contentsline {subsubsection}{Refitting}{82}{subsubsection*.117}%
+\contentsline {section}{\numberline {5.5}Services}{83}{section.5.5}%
+\contentsline {subsection}{\numberline {5.5.1}Rationale}{83}{subsection.5.5.1}%
+\contentsline {subsection}{\numberline {5.5.2}Learner}{83}{subsection.5.5.2}%
+\contentsline {subsection}{\numberline {5.5.3}Actor}{83}{subsection.5.5.3}%
+\contentsline {subsection}{\numberline {5.5.4}Evaluator}{83}{subsection.5.5.4}%
+\contentsline {section}{\numberline {5.6}Self-play pipeline}{84}{section.5.6}%
+\contentsline {subsection}{\numberline {5.6.1}Decoupling service communication}{84}{subsection.5.6.1}%
+\contentsline {subsection}{\numberline {5.6.2}Distributing the pipeline}{85}{subsection.5.6.2}%
+\contentsline {subsection}{\numberline {5.6.3}\acrshort {rest} servers}{86}{subsection.5.6.3}%
+\contentsline {subsection}{\numberline {5.6.4}\acrshort {grpc} server}{86}{subsection.5.6.4}%
+\contentsline {subsection}{\numberline {5.6.5}Tensorboard server}{87}{subsection.5.6.5}%
+\contentsline {section}{\numberline {5.7}Implementation}{87}{section.5.7}%
+\contentsline {section}{\numberline {5.8}Deployment}{87}{section.5.8}%
+\contentsline {section}{\numberline {5.9}Configuration}{88}{section.5.9}%
+\contentsline {subsection}{\numberline {5.9.1}Replay buffer}{89}{subsection.5.9.1}%
+\contentsline {subsection}{\numberline {5.9.2}Services}{89}{subsection.5.9.2}%
+\contentsline {section}{\numberline {5.10}Execution}{90}{section.5.10}%
+\contentsline {chapter}{\numberline {6}Analyse}{91}{chapter.6}%
+\contentsline {chapter}{Conclusion}{92}{chapter*.125}%
+\contentsline {chapter}{\numberline {A}On Constraint Satistfaction Problems}{94}{appendix.A}%
+\contentsline {section}{\numberline {A.1}Constraint Satisfaction Problem}{94}{section.A.1}%
+\contentsline {subsection}{\numberline {A.1.1}Definition}{94}{subsection.A.1.1}%
+\contentsline {subsection}{\numberline {A.1.2}Assignment}{94}{subsection.A.1.2}%
+\contentsline {subsection}{\numberline {A.1.3}Polymorphism}{94}{subsection.A.1.3}%
+\contentsline {section}{\numberline {A.2}Ternary Max Atom Systems}{94}{section.A.2}%
+\contentsline {subsection}{\numberline {A.2.1}Definition}{94}{subsection.A.2.1}%
+\contentsline {subsection}{\numberline {A.2.2}Example}{95}{subsection.A.2.2}%
+\contentsline {section}{\numberline {A.3}Max Atom Systems}{95}{section.A.3}%
+\contentsline {subsection}{\numberline {A.3.1}Definition}{95}{subsection.A.3.1}%
+\contentsline {subsection}{\numberline {A.3.2}$\text {MA} \le \text {MA}_3$}{95}{subsection.A.3.2}%
+\contentsline {subsubsection}{Recursive Reduction}{95}{subsubsection*.126}%
+\contentsline {paragraph}{Implication}{96}{paragraph*.127}%
+\contentsline {paragraph}{Equivalence}{96}{paragraph*.128}%
+\contentsline {subsubsection}{Induction}{96}{subsubsection*.129}%
+\contentsline {subsection}{\numberline {A.3.3}Polymorphisms}{98}{subsection.A.3.3}%
+\contentsline {section}{\numberline {A.4}Min-Max System}{98}{section.A.4}%
+\contentsline {subsection}{\numberline {A.4.1}Transforming to Max Atom Systems}{98}{subsection.A.4.1}%
+\contentsline {subsubsection}{Transforming $\text {MI}$ constraints}{98}{subsubsection*.130}%
+\contentsline {subsubsection}{Tranforming $\text {MA}$ constraints}{99}{subsubsection*.131}%
+\contentsline {subsubsection}{Building the Max Atom System}{99}{subsubsection*.132}%
+\contentsline {subsubsection}{Equivalence}{99}{subsubsection*.133}%
+\contentsline {section}{\numberline {A.5}Solving Mean Payoff}{101}{section.A.5}%
+\contentsline {subsection}{\numberline {A.5.1}Reduction to Min Max System}{101}{subsection.A.5.1}%
+\contentsline {subsection}{\numberline {A.5.2}Arc Consistency}{101}{subsection.A.5.2}%
+\contentsline {subsubsection}{First Implementation}{101}{subsubsection*.134}%
+\contentsline {subsubsection}{Refinement}{103}{subsubsection*.135}%
+\contentsline {chapter}{\numberline {B}On Random Mean Payoff Graphs}{104}{appendix.B}%
+\contentsline {section}{\numberline {B.1}Introduction}{104}{section.B.1}%
+\contentsline {section}{\numberline {B.2}Sinkless $\mathcal {D}(n,p)$ Graph}{104}{section.B.2}%
+\contentsline {subsection}{\numberline {B.2.1}Property}{104}{subsection.B.2.1}%
+\contentsline {subsection}{\numberline {B.2.2}Basic Comparison with Normal $\mathcal {D}(n,p)$}{104}{subsection.B.2.2}%
+\contentsline {subsection}{\numberline {B.2.3}Property Probability}{105}{subsection.B.2.3}%
+\contentsline {subsection}{\numberline {B.2.4}Asymptotic Analysis For Dense $\mathcal {D}(n,p)$}{105}{subsection.B.2.4}%
+\contentsline {subsection}{\numberline {B.2.5}Asymptotic Analysis For Sparse $\mathcal {D}(n,p)$}{106}{subsection.B.2.5}%
+\contentsline {section}{\numberline {B.3}Expected Mean Payoff}{107}{section.B.3}%
+\contentsline {subsection}{\numberline {B.3.1}Definition}{107}{subsection.B.3.1}%
+\contentsline {subsection}{\numberline {B.3.2}Matrix Form}{107}{subsection.B.3.2}%
+\contentsline {chapter}{\numberline {C}On Probabilistic Strategies}{108}{appendix.C}%
+\contentsline {section}{\numberline {C.1}Markovian Nature}{108}{section.C.1}%
+\contentsline {subsection}{\numberline {C.1.1}Fixing $\Pi ^{\ensuremath {\Opt }}$}{108}{subsection.C.1.1}%
+\contentsline {subsection}{\numberline {C.1.2}Fixing both $\Pi ^{\Max }$ and $\Pi ^{\Min }$}{108}{subsection.C.1.2}%
+\contentsline {section}{\numberline {C.2}Expected Reward of a MRP}{108}{section.C.2}%
+\contentsline {subsection}{\numberline {C.2.1}Markov Reward Process}{108}{subsection.C.2.1}%
+\contentsline {subsubsection}{Definition}{108}{subsubsection*.136}%
+\contentsline {subsubsection}{Execution and Award}{109}{subsubsection*.137}%
+\contentsline {subsection}{\numberline {C.2.2}Expected discounted reward}{109}{subsection.C.2.2}%
+\contentsline {subsection}{\numberline {C.2.3}Expected average-time reward}{110}{subsection.C.2.3}%
+\contentsline {subsubsection}{Deriving Formula}{110}{subsubsection*.138}%
+\contentsline {subsubsection}{Convergence}{110}{subsubsection*.139}%
+\contentsline {section}{\numberline {C.3}Evaluation of probabilistic strategies}{111}{section.C.3}%
+\contentsline {subsection}{\numberline {C.3.1}Definition}{111}{subsection.C.3.1}%
+\contentsline {subsection}{\numberline {C.3.2}Matrix Form}{111}{subsection.C.3.2}%
+\contentsline {chapter}{Bibliographie}{115}{appendix*.140}%
+\contentsline {chapter}{Acronyms}{116}{section*.141}%
