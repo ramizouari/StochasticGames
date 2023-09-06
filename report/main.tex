@@ -56,6 +56,8 @@
 \usepackage{setspace} %to enable double spacing   
 \usepackage{float}
 \usepackage{footnote}
+\usepackage[bottom]{footmisc}
+
 \usepackage[notransparent]{svg}
 \usepackage{mathrsfs}
 \usepackage{pgf-umlcd}
@@ -63,6 +65,7 @@
 \usepackage{tikz} 
 \usepackage{lscape}
 \usepackage{colortbl}
+
 
 %Tick & Cross
 \usepackage{pifont}
@@ -129,7 +132,7 @@
 \newcommand{\Distribution}[1]{\mathscr{D}(#1)}
 
 
-\newcommand{\ProjectTitle}{Implementation, Analysis and Predictive modeling of Mean Payoff Games using a Self Learning approach}
+\newcommand{\ProjectTitle}{Implementation, generation, analysis and predictive modeling of mean payoff games using self-play}
 \newcommand{\AuthorName}{Rami ZOUARI}
 
 
@@ -157,10 +160,10 @@
 }
 
 % Glossaries and acronyms list
-\usepackage[acronym,toc]{glossaries}
+\usepackage[acronym,toc,nomain]{glossaries}
 \makeglossaries
 \input{acronyms}
-\loadglsentries{glossary}
+%\loadglsentries{glossary}
 
 % Bibliography --
 
@@ -212,7 +215,6 @@
 \listoftables
 \listofalgorithms
 
-
 \input{chapters/Introduction}
 \input{chapters/chapter00}
 \input{chapters/chapter01}
@@ -229,10 +231,11 @@
 
 \printbibliography[title=Bibliographie]
 \addcontentsline{toc}{chapter}{Bibliographie}
-\printglossary[type=\acronymtype,title=Acronyms]
 
 
-%\addcontentsline{toc}{chapter}{Acronymes}
+\printglossary[type=\acronymtype]
+
+\addcontentsline{toc}{chapter}{Acronymes}
 
 
 

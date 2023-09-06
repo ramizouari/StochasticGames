@@ -1,21 +1,21 @@
-\contentsline {algorithm}{\numberline {1}{\ignorespaces Deterministic strategies evaluation\relax }}{28}{algorithm.1}%
-\contentsline {algorithm}{\numberline {2}{\ignorespaces Probabilistic strategies evaluation\relax }}{28}{algorithm.2}%
-\contentsline {algorithm}{\numberline {3}{\ignorespaces $\mathcal {D}(n,p)$ Graph Generation\relax }}{37}{algorithm.3}%
-\contentsline {algorithm}{\numberline {4}{\ignorespaces $\mathcal {D}(n,p)$ Graph Generation Optimisation\relax }}{37}{algorithm.4}%
-\contentsline {algorithm}{\numberline {5}{\ignorespaces $\mathcal {D}(n,p)$ Choice without replacement\relax }}{38}{algorithm.5}%
-\contentsline {algorithm}{\numberline {6}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{40}{algorithm.6}%
-\contentsline {algorithm}{\numberline {7}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{41}{algorithm.7}%
-\contentsline {algorithm}{\numberline {8}{\ignorespaces Solving a Mean Payoff Graph for all states\relax }}{50}{algorithm.8}%
-\contentsline {algorithm}{\numberline {9}{\ignorespaces Selection algorithm for \acrshort {mcts}\relax }}{70}{algorithm.9}%
-\contentsline {algorithm}{\numberline {10}{\ignorespaces Expansion algorithm for \acrshort {mcts}\relax }}{71}{algorithm.10}%
-\contentsline {algorithm}{\numberline {11}{\ignorespaces Simulation algorithm for \acrshort {mcts}\relax }}{71}{algorithm.11}%
-\contentsline {algorithm}{\numberline {12}{\ignorespaces Backpropagation algorithm for \acrshort {mcts}\relax }}{72}{algorithm.12}%
-\contentsline {algorithm}{\numberline {13}{\ignorespaces \acrshort {mcts} Algorithm\relax }}{72}{algorithm.13}%
-\contentsline {algorithm}{\numberline {14}{\ignorespaces Create children\relax }}{74}{algorithm.14}%
-\contentsline {algorithm}{\numberline {15}{\ignorespaces Alpha Zero \acrshort {mcts} Simulation\relax }}{74}{algorithm.15}%
-\contentsline {algorithm}{\numberline {16}{\ignorespaces model-based \acrshort {mcts} playout policy\relax }}{75}{algorithm.16}%
-\contentsline {algorithm}{\numberline {17}{\ignorespaces Converting a Max Atom System to Ternary Max Atom System\relax }}{86}{algorithm.17}%
-\contentsline {algorithm}{\numberline {18}{\ignorespaces Converting a Min-Max System to Max Atom\relax }}{89}{algorithm.18}%
-\contentsline {algorithm}{\numberline {19}{\ignorespaces Converting a Mean Payoff Game to a Min Max system\relax }}{90}{algorithm.19}%
-\contentsline {algorithm}{\numberline {20}{\ignorespaces AC3 for Ternary Max Atom systems\relax }}{91}{algorithm.20}%
-\contentsline {algorithm}{\numberline {21}{\ignorespaces AC3 Optimized for Ternary Max Atom systems\relax }}{92}{algorithm.21}%
+\contentsline {algorithm}{\numberline {1}{\ignorespaces Deterministic strategies evaluation\relax }}{29}{algorithm.1}%
+\contentsline {algorithm}{\numberline {2}{\ignorespaces Probabilistic strategies evaluation\relax }}{29}{algorithm.2}%
+\contentsline {algorithm}{\numberline {3}{\ignorespaces $\mathcal {D}(n,p)$ Graph Generation\relax }}{38}{algorithm.3}%
+\contentsline {algorithm}{\numberline {4}{\ignorespaces $\mathcal {D}(n,p)$ Graph Generation Optimisation\relax }}{38}{algorithm.4}%
+\contentsline {algorithm}{\numberline {5}{\ignorespaces $\mathcal {D}(n,p)$ Choice without replacement\relax }}{39}{algorithm.5}%
+\contentsline {algorithm}{\numberline {6}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{41}{algorithm.6}%
+\contentsline {algorithm}{\numberline {7}{\ignorespaces Fine tuned $\mathcal {D}(n,p)$ Choice without replacement \relax }}{42}{algorithm.7}%
+\contentsline {algorithm}{\numberline {8}{\ignorespaces Solving a Mean Payoff Graph for all states\relax }}{51}{algorithm.8}%
+\contentsline {algorithm}{\numberline {9}{\ignorespaces Selection algorithm for \acrshort {mcts}\relax }}{73}{algorithm.9}%
+\contentsline {algorithm}{\numberline {10}{\ignorespaces Expansion algorithm for \acrshort {mcts}\relax }}{73}{algorithm.10}%
+\contentsline {algorithm}{\numberline {11}{\ignorespaces Simulation algorithm for \acrshort {mcts}\relax }}{74}{algorithm.11}%
+\contentsline {algorithm}{\numberline {12}{\ignorespaces Backpropagation algorithm for \acrshort {mcts}\relax }}{74}{algorithm.12}%
+\contentsline {algorithm}{\numberline {13}{\ignorespaces \acrshort {mcts} Algorithm\relax }}{75}{algorithm.13}%
+\contentsline {algorithm}{\numberline {14}{\ignorespaces Create children\relax }}{76}{algorithm.14}%
+\contentsline {algorithm}{\numberline {15}{\ignorespaces Alpha Zero \acrshort {mcts} Simulation\relax }}{77}{algorithm.15}%
+\contentsline {algorithm}{\numberline {16}{\ignorespaces model-based \acrshort {mcts} playout policy\relax }}{77}{algorithm.16}%
+\contentsline {algorithm}{\numberline {17}{\ignorespaces Converting a Max Atom System to Ternary Max Atom System\relax }}{91}{algorithm.17}%
+\contentsline {algorithm}{\numberline {18}{\ignorespaces Converting a Min-Max System to Max Atom\relax }}{94}{algorithm.18}%
+\contentsline {algorithm}{\numberline {19}{\ignorespaces Converting a Mean Payoff Game to a Min Max system\relax }}{95}{algorithm.19}%
+\contentsline {algorithm}{\numberline {20}{\ignorespaces AC3 for Ternary Max Atom systems\relax }}{96}{algorithm.20}%
+\contentsline {algorithm}{\numberline {21}{\ignorespaces AC3 Optimized for Ternary Max Atom systems\relax }}{97}{algorithm.21}%

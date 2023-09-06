@@ -462,3 +462,59 @@ Putting all building block together, we designed a model that takes arbitrary gr
 	\end{figure}
 	
 \end{landscape}
+
+\section{Optimization}
+Once we built the model architecture, we have to define the optimization problem to refine the learnable parameters.
+
+Also, there is a wide range of optimizers that we can use. The next two sections will respectfully define the loss function and the optimizer.
+\subsection{Loss function}
+\begin{itemize}
+	\item Let $\boldsymbol{G}$ be a batch of \acrshortpl{mpg}.
+	\item Let $\boldsymbol{v}$ be a batch of evaluations of $\boldsymbol{G}$ 
+	\item Let $\boldsymbol{\Pi}$ be a batch of strategies of $\boldsymbol{G}$
+	\item Let $\mathcal{M}_{\Theta}$ be the model with $\Theta$ the learnable parameters.
+	\item Let $\boldsymbol{v}_{\Theta}$ be the predicted evaluation per model $\mathcal{M}_{\Theta}$
+	\item Let $\boldsymbol{\Pi}_{\Theta}$ be the predicted strategy per model $\mathcal{M}_{\Theta}$ 
+	\item Let $\mathcal{H}$ be the categorical cross entroy operator defined as follow:
+	\begin{equation*}
+		\mathcal{H}(p,q) = \sum_{i}p_i \log q_i 
+	\end{equation*}
+\end{itemize}
+We defined the loss function similar to Alpha Zero's approach \cite{AlphaZero}:
+\begin{equation}
+	\label{eqn:LossFunction}
+	\mathcal{L}(\mathcal{M}_{\Theta},\boldsymbol{G},\boldsymbol{v},\boldsymbol{\Pi}) = \mathcal{H}(\boldsymbol{\Pi},\boldsymbol{\Pi}_\Theta(\boldsymbol{G})) + \lVert \boldsymbol{v}_{\Theta}(\boldsymbol{G})- \boldsymbol{v} \rVert_2^2 +  C \lVert \Theta \rVert_2^2
+\end{equation}
+This is the sum of three terms:
+\begin{itemize}
+	\item $\displaystyle \mathcal{H}(\boldsymbol{\Pi},\boldsymbol{\Pi}_\Theta(\boldsymbol{G})):$ This term encodes the error between the predicted strategy $\boldsymbol{\Pi}_\Theta(\boldsymbol{G})$ and the actual strategy $\boldsymbol{\Pi}$.
+	\item $\displaystyle \lVert \boldsymbol{v}_{\Theta}(\boldsymbol{G})- \boldsymbol{v} \rVert_2^2:$ This term encodes the euclidean distance between the predicted evaluation $\boldsymbol{v}_{\Theta}(\boldsymbol{G})$ and the actual evaluation $\boldsymbol{v}$.
+	\item $\displaystyle C \lVert \Theta \rVert_2^2$ This term adds $L_2$ regularization to the model, with $C$ serving as the strength of the regularization.
+\end{itemize}
+Also, each error term in the loss function is applied to each game individually. In fact, equation \eqref{eqn:LossFunction} is in a compact representation that reduces\footnote{Up to some normalization factor, this is an implementation detail.} to the mean of individual errors in the batch.
+\subsection{Optimizer}
+We used the Adam optimizer \cite{AdamOptimizer} to minimize the objective function $\mathcal{L}$ with respect to $\Theta$
+
+\subsection{Hyper-parameters}
+Our choice of optimizer and loss function induced more hyper-parameters. We will list them in the following table:
+
+
+\section{Configuration}
+we externalized our configuration so that we can change hyperparameters and other non-learnable parameters at will, without modifying the source code. This was beneficial as it seperated between the model implementation phase and the model fine-tuning phase.
+\subsection{Model configuration}
+We setup a configuration YAML configuration file containing the entries for tweaking the model.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.95\textwidth]{Figures/ModelConfiguration.png}
+	\caption{Model section of the configuration file}
+	\small{Note: while a recent version of the configuration file, we may tweak it further for fine-tuning purposes.}
+\end{figure}
+\FloatBarrier
+\subsection{Training configuration}
+The configuration file also has a section for training hyper-parameters. We will show it in the next figure:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\textwidth]{Figures/TrainingConfiguration.png}
+	\caption{Training section of the configuration file}
+	\small{Note: while a recent version of the configuration file, we may tweak it further for fine-tuning purposes.}
+\end{figure}
