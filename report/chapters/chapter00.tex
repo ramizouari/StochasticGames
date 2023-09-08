@@ -44,7 +44,7 @@ The ultimate goal of this project is to design and implement a \acrshort{sp} sys
 
 As we were not able to discover any implementation regarding \acrshort{mpg}. Before diving into the modeling part, we implemented and tested a library that we called \textbf{\acrshort{mpg}}. We generated and annotated two large datasets of \acrshortpl{mpg} to understand more properties about the game and strategies. And finally then, we started implementing a \acrshort{gnn} model that will be used as part of the \acrshort{sp} system.
 
-\subsection{Non-funcitonal requirements}
+\subsection{Non-functional requirements}
 \begin{table}[h]
 	\begin{tabularx}{\textwidth}{| p{3cm} | X |}
 		\hline
@@ -87,7 +87,26 @@ As we were not able to discover any implementation regarding \acrshort{mpg}. Bef
 	\caption{Non functional requirements
 		\label{table:NonFunctionalRequirements}}
 \end{table}
+\section{Introduction to Mean Payoff Games}
+\subsection{Mean Payoff Games}
 
+\subsection{State of the art}
+\acrfull{mpg} are well-known in many fields, such as Optimization \cite{SimplexMPG}, Game Theory \cite{PositionalStrategies}, Formal Verification \cite{OmegaSpecsMPG}, Constraint Satisfaction Problems  \cite{TropicalCSP,MPGMaxAtom}, Reinforcement Learning \cite{StrategyImprovement}.
+
+We believe that \citeauthor{PositionalStrategies} were the first to introduce \acrshort{mpg} in their \citedate{PositionalStrategies} paper \cite{PositionalStrategies} in which they also proved the optimality of positional strategies\footnote{Which will be defined in section \ref{section:Formalisation:Strategy:Positional}}. The problem itself is interesting as it connect many related fields. First of all, it is closely related to many problems in constraint satisfaction \cite{TropicalCSP,MPGMaxAtom}, model-checking \cite{OmegaSpecsMPG}, game theory \cite{PositionalStrategies}.
+
+Also, another interesting fact is that deciding the winner of a mean payoff game is polynomial time equivalent\footnote{Each instance of both problems can be transformed to the other in polynomial time.} to the Max Atom problem \cite{MPGMaxAtom}, which is in $\texttt{NP}\cap \texttt{co-NP},$ but its membership to $\mathtt{P}$ is still open. This is remarkable, there only few problems that share such fate \cite{NPInterCoNP}.
+
+
+This influenced mainly two research axes. The first deals with solving the decision problem\footnote{The decision problem of a mean payoff game is deciding the winner.}, and the other one deals with the optimization problem\footnote{The optimization problem is calculating the best strategy for each player} related to calculating the optimal strategies. The optimization problem itself can be solved using exact methods \cite{MPGMaxAtom}, as well as iterative methods \cite{StrategyImprovement,SimplexMPG}.
+
+While we did not find a \acrfull{ml} approach on \acrshort{mpg} in the literature, we were able to find some results in a related game, known as stochastic parity games. In fact, a model-free \acrfull{rl} approach was proposed using the Q-learning minimax algorithm \cite{??}. It does only learn specific instances of the game and not a whole family of stochastic parity games.
+
+We were also able to find supervised learning approach on solved instances of that game using \acrfull{gnn} methods. We will base our \acrshort{gnn} algorithms.
+
+\subsection{Potential difficulties}
+We believe that our project is 
+ 
 \section{Introduction to learning approaches}
 \subsection{Machine learning}
 \acrfull{ml} is a subfield of \acrfull{ai}, which is broadly defined as the capability of a machine to imitate intelligent human behavior. \acrshort{ai} systems are used to perform complex tasks in a way that is similar to how humans solve problems.

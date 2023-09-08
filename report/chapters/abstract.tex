@@ -1,6 +1,4 @@
 \chapter*{Abstract}
-Les réseaux de neurones sont devenus très utilisés dans l'intelligence artificielle grâce à leurs performances de prédictions.
-\newline Ces réseaux de neurones sont parfois très complexes, et il n'est pas pratique de les utiliser dans des systèmes à ressources limités.\\
-\\ 
-Pour cela, dans ce rapport nous allons introduire les réseaux de neurones binaires (BNNs), les formaliser, étudier quelques modèles binarisés et dériver leurs formules, implémenter les résultats trouvés dans une bibliothèque qu'on va nommer \textbf{binaryflow}. 
-\newline Et finalement, nous allons implémenter et entraîner des modèles binarisés pour la classification et régression, et nous allons comparer les performances de prédiction, ainsi que les performances temps et mémoire de ces BNNs et leurs contrepart classique. 
+\acrfullpl{mpg} are being extensively investigated with the hopes of finding a general polynomial time solver. While this is a very desired goal, it is ambitious. We will use instead a \acrfull{rl} method using an underlying \acrfull{dl} model based on \acrfullpl{gnn} that tries to approximate solutions of a \acrshort{mpg} instance. The learnable parameters of the model will be updated using a \acrfull{sp} approach that is inspired from Alpha Zero.
+
+To achieve all this, we will implement a \acrshort{mpg} library, generate two \acrshort{mpg} datasets, and then try solve and analyse them.  We will then design our \acrshort{gnn} model with high focus on keeping as much symmetries as possible in the model itself. Finally, we will implement a whole \acrshort{sp} system based on Alpha Zero that will be used for learning purposes, in the hope of getting a model that plays decently. 

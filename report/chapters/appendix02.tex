@@ -1,9 +1,10 @@
 \chapter{On Random Mean Payoff Graphs}
 \label{appendix:RandomGraphs}
-In the previous chapters, we gave a rough analysis of graph generation.
-\newline In this chapter, we will dive into a more detailed analysis.
 
-\section{Introduction}
+
+\section*{Introduction}
+This appendix deals with some random properties of \acrshort{mpg}. The results offered by the appendix are used in the implementation and complexity analysis used in section \ref{section:MPG:Generation} of chapter \ref{section:Dataset}.
+
 \section{Sinkless $\mathcal{D}(n,p)$ Graph}
 
 \subsection{Property}
@@ -115,22 +116,52 @@ Finally, we apply the exponential function to both sides, to get the desired est
 Now with that:
 $$
 \lim_{x\rightarrow +\infty} x\ln (1-g(x,k,c))=\begin{cases}
-	-\infty  & \text{if} \space k\in[0,1[ \\
-	-e^{-c} & \text{if}\space k=1  \\
-	0 & \text{otherwise if}\space k\in ]1,+\infty[ 
+	-\infty  & \text{if} \ k\in[0,1[ \\
+	-e^{-c} & \text{if}\ k=1  \\
+	0 & \text{otherwise if}\ k\in \mathopen]1,+\infty\mathclose[ 
 \end{cases}
 $$
 Finally, we can conclude that:
 \begin{equation}
 	\label{eqn:SinklessProbabilityLimit}
 	\lim_{x\rightarrow +\infty} f(x,k)\begin{cases}
-		0  & \text{if} \space k\in[0,1[ \\
-		e^{-e^{-c}} & \text{if}\space k=1  \\
-		1 & \text{otherwise if}\space k\in ]1,+\infty[ 
+		0  & \text{if} \ k\in \mathopen[0,1\mathclose[ \\
+		e^{-e^{-c}} & \text{if}\ k=1  \\
+		1 & \text{otherwise if}\ k\in \mathopen]1,+\infty\mathclose[ 
 	\end{cases}
 \end{equation}
 
+\section{Verification of distribution properties}
+In section \ref{section:Dataset:ProposedDistributions:Properties} of chapter \ref{chapter:Dataset}, we required our \acrshort{mpg} distributions to be fair and symmetric.
 
+We have proposed some useful weight distributions and graph distributions in table \ref{table:Distributions}. Then, we have also boldly claimed that any combination of both types of such distributions will give a \acrshort{mpg} distribution verifying both properties.
+
+In this section, we will prove that claim. We will first start by the following notations:
+\begin{itemize}
+	\item Let $\mathcal{D}$ be a graph distribution.
+	\item Let $\mathcal{W}$ be a symmetric weight distribution. 
+	\item Let $D=(V,E)\sim \mathcal{D},$ and let $n=\lvert V \rvert$
+	\item Let $W\sim \mathcal{W}$
+	\item Let $s\sim \mathcal{U}(V)$
+	\item Let $p\sim \mathcal{U}(\PlayerSet)$ where $\PlayerSet=\{\Max,\Min\}$
+	\item Let $G=(V,E,W,s,p)$
+\end{itemize}
+
+\subsection{Symmetric}
+This is immediate as $\mathcal{W}$ is symmetric by construction.
+\subsection{Fairness}
+\begin{align*}
+	\mathscr{P}(\Max \ \text{wins in} \ G \ \text{with optimal play}) &=
+	\mathscr{P}(v(G) > 0)  \\ 
+	&= \mathscr{P}(v(\bar{G})<0) \\
+	&= \mathscr{P}(v(V,E,-W,s,\bar{p})<0) \\
+	&= \mathscr{P}(v(V,E,W,s,\bar{p})<0) \quad \text{as} \ W\sim \mathcal{W} \ \text{and}\ \mathcal{W} \ \text{is symmetric} \\  
+	&= \mathscr{P}(v(V,E,W,s,p)<0) \quad \text{as} \ p \sim \mathcal{P} \\
+	&=\mathscr{P}(v(G)<0) \\
+		&=\mathscr{P}(\Min \ \text{wins in} \ G \ \text{with optimal play}) 
+\end{align*} 
+\subsection{Conclusion}
+We conclude the result for any combination of distributions following the table \ref{table:Distributions} as they follow the hypotheses.
 
 \section{Expected Mean Payoff}
 \subsection{Definition}

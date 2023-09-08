@@ -173,7 +173,10 @@ With that, there is not any major difference between $\Max$ and $\Min$ from a th
 \end{figure}
 
 \subsection{Strategy}
+\label{section:Formalisation:Strategy}
 \subsubsection{Deterministic Strategies}
+\label{section:Formalisation:Strategy:Deterministic}
+\label{section:Formalisation:Strategy:Positional}
 Let $p$ be a player. \newline 
 A (deterministic) strategy is a function $\Pi^{p}:\VertexSet^+\rightarrow \VertexSet$ such that:
 $$
@@ -402,18 +405,6 @@ The problem of finding a counter strategy will be reduced to finding a negative 
 \newline This can be done in $\mathcal{O}(\lvert V\rvert^3)$
 \subsection{Probabilistic Counter Strategy}
 On the other hand, if $\Phi^p$ is probabilistic, then the problem can be reduced to optimizing the mean payoff of an infinite-horizon Markov Decision Process.
-
-\section{Learning Strategies}
-\section{State of the Art}
-Mean Payoff Games are well-known in many fields, such that Optimization\cite{SimplexMPG}, Game Theory\cite{PositionalStrategies}, Formal Verification\cite{OmegaSpecsMPG}, Constraint Satisfaction Problems\cite{TropicalCSP,MPGMaxAtom}, Reinforcement Learning\cite{StrategyImprovement}.
-\newline While we were not able to trace the exact origin of Mean Payoff Games, we were able to find references to it since the seventies \cite{PositionalStrategies}. The problem itself is interesting as it connect many related fields. First of all, it is closely related to many problems in constraint satisfaction \cite{TropicalCSP,MPGMaxAtom}, model-checking \cite{OmegaSpecsMPG}, game theory \cite{PositionalStrategies}.
-\newline Also, another interesting fact is that deciding the winner of a mean payoff game is polynomial time equivalent\footnote{Each instance of both problems can be transformed to the latter in polynomial time.} to the Max Atom problem \cite{MPGMaxAtom}, which is in $\texttt{NP}\cap \texttt{co-NP},$ but its membership to $\mathtt{P}$ is still open. This is remarkable, there only few problems that share such fate \cite{NPInterCoNP}.
-
-
-This influenced mainly two research axes. The first deals with solving the decision problem\footnote{The decision problem of a mean payoff game is deciding the winner.}, and also optimization problem\footnote{The optimization problem is calculating the best strategy for each player.} related to calculating the optimal strategies. 
-\newline The optimization problem itself can be solved using exact methods \cite{MPGMaxAtom}, as well as iterative methods \cite{StrategyImprovement,SimplexMPG}.
-
-While we did not find a machine learning approach on mean payoff games in the literature, we were able to find some results in a superclass, known as stochastic parity games. In fact, a model free reinforcement learning approach was proposed using the Q-learning minimax algorithm , as well as a supervised learning approach on solved instances of that game.
 
 \section{Library Implementation}
 We have two implementations of our mean payoff game library:

@@ -1,12 +1,62 @@
 \chapter{On Probabilistic Strategies}
 \label{appendix:Probabilistic:Strategies}
-In the previous chapters, we gave a rough analysis of graph generation.
-\newline In this chapter, we will dive into a more detailed analysis.
+This appendix is dedicated to building important results related to fractional strategies.
+
 
 \section{Markovian Nature}
 \subsection{Fixing $\Pi^{\Player}$}
+Let $G=(\VertexSet,\EdgeSet,W,s,p)$ be a \acrshort{mpg}.
+
+If \PlayerSet's is fixed to a fractional strategy $\Pi^{\Player},$ and $\bar{\Player}$ is still variable, then the \acrshort{sg} becomes a \acrshort{mdp}.
+\subsubsection{Transitions}
+This is illustrated as follow:
+\begin{itemize}
+	\item We set the initial state of the \acrshort{mdp} $\Gamma$ as follow:
+	\begin{equation*}
+		\begin{cases}
+			s & \text{if} \ p=\bar{\Player} \\
+			\Pi^{\Player}(s) & \text{otherwise}
+		\end{cases}
+	\end{equation*}
+	
+	\item If the current state is $u\in V,$ then for any action $a\in V,$ we have:
+	\begin{equation*}
+		\mathscr{P}(u\rightarrow v \mid a) =
+		\begin{cases}
+			\displaystyle \mathscr{P}(\Pi^{\Player}(a)= v) & \text{if}\ a\in \Adj v \\
+			0 & \text{otherwise}
+		\end{cases} 
+	\end{equation*}
+\end{itemize}
+\subsubsection{Rewards}
+We have:
+\begin{align*}
+	\forall u,a,v\in V ,\quad R(u,a,v)&= W(u,a)+W(a,v) \\
+	\forall u,a\in V,\quad R(u,a)&=R(u,a,\Pi^{\Player}(a)) \\
+	&= W(u,a)+\sum_{v\in \Adj a}\mathscr{P}(\Pi^{\Player}(a)=v)\times W(a,v) 
+\end{align*}
+If we represent $R,W$ and $\Pi^{\Player}$ as matrices, then:
+\begin{equation}
+	R=W+ \ones \times  (\Pi^{\Player} \odot W)
+\end{equation}
+
 \subsection{Fixing both $\Pi^{\Max}$ and $\Pi^{\Min}$}
 \label{section:ProbabilisticStrategies:MRP}
+\begin{itemize}
+	\item Let $G=(\VertexSet,\EdgeSet,W,s,p)$ be a \acrshort{mpg}.
+	\item Suppose without a loss of generality that $p=\Max$
+\end{itemize}
+
+We have:
+\begin{align*}
+	\forall u,v\in V,\quad \mathscr{P}(u\rightarrow v) &=\mathscr{P}(\Pi^{\Max}\circ \Pi^{\Min} (u)= v) \\
+	&=\sum_{w\in V} \mathscr{P}(\Pi^{\Min}\circ \Pi^{\Max} (u)= v\mid \Pi^{\Max}(u)=w) \times \mathscr{P}(\Pi^{\Max}(u)=w) \\
+	&= \sum_{w\in V}\mathscr{P}(\Pi^{\Min}(w)= v) \times \mathscr{P}(\Pi^{\Max}(u)=w) \\
+\end{align*}
+If we represent $\Pi^{\Max}$ and $\Pi^{\Min}$ as matrices, then we get the transition matrix of the Markov Chain:
+\begin{equation}
+	M=\Pi^{\Max} \times \Pi^{\Min}
+\end{equation}
 
 
 \section{Expected Reward of a MRP}

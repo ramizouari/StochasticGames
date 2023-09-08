@@ -1,6 +1,6 @@
 \chapter{Dataset Generation \& Annotation}
 \label{section:Dataset}
-
+\label{chapter:Dataset}
 \section{Introduction}
 \section{Analysis}
 Generating a Mean Payoff Game can be decomposed into two subsequent objectives.
@@ -211,55 +211,84 @@ Sampling from a graph distribution may lead to graphs that have at least one sin
 	\item $\mathcal{D}^\bullet(n,p):$ This is the distribution of graphs following $\Dnp{n}{p}$ with the requirement that they do not have a sink.
 	\item $\mathcal{D}^\bullet(n,m):$ This is the distribution of graphs following $\Dnm{n}{m}$ with the requirement that they do not have a sink.
 \end{itemize}
-\subsection{Graph Rejection Construction}
+\subsection{Graph rejection method}
+\subsubsection{Definition}
+We define the graph rejection method as the method used to generate a graph by rejecting bad ones until getting the desired one.
+
+In our case, we will reject graphs that have at least a sink, and retry again until getting a sinkless graph.
+
 \subsubsection{Estimating Complexity}
-Now the method of rejecting graphs that have sinks and retrying give us a natural question about how many times will the algorithm reject graph until finding a desirable one.\newline
+The number of steps in this method is proportional tp the number of rejections before getting a sinkless graph.
+
 The number of such rejections will follow a geometric law $\mathcal{G}(h(n,p))$ where: 
 \begin{equation}
 	\label{eqn:HnpProbability}
 	h(n,p)=\mathscr{P}\left(\text{Sinkless}(\mathcal{D}(n,p))\right)=(1-(1-p)^n)^n
 \end{equation}
-Proof of \eqref{eqn:HnpProbability} is found in section \ref{section:RandomGraphs:PropertyProbability}
-\newline With that, the expected complexity of the algorithm will be:
+Proof of \eqref{eqn:HnpProbability} is found in section \ref{section:RandomGraphs:PropertyProbability} of appendix \ref{appendix:RandomGraphs}.
+
+With that, the expected complexity of the algorithm will be:
 $$
-\tilde{\mathcal{O}}\left(\frac{C(n,p)}{h(n,p)}\right)=\tilde{\mathcal{O}}\left(\frac{C(n,p)}{(1-(1-p)^n)^n}\right)
+\tilde{\mathcal{O}}\left(\frac{n+m}{h(n,p)}\right)=\tilde{\mathcal{O}}\left(\frac{n+m}{(1-(1-p)^n)^n}\right)
 $$
-With $C(n,p)$ the cost of building the graph, depending on the algorithm\footnote{The two algorithms that we have discussed are the naive $\mathcal{O}(n^2)$ algorithm and the more optimized $\tilde{\mathcal{O}}(n+m)$ algorithm.}.
+
 \paragraph{Dense Graph case}
-Now it is clear for dense enough graphs, in particular with $p(n) \ge \frac{\ln (n)}{n}$ for large enough $n$, the expected complexity will reduce to $\mathcal{O}(C(n,p))$. This is a result of equation \eqref{eqn:SinklessProbabilityLimit}.
-\newline In the dense case, we consider the rejection method to be efficient.
+Now it is clear for dense enough graphs, in particular with $p(n) \ge \frac{\ln (n)}{n}$ for large enough $n$, the expected complexity will reduce to $\tilde{\mathcal{O}}(n+m)$. This is a consequence of equation \eqref{eqn:SinklessProbabilityLimit}.
+
+Thus: \textbf{In the dense case, we consider the graph rejection method to be efficient.}
+
 \paragraph{Sparse Graph case}
-If $p(n)=\frac{k\ln n}{n}+c$ with $k<1.$ We have as a result of:
+If $p(n)=\frac{k\ln n}{n}+c$ with $k<1,$ we have as a result of equation \eqref{eqn:SinklessAsymptotic}:
 $$
-(1-(1-p)^n)^n=e^{-e^{-c}x^{1-k}+o(x^{1-k})}
+(1-(1-p)^n)^n=e^{-e^{-c}n^{1-k}+o(n^{1-k})}
 $$
-With that, the expected complexity of the rejection method will be:
+With that, the expected complexity of the graph rejection method will be:
 $$
-\tilde{\mathcal{O}}\left(C(n,p)\times \exp\left(e^{-c}x^{1-k}+o(x^{1-k})\right)\right)
+\tilde{\mathcal{O}}\left((n+m)\times \exp\left(e^{-c}n^{1-k}+o(n^{1-k})\right)\right)
 $$
 which is an exponential algorithm, and thus inefficient for large graphs.
 Since property $\mathtt{P}$ is increasing, this argument generalises to $p(n) \le \frac{k\ln n}{n}+c$ for large enough $n$
+
+Thus: \textbf{In the sparse case, we consider the graph rejection method to be \newline inefficient.}
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.75\textwidth]{Figures/BadSparseGraphGen.png}
 	\caption{Exponential blowup when using the graph rejection method}
 \end{figure}
 \FloatBarrier
-\subsection{Degree Rejection Construction}
+\subsection{Degree rejection method}
 \label{section:Dataset:Sinkless:DegreeRejection}
-Instead of throwing the whole graph at once. For every vertex $u\in V,$ we try to construct the adjacenty vertices of $u,$ and repeat if the procedure gives $\Adj u =\varnothing$
-\newline With this trick, the expected complexity will reduce for both algorithms to:
+Instead of throwing the whole graph at once. For every vertex $u\in V,$ we try to construct the adjacenty vertices of $u,$ and repeat if the procedure gives $\Adj u =\varnothing.$
+\begin{algorithm}[ht]
+	\caption{$\mathcal{D}^\bullet(n,p)$ Fast graph generation}\label{alg:Dnp_Sinkless_Fast}
+	\begin{algorithmic}
+		\Require $n\in\mathbb{N}^*$ the size of the graph
+		\Require $p\in\mathbb{N}^*$ the edge probability 
+		\Ensure $G\sim \mathcal{D}(n,p)$  
+		\State $A:u\in V\rightarrow \varnothing$
+		\For{ $u\in V$} 
+		\Repeat
+			\State Generate $d\sim \mathcal{B}(n,p)$		\Comment{$d$ represents the degree, $\mathcal{B}(n,p)$ is the binomial distribution}
+		\Until{$d>0$}
+		\State $A(u)\leftarrow \choice(V,d)$
+		\EndFor
+		\State \Return $G\leftarrow \texttt{GraphFromAdjacencyList}(A)$
+	\end{algorithmic}
+\end{algorithm} 
+\FloatBarrier
+
+With this trick, the expected complexity will reduce for both algorithms to:
 $$
-\tilde{\mathcal{O}}\left(\frac{C(n,p)}{1-(1-p)^n}\right)
+\tilde{\mathcal{O}}\left(\frac{n+m}{1-(1-p)^n}\right)
 $$
-Now for our case, it is natural to assume that $p(n) \ge \frac{1}{n},$ as a Mean Payoff Graph does not have a sink. With that: 
-$$
-1-(1-p)^n \ge 1-(1-\tfrac{1}{n})^n \ge 1-e^{-1}
-$$
+Now for our case, it is natural to assume that $p(n) \ge \frac{1}{n},$ as a \acrshort{mpg} does not have a sink. With that: 
+\begin{equation*}
+	1-(1-p)^n \ge 1-(1-\tfrac{1}{n})^n \ge 1-e^{-1}
+\end{equation*}
 Therefore, the expected complexity will simplify to:
-$$
-\tilde{\mathcal{O}}\left(C(n,p)\right)
-$$
+\begin{equation*}
+	\tilde{\mathcal{O}}\left(n+m\right)
+\end{equation*}
 Moreover, the cost of the conditionning makes at most a constant $\frac{1}{1-e^{-1}}\approx 1.582$ factor slowdown, which is effectively neligible.
 
 \begin{figure}[H]
@@ -281,6 +310,7 @@ Moreover, the cost of the conditionning makes at most a constant $\frac{1}{1-e^{
 
 \section{Proposed \acrshort{mpg} distributions}
 \subsection{Desired properties of \acrshort{mpg} distributions}
+\label{section:Dataset:ProposedDistributions:Properties}
 \subsubsection{Fairness}
 This is essential, as we intend to generate a sequence of Mean Payoff Games that do not favour statistically a certain player.
 
