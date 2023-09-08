@@ -114,6 +114,13 @@ This will require the following definition:
 			P &\sim \mathcal{U}(\mathcal{P})
 		\end{cases}
 	\end{equation*}
+	To sample an element from $\mathcal{D}^\bullet_{p,\text{US}}(\mathcal{N},\mathcal{P})$:
+	\begin{enumerate}
+		\item Select the graph size $N\in\mathcal{N}$ uniformly at random.
+		\item Select the edge probability $p\in\mathcal{P}$ uniformly at random.
+		\item Build $G\sim \mathcal{D}^\bullet(N,P)$ using algorithm \ref{alg:Dnp_Fast} and degree rejection method defined at section \ref{section:Dataset:Sinkless:DegreeRejection}.
+			
+	\end{enumerate} 
 	
 	\subsubsection{$\mathcal{D}^\bullet_{c,\text{US}}$ distribution}
 	\begin{itemize}
@@ -122,11 +129,28 @@ This will require the following definition:
 	\end{itemize}
 	The $\mathcal{D}^\bullet_{c,\text{US}}(\mathcal{N},\mathcal{C})$ is a mixture distribution defined as follow:
 	\begin{equation*}
-		\mathcal{D}^\bullet_{p,\text{US}}(\mathcal{N},\mathcal{C}) = \mathcal{D}^\bullet(N,\tfrac{C}{N}) \quad \text{where}\ \begin{cases}
+		\mathcal{D}^\bullet_{c,\text{US}}(\mathcal{N},\mathcal{C}) = \mathcal{D}^\bullet(N,\tfrac{C}{N}) \quad \text{where}\ \begin{cases}
 			N &\sim \mathcal{U}(\mathcal{N}) \\
 			C &\sim \mathcal{U}(\mathcal{C})
 		\end{cases}
 	\end{equation*}
+		To sample an element from $\mathcal{D}^\bullet_{c,\text{US}}(\mathcal{N},\mathcal{C})$:
+	\begin{enumerate}
+		\item Select the graph size $N\in\mathcal{N}$ uniformly at random.
+		\item Select the expected degree $c\in\mathcal{C}$ uniformly at random.
+		\item Build $G\sim \mathcal{D}^\bullet(N,\tfrac{C}{N})$ using algorithm \ref{alg:Dnp_Fast} and degree rejection method defined at section \ref{section:Dataset:Sinkless:DegreeRejection}.
+	\end{enumerate} 
+\subsubsection{Importance}
+In chapter \ref{section:Dataset}, we designed and implemented a graph generation pipeline, then a graph annotation pipeline for dense graphs and later sparse graphs.
+
+Both datasets $\mathcal{D}^\text{dense}$ and $\mathcal{D}^\text{sparse}$ contain the evaluation of each game and its respective optimal strategy. We can use both datasets for evaluation purposes, and for that we will make sure that our learns from the same distribution.
+
+Following our implementation in chapter \ref{section:Dataset}: 
+\begin{itemize}
+	\item Each generated dense graph follow $\mathcal{D}^\bullet_{p,\text{US}}(\mathcal{N},\mathcal{P}).$ with $\mathcal{N}$ and $\mathcal{P}$ defined on section \ref{section:MPG:Generation:Distribution}, at the \textbf{Dense Graphs} paragraph.
+	\item Each generated sparse graph follow $\mathcal{D}^\bullet_{c,\text{US}}(\mathcal{N},\mathcal{C})$ with $\mathcal{N}$ and $\mathcal{C}$ defined on section \ref{section:MPG:Generation:Distribution}, at the \textbf{Sparse Graphs} paragraph.
+\end{itemize} 
+	
 \subsection{Considered \acrshort{rl} algorithm}
 Now, all the technicalities about the formalisation of \acrshort{mpg} in \acrshort{rl} setting are resolved. Also, we have a complete model $\mathcal{M}$ as a result of chapter \ref{section:ModelDesign}.
 
@@ -145,7 +169,7 @@ With all that said, only the self-playing system is remaining. Thus in the upcom
 	\item Deploy it in a \acrshort{hpc} cluster.
 	\item Execute the whole pipeline and fine-tune the model.
 \end{enumerate}
-
+\newpage
 \section{Monte Carlo Tree Search}
 \acrfull{mcts} is an advanced algorithm in decision making that appeared in \citedate{MCTSOriginal}. \citeauthor{MCTSOriginal} first coined the term \acrshort{mcts} as application of Monte-Carlo methods to game-tree search \cite{MCTSOriginal}. It is an important algorithm for adversial search. that had a huge success at improving the competence of Go engines to a master level \cite{GoMaster}. This alone was a feat considering that previous state of the are alpha-beta implementations were unable to get past beginner level. 
 

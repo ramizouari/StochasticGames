@@ -246,6 +246,7 @@ Since property $\mathtt{P}$ is increasing, this argument generalises to $p(n) \l
 \end{figure}
 \FloatBarrier
 \subsection{Degree Rejection Construction}
+\label{section:Dataset:Sinkless:DegreeRejection}
 Instead of throwing the whole graph at once. For every vertex $u\in V,$ we try to construct the adjacenty vertices of $u,$ and repeat if the procedure gives $\Adj u =\varnothing$
 \newline With this trick, the expected complexity will reduce for both algorithms to:
 $$
@@ -361,6 +362,7 @@ With all that said, distributions are fair in the limit and are symmetric, provi
 \section{MPG Generation}
 \label{section:MPG:Generation}
 \subsection{Distribution}
+\label{section:MPG:Generation:Distribution}
 \begin{itemize}
 	\item Each generated graph will follow a distribution $\mathcal{G}(n,p(n))$  for some $n\in\mathbb{N}^*$
 	\item The weights will follow the discrete uniform distribution $\mathcal{D}(-1000,1000)$

@@ -6,12 +6,14 @@
 %---------------------------- Preamble ------------------------------
 
 % Document type and font --
-\documentclass[11pt]{report} % form of the document
+\documentclass[12pt,a4paper,oneside,french]{book}
 \usepackage[utf8]{inputenc} %utf-8 encoding for ASCII symbols
+\usepackage[T1]{fontenc}
 \usepackage{xcolor}
 \usepackage{afterpage}
 \usepackage{rotating}
 \usepackage[export]{adjustbox}% http://ctan.org/pkg/adjustbox
+\usepackage{pdfpages}
 
 
 % Algorithms
@@ -47,13 +49,11 @@
 \usepackage{amssymb}
 \usepackage{mathabx} % font for math symbols
 \usepackage{fancyhdr} %constructing headers and footers
-\usepackage{titlesec} %title styles
 \usepackage{breakcites} %to avoid citations extending into the margin
 \usepackage{csquotes} %in-line and display quotations
 \usepackage[margin=1in]{geometry}  %to reduce margins to 1 inch 
 \usepackage{sidecap} %to enable side captions on figures
 \usepackage{subcaption}
-\usepackage{setspace} %to enable double spacing   
 \usepackage{float}
 \usepackage{footnote}
 \usepackage[bottom]{footmisc}
@@ -138,28 +138,70 @@
 
 
 %Middle Align
+\usepackage{array,multirow,makecell}
+\newcolumntype{C}[1]{>{\arraybackslash}p{#1}}
 
 
 % header and footer
-\pagestyle{fancy}
-\fancyhf{}
-\chead{\small\ProjectTitle}
-\renewcommand{\footrulewidth}{0.4pt}
-\cfoot{\thepage \\ \small{\AuthorName}  \\ \scriptsize{INSAT, Tunisia} }
+\usepackage{enumitem}
+\setlist{leftmargin=*,itemsep=0pt}
+
+\usepackage{centernot}
+%\usepackage[linesnumbered,ruled,vlined,french,onelanguage]{algorithm2e}
+
+\usepackage{quotchap}
+\makeatletter
+\renewcommand{\@makechapterhead}[1]{
+	\chapterheadstartvskip
+	{\size@chapter{\sectfont\raggedright
+			{\chapnumfont
+				\ifnum \c@secnumdepth >\m@ne
+				\if@mainmatter\thechapter
+				\fi\fi
+				\par\nobreak}
+			{\raggedright\advance\leftmargin10em\interlinepenalty\@M #1\par}}
+		\nobreak\chapterheadendvskip}}
+\makeatother
+\renewcommand*{\chapterheadendvskip}{\vspace{2cm}}
+
+\geometry{hmargin=2.5cm,vmargin=2.5cm}
+
+\usepackage{fancyhdr}
+\pagestyle{fancyplain}
+\lhead{\fancyplain{}{\nouppercase{\textit{\leftmark}}}}
+\chead{\fancyplain{}{}}
+\rhead{\fancyplain{}{}}
+\lfoot{\fancyplain{}{}}
+\cfoot{\fancyplain{}{}}
+\rfoot{\fancyplain{\thepage}{\thepage}}
+\renewcommand{\headrulewidth}{1pt}
+\renewcommand{\footrulewidth}{1pt}
+
+\renewcommand{\thesection}{\arabic{section}}
+
+\usepackage{titlesec}
+\titleformat{\paragraph}{\fontsize{11}{10}\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}{0pt}{10pt plus 2pt minus 0pt}{0pt plus 2pt minus 0pt}
+
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
 
 
+\setlength{\parskip}{8pt}
+\usepackage{setspace}
+
+\usepackage{url}
 
 % linked table of contents
 \usepackage{hyperref}  
+% Comment before printing to remove links' colors
+\definecolor{darkblue}{rgb}{0.0, 0.0, 0.5}
 \hypersetup{
-    colorlinks,
-    citecolor=black,
-    filecolor=black,
-    linkcolor=black,
-    urlcolor=black,
-    backref=page
-}
-
+	colorlinks,
+	linktocpage=true,
+	linkcolor={darkblue},
+	citecolor={darkblue},
+	urlcolor={blue}}
 % Glossaries and acronyms list
 \usepackage[acronym,toc,nomain]{glossaries}
 \makeglossaries
@@ -195,7 +237,7 @@
 
 
 \begin{document}
-
+%\pagenumbering{gobble}
 % Making title page
 \input{chapters/titlepage}
 \newpage
