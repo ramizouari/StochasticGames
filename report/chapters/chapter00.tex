@@ -1,5 +1,12 @@
 \chapter{Project context}
+\section*{Introduction}
+In this chapter, we are going to present the host department and their research interests.
 
+Then, we will present the project in general and its importance. Later, we will give the functional requirements and non-functional requirements of our implementations.
+
+Furthermore, we will introduce informally \acrfullpl{mpg}, then dive into the state of the art in its theory and in \acrfull{ml} approaches. Also, we will briefly introduce learning methods.
+
+Finally, we will present our work methodologies, and describe the whole project schedule in figure \ref{fig:Gantt}.
 \section{Presentation of the host institute}
 \subsection{Presentation of the institute of Algebra}
 Algebra (from Arabic: al-dschabr "the joining of broken parts") is one of the oldest scientific disciplines of all. As a doctrine of solving equations and systems of equations, it already developed in Babylon and in ancient Egypt. In the 19th century this theory ("classical algebra") was largely completed by the fundamental theorem of algebra by Gauss and the theorem by Abel-Ruffini. Modern algebra developed - on the basis of the work of Galois and Abel - as the theory of algebraic structures, above all of groups, rings and solids. Algebra has fundamental importance within mathematics, since almost all mathematics is based on sets and operations or relations on their elements. In addition to mathematics, various sub-areas of algebra are essential for other research areas, e.g. for symmetry studies in physics and chemistry or for coding theory and cryptography in computer science.
@@ -89,6 +96,18 @@ As we were not able to discover any implementation regarding \acrshort{mpg}. Bef
 \end{table}
 \section{Introduction to Mean Payoff Games}
 \subsection{Mean Payoff Games}
+A \acrfull{mpg} is a two-player turn-based game played in a weighted graph on which every player will select an edge from the position of the current token, and then move the token to an adjacent edge.
+By doing that, both players will get a common reward $w$ where $w$ is the weight of the selected edge.
+
+The goal of the first player is to maximise the average of the rewards, while the goal of the second player is to minimise it. 
+
+Player $1$ wins if at a certain moment he can secure a positive average. Player $2$ wins if at a certain moment he can secure a negative average.
+
+\begin{figure}[hp]
+	\centering
+	\includegraphics[width=0.9\textwidth]{Figures/MeanPayoffGameExecution.png}
+	\caption{A \acrshort{mpg} instance}
+\end{figure}
 
 \subsection{State of the art}
 \acrfull{mpg} are well-known in many fields, such as Optimization \cite{SimplexMPG}, Game Theory \cite{PositionalStrategies}, Formal Verification \cite{OmegaSpecsMPG}, Constraint Satisfaction Problems  \cite{TropicalCSP,MPGMaxAtom}, Reinforcement Learning \cite{StrategyImprovement}.
@@ -103,10 +122,7 @@ This influenced mainly two research axes. The first deals with solving the decis
 While we did not find a \acrfull{ml} approach on \acrshort{mpg} in the literature, we were able to find some results in a related game, known as stochastic parity games. In fact, a model-free \acrfull{rl} approach was proposed using the Q-learning minimax algorithm \cite{??}. It does only learn specific instances of the game and not a whole family of stochastic parity games.
 
 We were also able to find supervised learning approach on solved instances of that game using \acrfull{gnn} methods. We will base our \acrshort{gnn} algorithms.
-
-\subsection{Potential difficulties}
-We believe that our project is 
- 
+\newpage
 \section{Introduction to learning approaches}
 \subsection{Machine learning}
 \acrfull{ml} is a subfield of \acrfull{ai}, which is broadly defined as the capability of a machine to imitate intelligent human behavior. \acrshort{ai} systems are used to perform complex tasks in a way that is similar to how humans solve problems.
@@ -173,6 +189,20 @@ deploys an algorithm against copies of itself to test compatibility in various s
 	\scriptsize src: 
 \end{figure}
 \FloatBarrier
+\section{Introduction to high power computing}
+\subsection{\acrshort{hpc}}
+The \acrlong{hpc} and Storage Complex (HRSK-II) with about 60,000 CPU cores, designed and operated by ZIH, achieves a peak performance of more than 1.5 \acrfull{pflops}. Massively parallel applications can also leverage the highly efficient processing power of our 448 \acrshort{gpu} accelerators. Additionally, the system is equipped with a shared storage consisting of about 2000 high capacity disks and a network of fast solid-state drives for specialized tasks. Therefore it provides the basis to successfully investigate compute-intensive and data-intensive problems of various scientific disciplines, like computational fluid dynamics, weather and climate modeling, material science, electrodynamics, life sciences, and bioinformatics.
+\subsection{Prerequisites}
+The ZIH \acrshort{hpc} system is Linux based system. To work on the \acrshort{hpc} system. Therefore, a \acrshort{hpc} user needs to know basic terminology such as SSH, cluster, login node, compute node, local and shared filesystem, command line or shell.
+
+\subsection{Architecture}
+The \acrshort{hpc} system is composed of many clusters:
+
+\begin{figure}[hp]
+	\centering
+	\includegraphics[width=0.75\textwidth]{Figures/HPCArchitecture.png}
+	\caption{\acrshort{hpc} architecture}
+\end{figure}
 
 \section{Work methodologies}
 This section is dedicated to describing the three methodologies we selected to conduct this
@@ -222,9 +252,17 @@ As a process model, CRISP-DM provides an overview of the data mining life cycle.
 	\hspace{4.35cm}
 		\makebox[\textheight]{\includegraphics[height=1.2 \textheight]{Figures/Gant.png}}
 
-	\caption{Gantt diagram}
+	\caption{Gantt diagram \label{fig:Gantt}}
 
 \end{figure}
 
 \end{landscape}
 \restoregeometry
+\section*{Conclusion}
+Through this chapter, we presented the host departement and discovered their research interests.
+
+Then, we presented the project and described the functional and non-functional requirements
+
+Later, we introduced \acrshortpl{mpg} and described the state of the art. We then introduced briefly learning approaches.
+
+Finally, we showed our work methodologies, and the detailed work in the scope of this project.

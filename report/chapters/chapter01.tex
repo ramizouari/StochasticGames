@@ -1,5 +1,8 @@
 \chapter{Formalisation \& Implementation}
-\section{Introduction}
+\section*{Introduction}
+In this chapter, we are going to formalise the definition of a \acrshort{mpg}. We are also going specify in what sense a strategy is optimal.
+
+Later, we will unify the \acrshort{mpg} theory frameworks under a modular and extensible library.
 
 \section{Formalisation}
 To define a Mean Payoff Game, we will start by formalising a weighted di-graph\footnote{Directed Graph}.
@@ -12,6 +15,7 @@ A Weighted Di-Graph $G$ is a tuple $(\VertexSet,\EdgeSet,W)$ where:
 		\item $\EdgeSet \subseteq \VertexSet\times \VertexSet$ is the set of edges.
 		\item $W:\EdgeSet\rightarrow \mathbb{G}$ is the weight function, assigning a weight for every edge, with $\mathbb{G}$ some ordered abelian group\footnote{This definition is too general. We will only consider $\mathbb{G}\in \{\mathbb{Z},\mathbb{Q},\mathbb{R}\}.$ Also, $\mathbb{G}$ itself should be clear from the context.}. 
 \end{itemize}
+\newpage
 \subsection{Mean Payoff Game}
 \label{section:Formalisation:MPG}
 \label{section:Formalisation:MeanPayoffGame}
@@ -25,7 +29,7 @@ Formally, a \textbf{Mean Payoff Graph} is a tuple $(\VertexSet,\EdgeSet,W,\Playe
 \end{itemize}
 
 
-A  \textbf{Mean Payoff Game} is a perfect information, zero-sum, turn based game played indefinitively on a Mean Payoff Graph as follow:
+A  \textbf{\acrfull{mpg}} is a perfect information, zero-sum, turn based game played indefinitively on a Mean Payoff Graph as follow:
 \begin{itemize}
 \item The game starts at $u_0=s$, with player $p_0=p$ starting.
 \item For each $n\in\mathbb{N},$ Player $p_n$ will choose a vertex $u_{n+1}\in \Adj u_n,$ with a payoff $w_n=W(u_n,u_{n+1})$
@@ -78,9 +82,29 @@ Now, there is a slight difference between the three winning conditions.
 \newline For example, an optimal strategy with respect to $C_1$ may not be optimal with respect to $C_2$. While this can happen, it is unlikely.
 \newline What about $C_2$ and $C_3$? As different as they appear, they are equivalent in the scope of this report\footnote{They are still different conditions in general.}.
 This is demonstrated in \ref{section:Formalisation:MeanPayoff}.
+\begin{figure}[ht]
+	\centering
+	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
+		thick,main node/.style={circle,draw,font=\Large\bfseries}]
+		\node[main node, fill=gray!50] (1) {$0$}; 
+		\node[main node] (2) [right of =1] {$1$}; 
+		\node[main node] (3) [above right of =1] {$2$}; 
+		\node[main node] (4) [right of =2] {$3$}; 
+		\path (1) edge [bend left] node {1} (3)
+		edge [bend right] node [below] {-1} (2)
+		(2) edge [bend right] node [above] {1} (1)
+		edge [loop below] node {-1} (2)
+		(3) edge [bend left] node {-5} (2)
+		edge [bend left] node {-2} (4)
+		(4) edge node {3} (2);
+	\end{tikzpicture} 
+	\caption{An example of a \acrshort{mpg}}
+\end{figure}
 \subsection{Well Foundness}
 It is not very clear from the definition that the game is well founded. \newline
-In fact, there are choices for which the mean payoff does not converge. That is the sequence $\left(\frac{1}{n}\sum_{k=0}^{n-1} w_k \right)_{n\in\mathbb{N}^*}$ does not converge. \newline One such example is the sequence defined by:
+In fact, there are choices for which the mean payoff does not converge. That is the sequence $\displaystyle\left(\frac{1}{n}\sum_{k=0}^{n-1} w_k \right)_{n\in\mathbb{N}^*}$ does not converge.  
+
+One such example is the sequence defined by:
 $$
 w_n=(-1)^{\lfloor  \log_2 (n+1)\rfloor}
 $$
@@ -95,7 +119,7 @@ That sequence has two accumulation points $\pm \frac{1}{3},$ and thus, it does n
 
 On the other hand, the introduction of the supremum and infimum operators in the table \ref{table:WinningConditions} will solve the convergence problem, as the resulting sequences will become monotone.
 
-An example of an execution that gives a rise to such payoffs is the following Meab Payoff Game instance\footnote{Note that the proposed pair of strategies is odd in the sense that it appears that both players cooperated on the construction of non-convergent mean payoffs instead of trying ot win the game.}:
+An example of an execution that gives a rise to such payoffs is the following \acrshort{mpg} instance:
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}[b]{0.45\textwidth}
@@ -128,7 +152,7 @@ An example of an execution that gives a rise to such payoffs is the following Me
 			\label{fig:MeanPayoffNonConvergence}}
 \end{figure}
 \subsection{Properties}
-A Mean Payoff Game has many properties that are interesting from a game theory perspective.
+A \acrshort{mpg} has many properties that are interesting from a game theory perspective.
 \subsubsection{Two Player}
 The game is a two player game.
 \subsubsection{Turn Based}
@@ -148,29 +172,6 @@ This duality is important due to the following theorem.
 \end{theorem}
 With that, there is not any major difference between $\Max$ and $\Min$ from a theoretical point of view.
 \newline In fact, without any loss of generality, we can assume that $\Max$ is the starting player. And this is what we will do by default in this report.
-\begin{figure}
-	\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2cm,
-		thick,main node/.style={circle,draw,font=\Large\bfseries}]
-		\node[main node, fill=gray!50] (1) {$0$}; 
-		\node[main node] (2) [above of =1] {$1$}; 
-		\node[main node] (3) [above right of =2] {$2$}; 
-		\node[main node] (4) [above of =3] {$3$}; 
-		\node[main node] (5) [above left of =2] {$4$}; 
-		\node[main node] (6) [above of =5] {$5$}; 
-		\node[main node] (7) [above of =6]{$6$}; 
-		\path (1) edge node {2} (2)
-		(2) edge node {3} (3)
-			edge node {3} (5)
-		(3) edge [bend left] node {-5} (4)
-			edge [bend left] node {-5} (2)
-		(4) edge [bend left] node {-5} (2)
-			edge [bend left] node {-2} (4)
-		(5) edge node {3} (6)
-			edge [bend left=25] node {3} (7)
-		(6) edge node {3} (1)
-		(7) edge [bend right=45] node {3} (1);
-	\end{tikzpicture} 
-\end{figure}
 
 \subsection{Strategy}
 \label{section:Formalisation:Strategy}
@@ -178,33 +179,34 @@ With that, there is not any major difference between $\Max$ and $\Min$ from a th
 \label{section:Formalisation:Strategy:Deterministic}
 \label{section:Formalisation:Strategy:Positional}
 Let $p$ be a player. \newline 
-A (deterministic) strategy is a function $\Pi^{p}:\VertexSet^+\rightarrow \VertexSet$ such that:
+A (deterministic) strategy is a function $\Phi^{p}:\VertexSet^+\rightarrow \VertexSet$ such that:
 $$
-\forall v_0\dots v_r\in \VertexSet^+, \quad \Pi_p(v_0\dots v_r) \in \Adj v
+\forall v_0\dots v_r\in \VertexSet^+, \quad \Phi_p(v_0\dots v_r) \in \Adj v
 $$	
-If the strategy does only depend on the current vertex, we say it is a memoryless (deterministic) strategy.  $\Pi:\VertexSet\rightarrow \VertexSet$
-\newline In this report, we will use the term positional strategies as an alias for memoryless deterministic strategies, which is conforming to the established litterature of mean payoff games.
-\newline Positional strategies are crucial for our analysis as a result of the following theorem.
+If the strategy does only depend on the current vertex, we say it is a memoryless (deterministic) strategy. 
+
+In this report, we will use the term ``positional strategies'' as an alias for memoryless deterministic strategies, which is conforming to the established litterature of \acrshortpl{mpg}.
+
+Positional strategies are crucial for our analysis as a result of the following theorem \cite{PositionalStrategies}:
 \begin{theorem}
 	\label{theorem:OptimalStrategy}
-	For all Mean Payoff Games, each player has an optimal positional strategy.
+	For all \acrlongpl{mpg}, each player has an optimal positional strategy.
 \end{theorem}
 
 \subsubsection{Probabilistic Strategies}
-A probabilistic strategy is a random process that assigns for each sequence of vertices $v\in\mathcal{V}$ a probability distribution over $\Adj v.$ This constitutes the most general strategy of a player:
+A probabilistic strategy is a random process that assigns for each sequence of vertices $v\in\mathcal{V}$ a probability distribution over $\Adj v.$ Within the scope of this project, this constitutes the most general strategy of a player:
 $$
 \forall v_0\dots v_r\in \VertexSet^+, \quad \Pi_p(v_0\dots v_r) \in \Distribution{\Adj v}
 $$
+
+If the probabilistic strategy does only depend on the current vertex, we say it is a memoryless probabilistic strategy.  $\Pi:\VertexSet\rightarrow \VertexSet$
+
+In this report, we will use both the terms ``fractional strategies'' and ``behavioural strategies" interchangeably as an alias for memoryless probabilistic strategies, which is also conforming to the established litterature of \acrshortpl{mpg}.
 \subsubsection{Considered Strategies}
-Strategies that depends in complete past histories are in general intractable. For Mean Payoff Game, it is proven that the optimal strategy is a \textbf{deterministic} and \textbf{memoryless}.
-\newline For that we will only consider \textbf{memoryless} strategies. And for the scope of this report:
-\begin{itemize}
-	\item A deterministic strategy should refer to memoryless deterministic strategy.
-	\item A probabilistic strategy should refer to memoryless probabilistic strategy.
-	\item A strategy should refer to memoryless deterministic strategy.
-\end{itemize}
-We will still consider (memoryless) probabilistic strategies as they reside in a smooth space, and thus they can be used for machine learning purposes.
-\subsubsection{Deterministic Optimal Strategy}
+Strategies that depends in complete past histories are in general intractable. For a \acrshort{mpg}, it is proven that we always have an optimal \textbf{positional} strategy \cite{PositionalStrategies}.
+
+For that we will only consider \textbf{memoryless} strategies. First of all, it is natural to consider positional strategies thanks to theorem \ref{theorem:OptimalStrategy}. For the fractional strategies, they serve as a generalisation of positional strategies that can be used in \acrfull{ml} methods, ay they reside in a smooth space.
+\subsubsection{Positional Optimal Strategy}
 There are three kinds of optimality:
 \paragraph{Weak Optimality}: In the deterministic case, a strategy $\Phi$ of player $p\in \PlayerSet$ is weakly optimal if one of the following is true:
 \begin{itemize}
@@ -658,3 +660,9 @@ Unlike \textbf{mpg}, which has support for mean payoff graph I/O from files via 
 \subsection{Environment}
 \subsection{Testing}
 \subsection{Structure}
+\section*{Conclusion}
+In this chapter, we formally defined \acrshortpl{mpg}, the strategies, and the mean payoff itself. We showed that while it can be problematic to have a mean payoff in the general sense, This will not be an issue in our scope.
+
+Then, we implemented crucial algorithms for countering strategies, and calculating mean payoffs that will serve as an evaluation metric for the future \acrfull{ml} model. 
+
+Finally, we designed an implemented a \acrshort{mpg} library on which we will base our work. We implemented time-critical algorithms with little overhead in C++ and linked it to the python implementation. To also test the correctness of our implementations, we added unit tests to each important algorithm..

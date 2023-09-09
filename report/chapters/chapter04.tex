@@ -1,5 +1,15 @@
 \chapter{Reinforcement learning and Self play approach}
-\section{Introduction}
+\section*{Introduction}
+
+In this final chapter, we will define \acrfull{rl} more formally, and then briefly describe the difference of some \acrshort{rl} approaches.
+
+Once we have the \acrshort{rl} background, we will transform our \acrshort{mpg} into a \acrfull{sg} in a consistent way with the model architecture defined on chapter \ref{chapter:ModelDesign}.
+
+Then, we will begin on \acrfull{sp} system. First, we will describe vanilla \acrshort{mcts} implementations with some required modifications to the \acrshort{sg} for convergence, and later, we will discuss the \acrshort{mcts} based on Alpha Zero that uses the model defined on chapter \ref{chapter:ModelDesign}.
+
+Later, we will design and implement the \acrshort{sp} pipeline, deploy it to a \acrshort{hpc} pipeline.
+
+Finally, we will create a configuration file for externalizing the configuration, and then do some experiments with out \acrshort{sp} system 
 \section{Reinforcement Learning}
 \subsection{Definition}
 \citeauthor{RLIntroduction} \cite[Chapter.~1]{RLIntroduction} gave an excellent in-depth definition, which not only defines what \acrfull{rl} is, but also compare it with other \acrfull{ml} methods.
@@ -442,6 +452,11 @@ In section \ref{section:RL:ModelBasedMCTS}, we discussed our model-based impleme
 	\mathscr{D}=\left[\left(G^{(1)},v'_{\Theta}(G^{(1)}),\Pi'_{\Theta}(G^{(1)})\right), \dots,\left(G^{(m)},v'_{\Theta}(G^{(m)}),\Pi'_{\Theta}(G^{(m)})\right)\right]
 	$$
 	\item Fit $\mathcal{M}_{\Theta^{(i)}}$ against $\mathscr{D}$ to get a better model $\mathcal{M}_{\Theta^{(i+1)}}$
+\begin{figure}[ht]
+	\centering
+	\includegraphics[width=0.85\textwidth]{Figures/AlphaZero.jpg}
+	\caption{Main steps of Alpha Zero}
+\end{figure}
 \end{enumerate}
 
 Each one of these steps is computationnally intensive. And for that, we will use the \text{seperation of concerns} principle to split them into distinct services.\footnote{This seperation, while not necessary, is benificial as it gives the freedom to scale the self-play pipeline.}
@@ -603,3 +618,17 @@ We also externalized the parameters of the services, so we can easily change the
 \end{figure}
 \FloatBarrier
 \section{Execution}
+\section*{Conclusion}
+This chapter marks the culmination of all our research, proven results, implementations into a whole \acrshort{rl} system based on \acrshort{sp}.
+
+First of all, we started by formalising our \acrshort{rl} approach, we formalised our \acrshort{mpg} as a \acrshort{sg} consistingly with the model we had built in chapter \ref{chapter:ModelDesign}. 
+
+We also defined two additional \acrshort{mpg} distributions that will be used on the \acrshort{sp} pipeline. The choice of both distributions is consistent with both datasets discussed in chapter \ref{chapter:Dataset}. This is intended so that we can evaluate our algorithms against optimal players.
+
+Second of all, we formalised the \acrshort{mcts} approach, and followed Alpha Zero's approach to get a \acrshort{mcts} variant that uses the model defined in chapter \ref{chapter:ModelDesign}.
+
+Later, we seperated functionalities of the \acrshort{sp} pipeline following Alpha Zero's approach. Then we distributed the whole system so it can be scaled both horizontally and vertically.
+
+Once we had resolved all implementation issues, we deployed the \acrshort{sp} pipeline to a \acrshort{hpc} cluster, externalized the configuration of the whole system.
+
+Finally, we executed the whole \acrshort{sp} pipeline as a proof of concept.

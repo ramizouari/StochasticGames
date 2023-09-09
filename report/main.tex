@@ -241,9 +241,9 @@
 % Making title page
 \input{chapters/titlepage}
 \newpage
-\input{chapters/abstract}
+\input{chapters/dedication}
 \input{chapters/acknowledgment}
-
+\input{chapters/abstract}
 
 % Roman page numbering to start from abstract onwards
 
@@ -258,7 +258,8 @@
 \listoffigures
 \listoftables
 \listofalgorithms
-
+\addcontentsline{toc}{chapter}{List of Algorithms}
+\printglossary[type=\acronymtype]
 \input{chapters/Introduction}
 \input{chapters/chapter00}
 \input{chapters/chapter01}
@@ -273,11 +274,11 @@
 \input{chapters/appendix03}
 \nocite{*}
 
-\printbibliography[title=Bibliographie]
-\addcontentsline{toc}{chapter}{Bibliographie}
+\printbibliography[title=Bibliography]
+\addcontentsline{toc}{chapter}{Bibliography}
 
 
-\printglossary[type=\acronymtype]
+
 
 
 

@@ -1,16 +1,26 @@
 \chapter{Dataset Generation \& Annotation}
 \label{section:Dataset}
 \label{chapter:Dataset}
-\section{Introduction}
-\section{Analysis}
-Generating a Mean Payoff Game can be decomposed into two subsequent objectives.
+\section*{Introduction}
+This chapter will be dedicted to the generation of random \acrshortpl{mpg}. We will decompose this problem into generating a graph and generating weights. 
+
+Later, we will detail graph notable distributions, and will implement efficient algorithms to build random graphs. Also, we will add a conditionning on the graph distributions to avoid having any sinks. 
+
+Furthermore, we will propose some desired properties of \acrshortpl{mpg} distributions, and we will show the graph and weight distributions.
+
+Then, we will detail our steps to generate two \acrshort{mpg} datasets, one for sparse graphs, and the other for dense ones. Also, we will annotate both datasets by finding the optimal strategies.
+
+Finally, we will deploy all our implementations to a \acrshort{hpc} system to reduce execution time.
+\section{Decomposition}
+Generating a \acrshort{mpg} can be decomposed into two subsequent objectives.
 \begin{enumerate}
-	\item Generate the Graph itself.
-	\item Generate the Weights
+	\item Generate the graph itself.
+	\item Generate the weights
 \end{enumerate}
+We will follow this approach to generate a random \acrshort{mpg}. In fact, we will decompose \acrshort{mpg} distributions intop a graph distribution $\mathcal{G}$ and a weight distribution $\mathcal{W}.$ 
 
-
-\section{Graph Distributions}
+We will also require that $\mathcal{W}$ is scalar and does not have any information about the generated graph in the sense that building the weights function is done by repeated sampling from $\mathcal{W}$
+\section{Graph distributions}
 There are many well studied graph distributions in the litterature. One of the most explored ones are the $\mathcal{G}(n,p)$ and $\mathcal{G}(n,m)$ families.
 
 We will offer here a directed variant of these two distributions that suits for \acrshortpl{mpg}.
@@ -201,7 +211,7 @@ Here $\text{Lazy}(V)\times \text{Lazy}(V)$ is a lazy implementation of cartesian
 \newline The complexity of this construction is: $
 \tilde{\mathcal{O}}(m)
 $ 
-
+\newpage
 \section{Sinkless Conditionning}
 Sampling from a graph distribution may lead to graphs that have at least one sink. 
 \newline These graphs are problematic as Mean Payoff Graphs are exactly the sinkless graphs.
@@ -307,7 +317,7 @@ Moreover, the cost of the conditionning makes at most a constant $\frac{1}{1-e^{
 %$$
 %Here $W_{u,v}$ will be a sequence of real %random variables. \newline
 %In our case, we set $(W_{u,v})_{(u,v)\in E}$ to %be independent and identically distributed over %a real distribution $\mathcal{W}.$ 
-
+\newpage
 \section{Proposed \acrshort{mpg} distributions}
 \subsection{Desired properties of \acrshort{mpg} distributions}
 \label{section:Dataset:ProposedDistributions:Properties}
@@ -425,7 +435,7 @@ We have deployed the pipeline in the HPC system. We have launched the following 
 \end{figure}
 \FloatBarrier
 The generation was done on a `haswell64` partition with 24 cores. and it took 02:12:38 hours.
-
+\newpage
 \section{Annotation}
 \subsection{Approach}
 We used the \acrfull{csp} algorithm $\ref{alg:AC3Optimized}$ to annotate the dataset, potentially augmented with some heuristics.
@@ -610,3 +620,13 @@ The figure \ref{fig:HPCAnnotation} above highlights the pipeline used to annotat
 		\label{table:SolverResults}}
 \end{table}
 \FloatBarrier
+\section*{Conclusion}
+In this chapter, we generated random \acrshortpl{mpg} by decomposing the problem into generating a random graph, and then generating random weights.
+
+We analysed the graph generation problem, and we were able to produce an optimal\footnote{In the Big-O sense.} algorithm for generating a random graph, and then also an optimal graph to generate sinkless graphs.
+
+Then, we proposed desired properties of \acrshort{mpg} distributions, and finally implemented some notable one. Once we had all the key elements, we designed and two \acrshort{mpg} datasets, one for sparse graphs and one dor dense ones. We implemented a graph generator program and deployed it in a \acrshort{hpc} system to reduce execution time.
+
+Once the datasets were generated, we were able to also implement a solver by reducing the problem to a \acrshort{csp}. This gave us the possibility to apply powerful \acrshort{csp} methods to find optimal strategies. We then implemented the solver in C++ with emphasis on low overhead.
+
+Finally, we deployed the solver to a \acrshort{hpc} system, and created a pipeline to annotate both datasets.
